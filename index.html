@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendaku</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="overlay" id="login">
+    <input type="text" id="nama" placeholder="Masukkan Nama Anda">
+    <input type="text" id="nimInput" placeholder="Masukkan Nim/Kelas (Opsional)">
+    <button class="btn" id="loginBtn">Masuk</button>
+    <div class="digital-time info-frame" id="digitalClock"></div>
+    <div class="user-info info-frame" id="userInfoDisplayLogin">
+      <span id="userNameDisplayLogin"></span>
+      <span id="userNimDisplayLogin"></span>
+    </div>
+    <div class="menu-icon-top-right" onclick="showAgendakuBranding()">☰</div>
+  </div>
+
+  <div class="overlay" id="menu" style="display:none">
+    <button class="btn" onclick="bukaSlide('jadwal')">Jadwal Kegiatan</button>
+    <button class="btn" onclick="bukaSlide('kuliah')">Jadwal Kuliah/Sekolah</button>
+    <button class="btn" onclick="bukaSlide('ubahTema')">Ganti Tema Aplikasi</button>
+    <button class="btn" onclick="bukaSlide('catatan')">Buat Catatan</button> 
+    <button class="btn" onclick="bukaSlide('info')">Info</button>
+    <div class="digital-time info-frame" id="digitalClockMenu"></div>
+    <div class="user-info info-frame" id="userInfoDisplayMenu">
+      <span id="userNameDisplayMenu"></span>
+      <span id="userNimDisplayMenu"></span>
+    </div>
+    <div class="menu-icon-top-right" onclick="showAgendakuBranding()">☰</div>
+  </div>
+
+  <div class="slide" id="jadwal">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="bukaSlide('editJadwal', 'jadwalContent')">Edit</button>
+      <button class="btn btn-reset-custom" onclick="confirmResetSchedule('jadwalContent')">Reset</button>
+      <button class="btn" onclick="tutupSlide('jadwal')">Kembali</button>
+    </div>
+    <h2>Kegiatan Harian</h2> <div class="jadwal-section">
+      <div id="jadwalContent" class="editable" contenteditable="false">
+        <h3>Senin:</h3>
+        <ul>
+          <li><strong>Shubuh:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Pagi:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Dhuhur:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Ashar:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Maghrib:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Isya:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Malam:</strong> Silakan edit kegiatan Anda.</li>
+        </ul>
+        <h3>Selasa:</h3>
+        <ul>
+          <li><strong>Shubuh:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Pagi:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Dhuhur:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Ashar:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Maghrib:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Isya:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Malam:</strong> Silakan edit kegiatan Anda.</li>
+        </ul>
+        <h3>Rabu:</h3>
+        <ul>
+          <li><strong>Shubuh:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Pagi:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Dhuhur:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Ashar:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Maghrib:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Isya:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Malam:</strong> Silakan edit kegiatan Anda.</li>
+        </ul>
+        <h3>Kamis:</h3>
+        <ul>
+          <li><strong>Shubuh:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Pagi:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Dhuhur:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Ashar:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Maghrib:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Isya:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Malam:</strong> Silakan edit kegiatan Anda.</li>
+        </ul>
+        <h3>Jumat:</h3>
+        <ul>
+          <li><strong>Shubuh:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Pagi:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Dhuhur:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Ashar:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Maghrib:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Isya:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Malam:</strong> Silakan edit kegiatan Anda.</li>
+        </ul>
+        <h3>Sabtu:</h3>
+        <ul>
+          <li><strong>Shubuh:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Pagi:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Dhuhur:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Ashar:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Maghrib:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Isya:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Malam:</strong> Silakan edit kegiatan Anda.</li>
+        </ul>
+        <h3>Minggu:</h3>
+        <ul>
+          <li><strong>Shubuh:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Pagi:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Siang:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Sore:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Maghrib:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Isya:</strong> Silakan edit kegiatan Anda.</li>
+          <li><strong>Malam:</strong> Silakan edit kegiatan Anda.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="kuliah">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="bukaSlide('editJadwal', 'kuliahContent')">Edit</button>
+      <button class="btn btn-reset-custom" onclick="confirmResetSchedule('kuliahContent')">Reset</button>
+      <button class="btn" onclick="tutupSlide('kuliah')">Kembali</button>
+    </div>
+    <h2>Jadwal Kuliah/ Sekolah</h2>
+    <div id="kuliahContent" class="jadwal-section editable" contenteditable="false">
+      <h3>Senin:</h3>
+      <ul>
+        <li>08.00-10.00: Mata Kuliah/Pelajaran Anda</li>
+        <li>10.00-12.00: Mata Kuliah/Pelajaran Anda</li>
+      </ul>
+      <h3>Selasa:</h3>
+      <ul>
+        <li>09.00-11.00: Mata Kuliah/Pelajaran Anda</li>
+        <li>13.00-15.00: Mata Kuliah/Pelajaran Anda</li>
+      </ul>
+      <h3>Rabu:</h3>
+      <ul>
+        <li>08.00-10.00: Mata Kuliah/Pelajaran Anda</li>
+        <li>10.00-12.00: Mata Kuliah/Pelajaran Anda</li>
+      </ul>
+      <h3>Kamis:</h3>
+      <ul>
+        <li>09.00-11.00: Mata Kuliah/Pelajaran Anda</li>
+        <li>13.00-15.00: Mata Kuliah/Pelajaran Anda</li>
+      </ul>
+      <h3>Jumat:</h3>
+      <ul>
+        <li>08.00-10.00: Mata Kuliah/Pelajaran Anda</li>
+        <li>10.00-12.00: Mata Kuliah/Pelajaran Anda</li>
+      </ul>
+      <h3>Sabtu:</h3>
+      <ul>
+        <li>09.00-12.00: Kegiatan Ekstrakurikuler/Praktikum</li>
+      </ul>
+      <h3>Minggu:</h3>
+      <ul>
+        <li>Libur</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide" id="ubahTema">
+    <div class="button-container">
+      <button class="btn" onclick="tutupSlide('ubahTema')">Kembali</button>
+      <button class="btn btn-reset-custom" onclick="confirmDefaultTheme()">Tema Default</button> 
+    </div>
+    <h2>Pilih Tema Latar Belakang</h2>
+    <div class="background-grid">
+      <img src="https://files.catbox.moe/xtcb9j.jpg" onclick="confirmImageTheme('https://files.catbox.moe/xtcb9j.jpg')" alt="Latar 1" />
+      <img src="https://files.catbox.moe/m34hwi.jpg" onclick="confirmImageTheme('https://files.catbox.moe/m34hwi.jpg')" alt="Latar 2" />
+      <img src="https://files.catbox.moe/7kizkm.jpg" onclick="confirmImageTheme('https://files.catbox.moe/7kizkm.jpg')" alt="Latar 3" />
+      <img src="https://files.catbox.moe/6inu37.jpg" onclick="confirmImageTheme('https://files.catbox.moe/6inu37.jpg')" alt="Latar 4" />
+      <img src="https://files.catbox.moe/mq9zmw.jpg" onclick="confirmImageTheme('https://files.catbox.moe/mq9zmw.jpg')" alt="Latar 5" />
+      <img src="https://files.catbox.moe/mhhmd9.jpg" onclick="confirmImageTheme('https://files.catbox.moe/mhhmd9.jpg')" alt="Latar 6" />
+      <img src="https://files.catbox.moe/60s2gr.jpg" onclick="confirmImageTheme('https://files.catbox.moe/60s2gr.jpg')" alt="Latar 7" />
+      <img src="https://files.catbox.moe/29u9l1.jpg" onclick="confirmImageTheme('https://files.catbox.moe/29u9l1.jpg')" alt="Latar 8" />
+      <img src="https://files.catbox.moe/dp6gal.jpg" onclick="confirmImageTheme('https://files.catbox.moe/dp6gal.jpg')" alt="Latar 9" />
+      <img src="https://files.catbox.moe/2juexf.jpg" onclick="confirmImageTheme('https://files.catbox.moe/2juexf.jpg')" alt="Latar 10" />
+      </div>
+  </div>
+
+  <div class="slide" id="catatan">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="bukaSlide('editCatatan')">Edit</button>
+      <button class="btn" onclick="tutupSlide('catatan')">Kembali</button>
+    </div>
+    <h2>Catatan Pribadi</h2>
+    <div id="catatanContent" class="jadwal-section" style="flex-grow: 1; overflow-y: auto;">
+      <p>Tulis catatanmu di sini...</p>
+      <p>Ini adalah tempat untuk menyimpan ide, daftar tugas, atau informasi penting lainnya.</p>
+      <p>Coba edit teks ini untuk memulai!</p>
+    </div>
+  </div>
+
+  <div class="slide" id="editCatatan">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="saveCatatan(); tutupSlide('editCatatan');">Simpan</button>
+      <button class="btn" onclick="tutupSlide('editCatatan')">Kembali</button>
+    </div>
+    <h2>Edit Catatan Pribadi</h2>
+    <textarea id="editCatatanTextarea" style="width: 100%; height: 100%; border: 1px solid #ccc; padding: 15px; font-size: 16px; border-radius: 10px; resize: vertical; box-sizing: border-box; flex-grow: 1;"></textarea>
+  </div>
+
+  <div class="slide" id="info">
+    <div class="info-header-content">
+      <h2>Info Pengguna</h2>
+      <p id="namaInfo">Nama: -</p>
+      <p id="nimInfo">Nim/Kelas: -</p>
+    </div>
+    <div class="developer-description-container" id="developerDescriptionScrollable">
+      <h3>Deskripsi Developer</h3>
+      <p> (Baca jika perlu !)</p>
+      <p style="margin-top: 10px;">Sebelumnya perlu diketahui bahwa aplikasi ini berbasis online web, maka mengharuskan pengguna untuk mempunyai akses internet terlebih dahulu untuk menggunakan aplikasi ini, Aplikasi ini dibuat untuk menampilkan jadwal secara sederhana, tentunya masih ada banyak bug dan kekurangan di aplikasi ini, nantinya aplikasi ini akan dikembangkan secara berkala. Segera hubungi admin jika kamu menemukan bug, Semoga bermanfaat dan sampai jumpa (◉⁠‿⁠◉)/</p>
+      <p>....</p>
+      <p>...</p>
+    </div>
+    <div class="info-footer-buttons">
+      <button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Tampilkan Instruksi</button>
+      <button class="btn" onclick="tutupSlide('info')">Kembali</button>
+      <button class="btn btn-kritik-saran" onclick="showKritikSaranPopup()">Kritik dan Saran</button>
+      <div class="copyright-info">2025 Amieen_Fjr - All Rights Reserved</div>
+    </div>
+  </div>
+
+  <div class="slide" id="instruksi">
+    <div class="button-container">
+      <button class="btn" onclick="tutupSlide('instruksi')">Kembali ke Info</button>
+    </div>
+    <h2>Panduan Penggunaan Aplikasi</h2>
+    <div class="tutorial-content">
+      <div class="tutorial-section">
+        <h3>Pendahuluan</h3>
+        <p>Aplikasi Jadwal ini dirancang untuk membantu Anda mengatur kegiatan harian, jadwal kuliah/sekolah, dan catatan pribadi. Berikut adalah panduan lengkap penggunaan aplikasi.</p>
+      </div>
+      
+      <div class="tutorial-section">
+        <h3>Memulai Aplikasi</h3>
+        <ul>
+          <li><strong>Masukkan Nama:</strong> Pada halaman awal, masukkan nama Anda di kolom yang tersedia.</li>
+          <li><strong>NIM/Kelas (Opsional):</strong> Anda dapat memasukkan identitas tambahan jika diperlukan.</li>
+          <li><strong>Tombol Masuk:</strong> Tekan tombol "Masuk" untuk mengakses menu utama aplikasi.</li>
+        </ul>
+      </div>
+      
+      <div class="tutorial-section">
+        <h3>Menu Utama</h3>
+        <ul>
+          <li><strong>Jadwal Kegiatan:</strong> Atur aktivitas harian Anda.</li> <li><strong>Jadwal Kuliah/Sekolah:</strong> Kelola jadwal akademik Anda per hari.</li>
+          <li><strong>Ganti Tema Aplikasi:</strong> Ubah tampilan latar belakang aplikasi sesuai preferensi.</li>
+          <li><strong>Buat Catatan:</strong> Simpan ide, tugas, atau informasi penting lainnya.</li>
+          <li><strong>Info:</strong> Akses informasi pengguna dan panduan aplikasi.</li>
+          <li><strong>Tentang Agendaku:</strong> Lihat informasi branding tentang aplikasi Agendaku.</li>
+        </ul>
+      </div>
+      
+      <div class="tutorial-section">
+        <h3>Mengelola Jadwal</h3>
+        <ul>
+          <li><strong>Edit Jadwal:</strong> Tekan tombol "Edit" di jadwal yang ingin Anda ubah. Anda akan dibawa ke halaman pengeditan khusus. Setelah selesai, klik "Simpan".</li>
+          <li><strong>Reset Jadwal:</strong> Gunakan tombol "Reset" di halaman jadwal utama untuk mengembalikan jadwal ke pengaturan awal (default).</li>
+          <li><strong>Format Penulisan (Jadwal Kegiatan):</strong> Pada halaman edit jadwal kegiatan, Anda akan menemukan opsi waktu dan kolom input. Pilih waktu yang sesuai (Shubuh, Pagi, Dhuhur, Siang, Ashar, Sore, Maghrib, Isya, Malam) lalu ketik kegiatan Anda. Contoh: pilih "Pagi" lalu ketik "makan mie".</li> 
+          <li><strong>Format Penulisan (Jadwal Kuliah/Sekolah):</strong> Pada halaman edit jadwal kuliah/sekolah, Anda akan menemukan input jam (misal 08:00 - 10:00) dan kolom input untuk mata pelajaran/deskripsi.</li>
+        </ul>
+      </div>
+      
+      <div class="tutorial-section">
+        <h3>Tombol Bantuan</h3>
+        <ul>
+          <li><strong>Tombol "💡":</strong> Tampilkan ringkasan jadwal hari ini.</li>
+          <li><strong>Tombol "?":</strong> Akses bantuan kontekstual sesuai halaman yang sedang dibuka.</li>
+          <li><strong>Tombol Rumah:</strong> Kembali ke halaman login.</li>
+          <li><strong>Tombol Kutipan:</strong> Tampilkan motivasi harian.</li>
+        </ul>
+      </div>
+      
+      <div class="tutorial-section">
+        <h3>Fitur Lanjutan</h3>
+        <ul>
+          <li><strong>Penyimpanan Otomatis:</strong> Semua perubahan disimpan secara otomatis di perangkat Anda.</li>
+          <li><strong>Notifikasi:</strong> Aplikasi akan memberikan notifikasi suara pada setiap interaksi penting.</li>
+          <li><strong>Kustomisasi Tema:</strong> Pilih dari berbagai latar belakang yang tersedia.</li>
+        </ul>
+      </div>
+      
+      <div class="tutorial-section">
+        <h3>Troubleshooting</h3>
+        <ul>
+          <li><strong>Reset Aplikasi:</strong> Jika mengalami masalah, coba coba keluar dan masuk kembali.</li>
+          <li><strong>Penyimpanan Penuh:</strong> Pastikan perangkat memiliki ruang penyimpanan yang cukup.</li>
+          <li><strong>Kritik dan Saran:</strong> Gunakan fitur ini untuk melaporkan bug atau memberikan masukan kepada pengembang.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="editJadwal">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="saveEditedSchedule()">Simpan</button>
+      <button class="btn" onclick="tutupSlide('editJadwal')">Kembali</button>
+    </div>
+    <h2 id="editJadwalTitle">Edit Jadwal</h2>
+    <div class="edit-schedule-container" id="editScheduleContent">
+      </div>
+  </div>
+
+  <div class="circular-btn home-btn" onclick="kembaliKeLogin()" id="homeBtn" style="display:none"></div>
+  <div class="circular-btn quote-btn" id="quoteBtn" style="display:none" onclick="showQuoteToast()"></div>
+  <div class="circular-btn tutorial-help-btn" id="tutorialHelpBtn" style="display:none" onclick="showScheduleNow()"></div>
+  <div class="circular-btn help-btn" id="helpBtnJadwal" style="display: none;" onclick="showHelp('jadwal')">?</div>
+  <div class="circular-btn help-btn" id="helpBtnKuliah" style="display: none;" onclick="showHelp('kuliah')">?</div>
+
+  <div class="popup-overlay" id="notificationPopup">
+    <div class="popup-content notification-popup">
+      <button class="popup-close-btn" onclick="closeNotification()">×</button>
+      <h3 class="popup-header" id="notificationTitle">Jadwal Hari Ini</h3>
+      <div class="popup-body" id="notificationContent">
+        </div>
+    </div>
+  </div>
+
+  <div class="tutorial-overlay" id="tutorialPopup">
+    <div class="tutorial-popup">
+      <button class="tutorial-close" onclick="closeMainTutorial()">×</button>
+      <h3>Tutorial Penggunaan Aplikasi</h3>
+      <p>1. Masukkan nama Anda untuk memulai</p>
+      <p>2. Pilih menu Jadwal Kegiatan atau Jadwal Kuliah/sekolah</p>
+      <p>3. Tekan tombol Edit untuk mengubah jadwal</p>
+      <p>4. Gunakan tombol "💡" di pojok kanan bawah untuk melihat jadwal hari ini.</p>
+      <button class="btn" onclick="closeMainTutorial()" style="width:100%; margin-top:15px;">Mengerti</button>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="helpPopupOverlay">
+    <div class="popup-content" id="helpPopupContent">
+      <button class="popup-close-btn" onclick="closeHelpPopup()">×</button>
+      <h3 class="popup-header" id="helpPopupTitle">Bantuan</h3>
+      <div class="popup-body" id="helpPopupText"></div>
+      <div class="popup-footer">
+        <button class="btn" onclick="closeHelpPopup()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="kritikSaranPopup">
+    <div class="popup-content kritik-saran-popup">
+      <button class="popup-close-btn" onclick="closeKritikSaranPopup()">×</button>
+      <h3 class="popup-header">Kritik dan Saran</h3>
+      <div class="popup-body">
+        <textarea id="kritikSaranTextarea" placeholder="Tulis kritik atau saran Anda di sini..."></textarea>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-kirim" onclick="sendKritikSaran()">Kirim</button>
+        <button class="btn btn-confirm btn-batal" onclick="closeKritikSaranPopup()">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="resetConfirmPopup">
+    <div class="popup-content reset-confirm-popup">
+      <span class="question-mark">❓</span>
+      <div class="popup-body centered">
+         <p>Kamu yakin ingin mereset jadwal kembali ke default?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmResetYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmResetNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="deleteConfirmPopup">
+    <div class="popup-content delete-confirm-popup">
+      <span class="question-mark">🗑️</span>
+      <div class="popup-body centered">
+         <p>Kamu yakin ingin menghapus item ini?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmDeleteYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmDeleteNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="themeConfirmPopup">
+    <div class="popup-content theme-confirm-popup">
+      <span class="question-mark">🖼️</span>
+      <div class="popup-body centered">
+         <p>Apakah Anda yakin ingin menerapkan tema ini?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmThemeYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmThemeNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="defaultThemeConfirmPopup">
+    <div class="popup-content default-theme-confirm-popup">
+      <span class="question-mark">ℹ️</span>
+      <div class="popup-body centered">
+         <p>Anda yakin ingin kembali ke tema awal aplikasi?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmDefaultThemeYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmDefaultThemeNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="saveConfirmPopup">
+    <div class="popup-content save-confirm-popup">
+      <span class="question-mark">💾</span>
+      <div class="popup-body centered">
+         <p id="saveConfirmMessage">Apakah Anda ingin menyimpan perubahan?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmSaveYes">Simpan</button>
+        <button class="btn btn-confirm btn-no" id="confirmSaveNo">Jangan Simpan</button>
+        <button class="btn btn-confirm btn-cancel" id="confirmSaveCancel">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="agendakuSidebar">
+      <div class="sidebar-header">
+          <h3>Tentang Agendaku</h3>
+          <button class="sidebar-close-btn" onclick="closeAgendakuBranding()">×</button>
+      </div>
+      <div class="sidebar-content">
+          <h4>Agendaku: Pengelola Jadwal Pintar Anda!</h4>
+          <p>Aplikasi ini dirancang untuk membantu Anda mengelola waktu dan kegiatan sehari-hari dengan lebih efisien. Fitur-fitur utama termasuk jadwal kegiatan harian, jadwal kuliah/sekolah, catatan pribadi, dan kustomisasi tema.</p>
+          <p>Dengan Agendaku, hidup Anda akan lebih terorganisir.</p>
+      </div>
+      <div class="social-icons-container">
+          <a href="https://www.facebook.com/share/1XPb1Uti5i/" target="_blank" class="social-icon" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 13.5h2.5L17 9h-3v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.053-1.6-.144-3.04-.144C10.66 2 9 3.65 9 6.7v2.8H6v4.5h3V22h5v-8.5z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/aminnu.s?igsh=dWV0bndhYmt6aDI1" target="_blank" class="social-icon" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A2.02 2.02 0 0 0 4 6.02V16.2C4 17.65 5.35 19 6.78 19h8.43c1.45 0 2.78-1.35 2.78-2.78V7.8c0-1.45-1.35-2.78-2.78-2.78H7.6zm9.6.48c-.9 0-1.62.73-1.62 1.62s.73 1.62 1.62 1.62c.9 0 1.62-.73 1.62-1.62s-.73-1.62-1.62-1.62zm-4.8 3.7c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 2.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
+          </a>
+          <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="social-icon" aria-label="Website">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43 2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
+          </a>
+      </div>
+      <div class="sidebar-footer">
+          Versi 1.0.0
+      </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <audio id="toast-sound" src="https://files.catbox.moe/vxltiz.mp3" preload="auto"></audio>
+  <audio id="click-sound" src="https://files.catbox.moe/x35kz3.wav" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
