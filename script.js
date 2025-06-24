@@ -627,7 +627,7 @@ function loadScheduleToEditor(contentElement, title, isDailyActivity = false) {
                             <option value="Isya" ${timeLabel === 'Isya' ? 'selected' : ''}>Isya</option>
                             <option value="Malam" ${timeLabel === 'Malam' ? 'selected' : ''}>Malam</option>
                         </select>
-                        <input type="text" value="${activityText}" placeholder="Makan mie">
+                        <input type="text" value="${activityText}" placeholder="Masukkan teks disini">
                     `;
                 } else {
                     const timeMatch = inputText.match(/^(\d{2}\.\d{2}-\d{2}\.\d{2}):\s*(.*)/);
