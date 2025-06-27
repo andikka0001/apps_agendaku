@@ -11,7 +11,7 @@
       padding: 0;
       box-sizing: border-box;
     }
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap');
     body {
       background-image: var(--bg-image-url, url('https://files.catbox.moe/sxim3d.jpg'));
       background-repeat: no-repeat;
@@ -385,6 +385,13 @@
       pointer-events: none;
       transition: opacity 0.3s ease;
     }
+    #quotePopup.popup-overlay.active .popup-content {
+        transform: scale(1);
+    }
+    #quotePopup .popup-content {
+        transform: scale(0.7);
+        transition: transform 0.3s ease;
+    }
     .popup-overlay.active { 
       opacity: 1; 
       pointer-events: auto;
@@ -437,6 +444,43 @@
       color: #666; 
       z-index: 1;
     }
+    /* --- Styles for Quote Popup --- */
+    .quote-popup-content {
+        padding: 30px;
+        background: #fdfdfd;
+    }
+    .quote-popup-content blockquote {
+        margin: 0;
+        position: relative;
+    }
+    .quote-popup-content blockquote::before {
+        content: '“';
+        font-family: 'Merriweather', serif;
+        position: absolute;
+        top: -20px;
+        left: -25px;
+        font-size: 60px;
+        color: rgba(0, 0, 0, 0.1);
+        line-height: 1;
+    }
+    #quotePopupText {
+        font-family: 'Merriweather', serif;
+        font-size: 1.25em;
+        font-style: italic;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    #quotePopupAuthor {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1em;
+        font-weight: 600;
+        color: #555;
+        text-align: right;
+        margin-top: 15px;
+    }
+    /* --- End Quote Popup Styles --- */
     .popup-content.notification-popup .popup-body {
       display: grid;
       grid-template-columns: 1fr;
@@ -1193,6 +1237,7 @@
         font-size: 12px;
         resize: vertical;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        margin-top: 15px;
     }
     .import-popup .popup-footer {
         display: flex;
@@ -1378,7 +1423,7 @@
             <h3>Backup Data (Export/Import)</h3>
             <ul>
                 <li><strong>Export Project:</strong> Buka menu samping (☰) dan pilih "Export Project". Salin kode yang muncul dan simpan di tempat aman (misal: file .txt). Ini adalah cadangan seluruh data Anda.</li>
-                <li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project", tempelkan (paste) kode backup Anda, dan klik "Import". Ini akan menimpa data yang ada saat ini.</li>
+                <li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project". **Tekan dan tahan** di dalam kotak teks lalu pilih 'Tempel' (Paste) untuk memasukkan kode backup Anda, kemudian klik "Import".</li>
                 <li><strong>Penting:</strong> Lakukan backup secara berkala untuk menghindari kehilangan data.</li>
             </ul>
         </div>
@@ -1388,7 +1433,7 @@
             <ul>
                 <li><strong>Tombol "💡":</strong> Menampilkan ringkasan jadwal untuk hari ini.</li>
                 <li><strong>Tombol Rumah (⌂):</strong> Kembali ke halaman login awal.</li>
-                <li><strong>Tombol Kutipan (💬):</strong> Dapatkan kutipan motivasi singkat.</li>
+                <li><strong>Tombol Quote (💬):</strong> Menampilkan kutipan inspiratif dalam sebuah pop-up.</li>
                 <li><strong>Keluar Aplikasi:</strong> Dari menu samping (☰), pilih "Keluar" untuk mencoba menutup tab aplikasi.</li>
             </ul>
         </div>
@@ -1408,7 +1453,7 @@
 
 
   <div class="circular-btn home-btn" onclick="kembaliKeLogin()" id="homeBtn" style="display:none" aria-label="Kembali ke Login"></div>
-  <div class="circular-btn quote-btn" id="quoteBtn" style="display:none" onclick="showQuoteToast()" aria-label="Tampilkan Kutipan Motivasi"></div>
+  <div class="circular-btn quote-btn" id="quoteBtn" style="display:none" onclick="showQuotePopup()" aria-label="Tampilkan Kutipan Motivasi"></div>
   <div class="circular-btn tutorial-help-btn" id="tutorialHelpBtn" style="display:none" onclick="showScheduleNow()" aria-label="Lihat Jadwal Hari Ini"></div>
   <div class="circular-btn help-btn" id="helpBtnJadwal" style="display: none;" onclick="showHelp('jadwal')" aria-label="Bantuan Jadwal">?</div>
   <div class="circular-btn help-btn" id="helpBtnKuliah" style="display: none;" onclick="showHelp('kuliah')" aria-label="Bantuan Kuliah">?</div>
@@ -1577,13 +1622,11 @@
                     <h4>Cara Memulihkan Data:</h4>
                     <ol>
                         <li>Salin semua teks dari file backup Anda.</li>
-                        <li>Klik tombol <strong>"Paste dari Clipboard"</strong> di bawah ini.</li>
-                        <li>Periksa datanya di kotak teks (jika perlu).</li>
+                        <li><strong>Tekan dan tahan</strong> di dalam kotak di bawah lalu pilih 'Tempel' (Paste).</li>
                         <li>Klik tombol <strong>"Import Data"</strong> untuk memulihkan.</li>
                     </ol>
                 </div>
-                <button class="btn" onclick="pasteAndImportData()" style="width:100%; margin-bottom: 15px;">📋 Paste dari Clipboard</button>
-                <textarea id="importDataTextarea" placeholder="Data backup Anda akan muncul di sini setelah di-paste..."></textarea>
+                <textarea id="importDataTextarea" placeholder="Tempel (Paste) data backup Anda di sini..."></textarea>
             </div>
             <div class="popup-footer">
                 <button class="btn" onclick="processImportData()">📥 Import Data</button>
@@ -1591,6 +1634,16 @@
             </div>
         </div>
     </div>
+    
+  <div class="popup-overlay" id="quotePopup">
+    <div class="popup-content quote-popup-content">
+      <button class="popup-close-btn" onclick="closeQuotePopup()">×</button>
+      <blockquote>
+        <p id="quotePopupText"></p>
+        <figcaption id="quotePopupAuthor"></figcaption>
+      </blockquote>
+    </div>
+  </div>
 
   <div id="agendakuSidebar">
       <div class="sidebar-header">
@@ -1688,7 +1741,7 @@
         "Kamis": [{ type: "general", time: "Pagi", activity: "Silakan edit kegiatan Anda.", location: "", selesai: false }],
         "Jumat": [{ type: "general", time: "Pagi", activity: "Silakan edit kegiatan Anda.", location: "", selesai: false }],
         "Sabtu": [{ type: "general", time: "Pagi", activity: "Silakan edit kegiatan Anda.", location: "", selesai: false }],
-        "Minggu": [{ type: "general", time: "Pagi", activity: "Silakan edit kegiatan Anda.", location: "", selesai: false }]
+        "Minggu": [{ type: "general", time: "Libur", activity: "Libur", location: "", selesai: false }]
     };
 
     const defaultKuliahData = {
@@ -1756,9 +1809,15 @@
         }, 300);
       }, duration);
     }
-
+    
+    // NEW: Revised Quotes data structure
     const quotes = [
-      "Ketekunan adalah kunci keberhasilan.", "Kesuksesan dimulai dengan langkah pertama.", "Jangan menyerah, hari ini sulit, besok akan lebih baik.", "Bekerja keraslah, impianmu menantimu.", "Setiap usaha tidak akan mengkhianati hasil."
+      { text: "Imajinasi lebih penting daripada pengetahuan.", author: "Albert Einstein" },
+      { text: "Satu-satunya cara untuk melakukan pekerjaan hebat adalah dengan mencintai apa yang Anda lakukan.", author: "Steve Jobs" },
+      { text: "Orang yang tidak pernah membuat kesalahan tidak pernah mencoba sesuatu yang baru.", author: "Albert Einstein" },
+      { text: "Pendidikan adalah senjata paling ampuh yang bisa kamu gunakan untuk mengubah dunia.", author: "Nelson Mandela" },
+      { text: "Kesuksesan bukanlah final, kegagalan bukanlah fatal: yang terpenting adalah keberanian untuk melanjutkan.", author: "Winston Churchill" },
+      { text: "Percayalah Anda bisa dan Anda sudah setengah jalan.", author: "Theodore Roosevelt" }
     ];
 
     function getDayNameID(dayIndex) {
@@ -1817,21 +1876,6 @@
         playToastSound();
         closeAgendakuBranding();
     }
-    
-    function pasteAndImportData() {
-        playClickSound();
-        if (navigator.clipboard && navigator.clipboard.readText) {
-            navigator.clipboard.readText().then(text => {
-                document.getElementById('importDataTextarea').value = text;
-                showToast('Berhasil', 'Data dari clipboard telah ditempel.');
-            }).catch(err => {
-                showToast('Gagal', 'Tidak dapat membaca clipboard. Pastikan Anda telah memberikan izin.');
-                console.error('Clipboard paste error:', err);
-            });
-        } else {
-            showToast('Error', 'Browser Anda tidak mendukung fitur ini. Silakan paste manual.');
-        }
-    }
 
     function closeImportPopup() {
         document.getElementById('importPopup').classList.remove('active');
@@ -1842,7 +1886,7 @@
         const importText = document.getElementById('importDataTextarea').value.trim();
         
         if (!importText) {
-            showToast('Error', 'Silakan paste data backup terlebih dahulu.');
+            showToast('Error', 'Silakan tempel (paste) data backup terlebih dahulu.');
             return;
         }
 
@@ -2514,7 +2558,7 @@
           kegiatanHtml = '<ul>' + validDaily.map(renderItemToHtml).join('') + '</ul>';
       }
       
-      const validSchool = schoolActivities.filter(item => item.activity && !item.activity.includes('Mata Kuliah/Pelajaran Anda'));
+      const validSchool = schoolActivities.filter(item => item.activity && !item.activity.includes('Mata Kuliah/Pelajaran'));
       if (validSchool.length > 0) {
           kuliahHtml = '<ul>' + validSchool.map(renderItemToHtml).join('') + '</ul>';
       }
@@ -2598,10 +2642,24 @@
       document.getElementById('defaultThemeConfirmPopup').classList.remove('active');
     }
     
-    function showQuoteToast() {
+    // NEW: Function to show aesthetic quote popup
+    function showQuotePopup() {
         playClickSound();
+        
         const randomIndex = Math.floor(Math.random() * quotes.length);
-        showToast('Inspirasi Hari Ini', quotes[randomIndex]);
+        const randomQuote = quotes[randomIndex];
+        
+        document.getElementById('quotePopupText').textContent = randomQuote.text;
+        document.getElementById('quotePopupAuthor').textContent = `— ${randomQuote.author}`;
+        
+        const popup = document.getElementById('quotePopup');
+        popup.classList.add('active');
+        playToastSound(); // Reusing the sound for a nice effect
+    }
+
+    function closeQuotePopup() {
+        playClickSound();
+        document.getElementById('quotePopup').classList.remove('active');
     }
     
     function updateCircularButtonVisibility(activeSlideId) {
