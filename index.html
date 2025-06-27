@@ -1273,9 +1273,9 @@
       <div class="tutorial-section">
         <h3>Export/Import Project</h3>
         <ul>
-          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project". Sebuah popup akan muncul, klik tombol "Unduh" untuk menyimpan file backup melalui browser eksternal Anda.</li>
-          <li><strong>Import Project:</strong> Gunakan "Import Project" untuk memulihkan data dari file backup yang telah diekspor sebelumnya.</li>
-          <li><strong>Backup Otomatis:</strong> Selalu backup data Anda secara berkala agar tidak kehilangan jadwal dan catatan penting.</li>
+            <li><strong>Export Project:</strong> Buka sidebar (☰), klik "Export Project". Sebuah popup akan muncul.</li>
+            <li><strong>Salin & Unduh:</strong> Tekan tombol "Salin Link", kemudian buka browser (misal: Chrome), tempel link di address bar, lalu tekan Enter untuk mengunduh file backup Anda.</li>
+            <li><strong>Import Project:</strong> Gunakan "Import Project" untuk memulihkan data dari file backup yang telah diekspor sebelumnya.</li>
         </ul>
       </div>
       
@@ -1453,11 +1453,11 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-               <p><strong>Versi 1.9.3 - Perbaikan Fungsionalitas:</strong></p>
+               <p><strong>Versi 1.9.4 - Perbaikan Final Ekspor:</strong></p>
               <ul>
-                  <li><strong>Perbaikan Ekspor Android:</strong> Tipe file ekspor diubah agar Android menawarkannya ke browser untuk diunduh, bukan ke aplikasi pembaca dokumen.</li>
-                  <li><strong>Popup Ekspor Minimalis:</strong> Tampilan popup konfirmasi ekspor disederhanakan agar lebih bersih dan profesional.</li>
-                  <li><strong>Simpan & Keluar Otomatis:</strong> Setelah menekan "Simpan" di halaman edit jadwal atau catatan, halaman akan otomatis tertutup.</li>
+                  <li><strong>Metode Ekspor "Salin Link":</strong> Metode ekspor diubah menjadi "Salin Link" untuk keandalan maksimal di WebView. Pengguna kini menyalin link dan membukanya di browser secara manual untuk mengunduh.</li>
+                  <li><strong>Perbaikan Tata Letak Popup:</strong> Tombol pada popup ekspor sekarang ditampilkan sejajar untuk tampilan yang lebih rapi.</li>
+                  <li><strong>Format Nama File Baru:</strong> Nama file ekspor diubah menjadi `Agendaku_eksport_(nama)_(nomor urut).json` untuk identifikasi yang lebih mudah.</li>
               </ul>
           </div>
           
@@ -1488,7 +1488,7 @@
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.9.3
+          Versi 1.9.4
       </div>
   </div>
 
@@ -1613,12 +1613,12 @@
     
     // --- REVISED EXPORT/IMPORT FUNCTIONS ---
 
-    // REVISI #1: Perbaikan tipe file & Popup Ekspor
+    // REVISI FINAL: Metode Ekspor "Salin Link"
     async function exportProject() {
         playClickSound();
         try {
             const exportData = {
-                version: "1.9.3",
+                version: "1.9.4",
                 timestamp: new Date().toISOString(),
                 userData: { namaUser, nimUser },
                 appData: { 
@@ -1632,19 +1632,24 @@
             };
 
             const dataStr = JSON.stringify(exportData, null, 2);
-            const fileName = `Agendaku_Backup_${namaUser || 'User'}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.json`;
+
+            // REVISI #4: Format nama file baru dengan nomor urut
+            const counterKey = `${namaUser}_exportCounter`;
+            let counter = parseInt(localStorage.getItem(counterKey) || 0) + 1;
+            const fileName = `Agendaku_eksport_${namaUser || 'User'}_${counter}.json`;
+            localStorage.setItem(counterKey, counter);
             
-            // REVISI #1: Mengubah tipe MIME ke 'octet-stream' untuk memaksa unduhan
+            // REVISI #1: Menggunakan octet-stream untuk keandalan
             const dataBlob = new Blob([dataStr], { type: "application/octet-stream" });
 
             const reader = new FileReader();
             reader.readAsDataURL(dataBlob);
             reader.onloadend = function() {
                 const dataUrl = reader.result;
-                const link = document.createElement('a');
-                link.href = dataUrl;
-                link.download = fileName;
-                showDownloadLinkPopup(link);
+                const linkElement = document.createElement('a');
+                linkElement.href = dataUrl;
+                linkElement.download = fileName; // Browser akan menggunakan nama ini saat diunduh
+                showCopyLinkPopup(linkElement);
             };
         } catch (err) {
             console.error('Error preparing export link:', err);
@@ -1654,8 +1659,8 @@
         }
     }
 
-    // REVISI #2: Popup ekspor yang lebih minimalis
-    function showDownloadLinkPopup(linkElement) {
+    // REVISI FINAL: Popup "Salin Link"
+    function showCopyLinkPopup(linkElement) {
         const popupOverlay = document.createElement('div');
         popupOverlay.className = 'popup-overlay active';
         popupOverlay.style.zIndex = '4000'; 
@@ -1664,27 +1669,32 @@
         popupContent.className = 'popup-content';
         popupContent.style.textAlign = 'center';
 
+        // REVISI #2: Teks popup minimalis
         popupContent.innerHTML = `
             <h3 class="popup-header">Ekspor Data</h3>
-            <div class="popup-body centered">
-                <p>Simpan file backup data Anda ke perangkat?</p>
+            <div class="popup-body centered" style="text-align:left; line-height: 1.6;">
+                <p>Untuk menyimpan backup, ikuti langkah berikut:</p>
+                <ol style="padding-left: 25px;">
+                  <li>Tekan tombol <strong>"Salin Link"</strong>.</li>
+                  <li>Buka browser Anda (Chrome, dll).</li>
+                  <li>Tempel link di address bar & tekan Enter.</li>
+                </ol>
             </div>
             <div class="popup-footer btn-confirm-container"></div>
         `;
         
         const footer = popupContent.querySelector('.popup-footer');
 
-        const downloadButton = linkElement;
-        downloadButton.textContent = 'Unduh';
-        downloadButton.className = 'btn btn-confirm btn-yes';
-        downloadButton.target = '_blank';
-        downloadButton.rel = 'noopener noreferrer';
+        const copyButton = document.createElement('button');
+        copyButton.textContent = 'Salin Link';
+        copyButton.className = 'btn btn-confirm btn-yes';
 
         const closeButton = document.createElement('button');
-        closeButton.textContent = 'Batal';
+        closeButton.textContent = 'Tutup';
         closeButton.className = 'btn btn-confirm btn-no';
         
-        footer.appendChild(downloadButton);
+        // REVISI #2: Tombol sejajar
+        footer.appendChild(copyButton);
         footer.appendChild(closeButton);
         popupOverlay.appendChild(popupContent);
         document.body.appendChild(popupOverlay);
@@ -1696,9 +1706,14 @@
         };
 
         closeButton.onclick = closePopup;
-        downloadButton.onclick = () => {
-            showToast('Info', 'Mempersiapkan unduhan...');
-            setTimeout(closePopup, 1500);
+
+        copyButton.onclick = () => {
+            navigator.clipboard.writeText(linkElement.href).then(() => {
+                showToast('Berhasil!', 'Link unduhan telah disalin.');
+                closePopup();
+            }).catch(err => {
+                showToast('Gagal', 'Tidak dapat menyalin link.');
+            });
         };
     }
 
@@ -1711,22 +1726,17 @@
     function handleImportFile(event) {
         const file = event.target.files[0];
         if (!file) return;
-
-        // Izinkan import dari file JSON atau file tanpa ekstensi yang mungkin dari octet-stream
         if (file.type && file.type !== 'application/json' && !file.name.endsWith('.json')) {
             showToast('Error', 'Harap pilih file JSON (.json) yang valid.');
             return;
         }
-
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 const importData = JSON.parse(e.target.result);
-                
                 if (!importData.appData || !importData.userData) {
-                    throw new Error('Format file tidak valid. Pastikan ini adalah file backup Agendaku yang benar.');
+                    throw new Error('Format file tidak valid.');
                 }
-
                 if (confirm(`Impor data dari backup "${importData.userData.namaUser}"?\n\nPERINGATAN: Semua data Anda saat ini akan diganti.`)) {
                     importProject(importData);
                 }
@@ -1735,7 +1745,6 @@
                 showToast('Error', 'File backup tidak valid atau rusak.');
             }
         };
-        
         reader.readAsText(file);
         event.target.value = '';
     }
@@ -1744,7 +1753,6 @@
         try {
             namaUser = importData.userData.namaUser || '';
             nimUser = importData.userData.nimUser || '';
-            
             appData.jadwalContent = importData.appData.jadwalContent || JSON.parse(JSON.stringify(defaultJadwalData));
             appData.kuliahContent = importData.appData.kuliahContent || JSON.parse(JSON.stringify(defaultKuliahData));
             appData.catatanContent = importData.appData.catatanContent || [...defaultCatatanData];
@@ -1759,19 +1767,15 @@
                 localStorage.setItem('savedTheme', importData.preferences.savedTheme);
                 document.body.style.setProperty('--bg-image-url', `url('${importData.preferences.savedTheme}')`);
             }
-
             document.getElementById('userNameDisplayMenu').textContent = namaUser;
             document.getElementById('userNimDisplayMenu').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
             document.getElementById('namaInfo').textContent = `Nama: ${namaUser}`;
             document.getElementById('nimInfo').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
-
             renderJadwal(appData.jadwalContent, 'jadwalContent');
             renderJadwal(appData.kuliahContent, 'kuliahContent');
             renderCatatan(appData.catatanContent);
-
             showToast('Import Berhasil', `Data untuk ${namaUser} berhasil dipulihkan!`);
             closeAgendakuBranding();
-            
         } catch (error) {
             console.error('Error importing project:', error);
             showToast('Error', 'Gagal mengimpor data. Periksa format file.');
@@ -1823,11 +1827,9 @@
         const savedJadwal = localStorage.getItem('jadwalContent');
         appData.jadwalContent = savedJadwal ? JSON.parse(savedJadwal) : JSON.parse(JSON.stringify(defaultJadwalData));
         renderJadwal(appData.jadwalContent, 'jadwalContent');
-        
         const savedKuliah = localStorage.getItem('kuliahContent');
         appData.kuliahContent = savedKuliah ? JSON.parse(savedKuliah) : JSON.parse(JSON.stringify(defaultKuliahData));
         renderJadwal(appData.kuliahContent, 'kuliahContent');
-        
         const savedCatatan = localStorage.getItem('catatanContent');
         appData.catatanContent = savedCatatan ? JSON.parse(savedCatatan) : [...defaultCatatanData];
         renderCatatan(appData.catatanContent);
@@ -1841,12 +1843,10 @@
         const container = document.getElementById(containerId);
         container.innerHTML = '';
         const fragment = document.createDocumentFragment();
-        
         for (const day in data) {
             const h3 = document.createElement('h3');
             h3.textContent = `${day}:`;
             const ul = document.createElement('ul');
-            
             if (data[day] && data[day].length > 0) {
                 data[day].forEach((item, index) => {
                     const li = document.createElement('li');
@@ -1924,7 +1924,6 @@
             history.pushState(historyState[historyState.length-1], '', `#${historyState[historyState.length-1].slideId}`);
             return;
         }
-
         if (historyState.length === 1 && historyState[0].slideId === 'login') {
             backPressOnLoginCount++;
             if (backPressOnLoginCount === 1) {
@@ -1938,7 +1937,6 @@
             }
             return;
         }
-
         if (historyState.length > 1) {
             historyState.pop();
             const previousState = historyState[historyState.length - 1];
@@ -1951,7 +1949,6 @@
 
     function navigateTo(slideId, contentId = null, pushToHistory = true) {
         document.querySelectorAll('.overlay.active, .slide.active').forEach(el => el.classList.remove('active'));
-        
         setTimeout(() => {
             document.querySelectorAll('.overlay, .slide').forEach(el => el.style.display = 'none');
             const targetElement = document.getElementById(slideId);
@@ -1960,11 +1957,9 @@
                 setTimeout(() => targetElement.classList.add('active'), 10);
             }
             if (pushToHistory) pushState(slideId, contentId);
-            
             updateCircularButtonVisibility(slideId);
             document.getElementById('helpBtnJadwal').style.display = (slideId === 'jadwal') ? 'flex' : 'none';
             document.getElementById('helpBtnKuliah').style.display = (slideId === 'kuliah') ? 'flex' : 'none';
-
             if (slideId === 'editJadwal' && contentId) {
                 currentEditTargetId = contentId;
                 loadScheduleToEditor();
@@ -1986,7 +1981,6 @@
         playClickSound();
         let shouldPromptSave = false;
         let message = '';
-
         if (slideId === 'editJadwal') {
             const editorData = buildScheduleDataFromEditor();
             if (JSON.stringify(editorData) !== JSON.stringify(appData[currentEditTargetId])) {
@@ -2002,7 +1996,6 @@
             navigateTo('info', null, false);
             return;
         }
-
         if (shouldPromptSave) {
             activeEditableContentId = slideId;
             document.getElementById('saveConfirmMessage').textContent = message;
@@ -2010,7 +2003,6 @@
             playToastSound();
             return;
         }
-
         if (historyState.length > 1) history.back();
         else goToMenu();
     }
@@ -2026,7 +2018,6 @@
       nimUser = document.getElementById('nimInput').value.trim();
       localStorage.setItem('lastLoggedInUser', namaUser);
       localStorage.setItem(`${namaUser}_nim`, nimUser);
-      
       const loginBtn = document.getElementById('loginBtn');
       loginBtn.style.transform = 'scale(0.95)';
       setTimeout(() => {
@@ -2209,7 +2200,7 @@
         });
         return newData;
     }
-
+    
     // REVISI #3: Otomatis keluar setelah menyimpan
     function saveEditedSchedule() {
         playClickSound();
@@ -2229,7 +2220,6 @@
             saveEditedSchedule();
         }
         closeSaveConfirmPopup();
-        // Tidak perlu navigasi di sini karena sudah ditangani fungsi save
     }
 
     function handleDiscardChanges() {
@@ -2499,9 +2489,7 @@
         playClickSound();
         closeExitConfirmPopup();
         showToast('Terima Kasih!', 'Menutup aplikasi...');
-        
         window.close();
-
         setTimeout(() => {
             showToast('Gagal Menutup Tab', 'Browser Anda mencegah penutupan tab secara otomatis. Kembali ke halaman login.', 5000);
             kembaliKeLogin();
@@ -2532,12 +2520,10 @@
         const currentDayName = getDayNameID(now.getDay());
         const currentHour = now.getHours();
         const currentTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-
         const allTodaySchedules = [
             ...(appData.jadwalContent[currentDayName] || []),
             ...(appData.kuliahContent[currentDayName] || [])
         ];
-
         allTodaySchedules.forEach(item => {
             if (item.selesai) return;
             if (item.type === 'specific' && item.startTime) {
@@ -2548,7 +2534,6 @@
                 }
             }
         });
-        
         for (const period in timeRanges) {
             const range = timeRanges[period];
             if (currentHour >= range.start && currentHour < range.end) {
