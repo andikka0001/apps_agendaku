@@ -1060,6 +1060,58 @@
         height: 24px;
         fill: #fff;
     }
+
+    /* NEW STYLES FOR SIDEBAR BUTTONS */
+    .sidebar-action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0;
+        padding: 15px 0;
+        border-top: 1px solid #444;
+        border-bottom: 1px solid #444;
+    }
+    .btn-sidebar-action {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: white;
+        text-decoration: none;
+    }
+    .btn-sidebar-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .btn-new-update {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+    }
+    .btn-new-update:hover {
+        background: linear-gradient(45deg, #ff5252, #f44336);
+    }
+    .btn-export-project {
+        background: linear-gradient(45deg, #4caf50, #45a049);
+    }
+    .btn-export-project:hover {
+        background: linear-gradient(45deg, #45a049, #4caf50);
+    }
+    .btn-import-project {
+        background: linear-gradient(45deg, #2196f3, #1976d2);
+    }
+    .btn-import-project:hover {
+        background: linear-gradient(45deg, #1976d2, #1565c0);
+    }
+    .hidden-file-input {
+        display: none;
+    }
   </style>
 </head>
 <body>
@@ -1217,6 +1269,15 @@
             </ul>
           </li>
           <li><strong>Simpan & Reset:</strong> Setelah selesai mengedit, tekan "Simpan". Gunakan tombol "Reset" untuk mengembalikan jadwal ke pengaturan awal (default).</li>
+        </ul>
+      </div>
+
+      <div class="tutorial-section">
+        <h3>Export/Import Project</h3>
+        <ul>
+          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project" untuk menyimpan semua data aplikasi Anda ke file JSON.</li>
+          <li><strong>Import Project:</strong> Gunakan "Import Project" untuk memulihkan data dari file backup yang telah diekspor sebelumnya.</li>
+          <li><strong>Backup Otomatis:</strong> Selalu backup data Anda secara berkala agar tidak kehilangan jadwal dan catatan penting.</li>
         </ul>
       </div>
       
@@ -1394,7 +1455,13 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-              <p><strong>Versi 1.8 - Detail & Informasi:</strong></p>
+              <p><strong>Versi 1.9 - Fitur Export/Import:</strong></p>
+              <ul>
+                  <li><strong>Export Project:</strong> Backup semua data aplikasi ke file JSON.</li>
+                  <li><strong>Import Project:</strong> Restore data dari file backup.</li>
+                  <li><strong>New Update Button:</strong> Akses update terbaru dengan mudah.</li>
+              </ul>
+              <p style="margin-top:10px;"><strong>Versi 1.8 - Detail & Informasi:</strong></p>
               <ul>
                   <li><strong>Input Lokasi:</strong> Menambahkan kolom 'Tempat (Opsional)' di editor jadwal.</li>
                   <li><strong>Indikator Selesai:</strong> Popup jadwal hari ini (💡) sekarang menandai jadwal yang sudah selesai.</li>
@@ -1405,6 +1472,19 @@
                   <li><strong>Perbaikan Bug Editor:</strong> Bug pada tombol 'Toggle Waktu' (⏱️/🗓️) telah diperbaiki.</li>
                   <li><strong>Tampilan Jadwal:</strong> Waktu yang belum diatur sekarang ditampilkan sebagai '-'.</li>
               </ul>
+          </div>
+
+          <!-- NEW ACTION BUTTONS -->
+          <div class="sidebar-action-buttons">
+              <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="btn-sidebar-action btn-new-update">
+                  🔥 New Update
+              </a>
+              <button class="btn-sidebar-action btn-export-project" onclick="exportProject()">
+                  📤 Export Project
+              </button>
+              <button class="btn-sidebar-action btn-import-project" onclick="triggerImportFile()">
+                  📥 Import Project
+              </button>
           </div>
       </div>
       
@@ -1422,9 +1502,12 @@
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.8
+          Versi 1.9
       </div>
   </div>
+
+  <!-- Hidden file input for importing -->
+  <input type="file" id="importFileInput" class="hidden-file-input" accept=".json" onchange="handleImportFile(event)">
 
   <div id="toast-container"></div>
   <audio id="toast-sound" src="https://files.catbox.moe/vxltiz.mp3" preload="auto"></audio>
@@ -1542,6 +1625,126 @@
     function getDayNameID(dayIndex) {
       const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       return days[dayIndex];
+    }
+
+    // --- EXPORT/IMPORT FUNCTIONS ---
+    function exportProject() {
+        playClickSound();
+        
+        const exportData = {
+            version: "1.9",
+            timestamp: new Date().toISOString(),
+            userData: {
+                namaUser: namaUser,
+                nimUser: nimUser
+            },
+            appData: {
+                jadwalContent: appData.jadwalContent,
+                kuliahContent: appData.kuliahContent,
+                catatanContent: appData.catatanContent
+            },
+            preferences: {
+                savedTheme: localStorage.getItem('savedTheme') || DEFAULT_BACKGROUND_IMAGE
+            }
+        };
+
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `Agendaku_Backup_${namaUser}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.json`;
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(link.href);
+        
+        showToast('Export Berhasil', `Project berhasil diekspor ke file ${link.download}`);
+        closeAgendakuBranding();
+    }
+
+    function triggerImportFile() {
+        playClickSound();
+        document.getElementById('importFileInput').click();
+    }
+
+    function handleImportFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+            showToast('Error', 'Harap pilih file JSON yang valid.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importData = JSON.parse(e.target.result);
+                
+                // Validasi struktur data
+                if (!importData.appData || !importData.userData) {
+                    throw new Error('Format file tidak valid');
+                }
+
+                // Konfirmasi import
+                if (confirm(`Import data dari backup ${importData.userData.namaUser}?\n\nSemua data saat ini akan diganti dengan data dari backup.`)) {
+                    importProject(importData);
+                }
+            } catch (error) {
+                console.error('Error parsing import file:', error);
+                showToast('Error', 'File backup tidak valid atau rusak.');
+            }
+        };
+        
+        reader.readAsText(file);
+        event.target.value = ''; // Reset input
+    }
+
+    function importProject(importData) {
+        try {
+            // Restore user data
+            namaUser = importData.userData.namaUser || '';
+            nimUser = importData.userData.nimUser || '';
+            
+            // Restore app data
+            appData.jadwalContent = importData.appData.jadwalContent || JSON.parse(JSON.stringify(defaultJadwalData));
+            appData.kuliahContent = importData.appData.kuliahContent || JSON.parse(JSON.stringify(defaultKuliahData));
+            appData.catatanContent = importData.appData.catatanContent || [...defaultCatatanData];
+
+            // Save to localStorage
+            localStorage.setItem('lastLoggedInUser', namaUser);
+            localStorage.setItem(`${namaUser}_nim`, nimUser);
+            saveData('jadwalContent');
+            saveData('kuliahContent');
+            saveData('catatanContent');
+
+            // Restore theme
+            if (importData.preferences && importData.preferences.savedTheme) {
+                localStorage.setItem('savedTheme', importData.preferences.savedTheme);
+                document.body.style.setProperty('--bg-image-url', `url('${importData.preferences.savedTheme}')`);
+            }
+
+            // Update UI
+            document.getElementById('userNameDisplayMenu').textContent = namaUser;
+            document.getElementById('userNimDisplayMenu').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
+            document.getElementById('namaInfo').textContent = `Nama: ${namaUser}`;
+            document.getElementById('nimInfo').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
+
+            // Re-render all data
+            renderJadwal(appData.jadwalContent, 'jadwalContent');
+            renderJadwal(appData.kuliahContent, 'kuliahContent');
+            renderCatatan(appData.catatanContent);
+
+            showToast('Import Berhasil', `Data ${namaUser} berhasil dipulihkan!`);
+            closeAgendakuBranding();
+            
+        } catch (error) {
+            console.error('Error importing project:', error);
+            showToast('Error', 'Gagal mengimpor data. Periksa format file.');
+        }
     }
 
     // --- INITIALIZATION ---
@@ -2318,7 +2521,7 @@
     const timeRanges = {
         "Shubuh": { start: 4, end: 6, title: "Waktunya Shubuh!" },
         "Pagi": { start: 7, end: 11, title: "Selamat Pagi!" },
-        "Dhuhur": { start: 12, end: 14, title: "Waktunya Dhuhur!" },
+        "Dhuhur": { start: 12,  end: 14, title: "Waktunya Dhuhur!" },
         "Ashar": { start: 15, end: 17, title: "Waktunya Ashar!" },
         "Maghrib": { start: 18, end: 19, title: "Waktunya Maghrib!" },
         "Isya": { start: 19, end: 21, title: "Waktunya Isya!" },
