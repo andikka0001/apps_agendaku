@@ -1266,14 +1266,14 @@
               <li style="border-left-color: #ff9800;"><strong>Input Tempat:</strong> Tambahkan lokasi atau ruangan di kolom "Tempat (Opsional)". Jika diisi, lokasi akan muncul di samping jadwal Anda.</li>
             </ul>
           </li>
-          <li><strong>Simpan & Reset:</strong> Setelah selesai mengedit, tekan "Simpan". Gunakan tombol "Reset" untuk mengembalikan jadwal ke pengaturan awal (default).</li>
+          <li><strong>Simpan & Reset:</strong> Setelah selesai mengedit, tekan "Simpan". Jadwal akan disimpan dan Anda akan otomatis kembali ke halaman sebelumnya. Gunakan tombol "Reset" untuk mengembalikan jadwal ke pengaturan awal (default).</li>
         </ul>
       </div>
 
       <div class="tutorial-section">
         <h3>Export/Import Project</h3>
         <ul>
-          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project". Sebuah popup akan muncul, klik tombol unduh untuk menyimpan file backup melalui browser eksternal Anda.</li>
+          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project". Sebuah popup akan muncul, klik tombol "Unduh" untuk menyimpan file backup melalui browser eksternal Anda.</li>
           <li><strong>Import Project:</strong> Gunakan "Import Project" untuk memulihkan data dari file backup yang telah diekspor sebelumnya.</li>
           <li><strong>Backup Otomatis:</strong> Selalu backup data Anda secara berkala agar tidak kehilangan jadwal dan catatan penting.</li>
         </ul>
@@ -1453,14 +1453,11 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-               <p><strong>Versi 1.9.2 - Perbaikan Ekspor WebView:</strong></p>
+               <p><strong>Versi 1.9.3 - Perbaikan Fungsionalitas:</strong></p>
               <ul>
-                  <li><strong>Metode Ekspor Baru:</strong> Fitur "Export Project" sekarang menampilkan sebuah popup. Dengan menekan tombol unduh di popup, aplikasi akan mencoba membuka browser eksternal perangkat Anda untuk menangani pengunduhan file.</li>
-                  <li>Metode ini dirancang sebagai solusi untuk keterbatasan unduhan di dalam aplikasi WebView.</li>
-              </ul>
-              <p style="margin-top:10px;"><strong>Versi 1.9.1 - Perbaikan Export/Import:</strong></p>
-              <ul>
-                  <li><strong>Perbaikan Export:</strong> Fitur "Export Project" telah diperbarui agar kompatibel dengan perangkat modern (termasuk Android 14) dengan menggunakan API browser terbaru dan menyediakan metode lama sebagai cadangan.</li>
+                  <li><strong>Perbaikan Ekspor Android:</strong> Tipe file ekspor diubah agar Android menawarkannya ke browser untuk diunduh, bukan ke aplikasi pembaca dokumen.</li>
+                  <li><strong>Popup Ekspor Minimalis:</strong> Tampilan popup konfirmasi ekspor disederhanakan agar lebih bersih dan profesional.</li>
+                  <li><strong>Simpan & Keluar Otomatis:</strong> Setelah menekan "Simpan" di halaman edit jadwal atau catatan, halaman akan otomatis tertutup.</li>
               </ul>
           </div>
           
@@ -1491,7 +1488,7 @@
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.9.2
+          Versi 1.9.3
       </div>
   </div>
 
@@ -1616,12 +1613,12 @@
     
     // --- REVISED EXPORT/IMPORT FUNCTIONS ---
 
-    // REVISI: Fungsi Ekspor dengan metode pengalihan ke browser eksternal
+    // REVISI #1: Perbaikan tipe file & Popup Ekspor
     async function exportProject() {
         playClickSound();
         try {
             const exportData = {
-                version: "1.9.2",
+                version: "1.9.3",
                 timestamp: new Date().toISOString(),
                 userData: { namaUser, nimUser },
                 appData: { 
@@ -1636,8 +1633,9 @@
 
             const dataStr = JSON.stringify(exportData, null, 2);
             const fileName = `Agendaku_Backup_${namaUser || 'User'}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.json`;
-
-            const dataBlob = new Blob([dataStr], { type: "application/json" });
+            
+            // REVISI #1: Mengubah tipe MIME ke 'octet-stream' untuk memaksa unduhan
+            const dataBlob = new Blob([dataStr], { type: "application/octet-stream" });
 
             const reader = new FileReader();
             reader.readAsDataURL(dataBlob);
@@ -1646,7 +1644,7 @@
                 const link = document.createElement('a');
                 link.href = dataUrl;
                 link.download = fileName;
-                showDownloadLinkPopup(link, fileName);
+                showDownloadLinkPopup(link);
             };
         } catch (err) {
             console.error('Error preparing export link:', err);
@@ -1656,8 +1654,8 @@
         }
     }
 
-    // Fungsi BANTUAN BARU untuk menampilkan popup dengan link download
-    function showDownloadLinkPopup(linkElement, fileName) {
+    // REVISI #2: Popup ekspor yang lebih minimalis
+    function showDownloadLinkPopup(linkElement) {
         const popupOverlay = document.createElement('div');
         popupOverlay.className = 'popup-overlay active';
         popupOverlay.style.zIndex = '4000'; 
@@ -1667,10 +1665,9 @@
         popupContent.style.textAlign = 'center';
 
         popupContent.innerHTML = `
-            <h3 class="popup-header">Siap untuk Ekspor</h3>
+            <h3 class="popup-header">Ekspor Data</h3>
             <div class="popup-body centered">
-                <p>Klik tombol di bawah untuk mengunduh file backup Anda. Fitur ini akan mencoba membuka browser eksternal.</p>
-                <p style="margin-top:10px;"><strong>Nama File:</strong><br><span style="word-break: break-all;">${fileName}</span></p>
+                <p>Simpan file backup data Anda ke perangkat?</p>
             </div>
             <div class="popup-footer btn-confirm-container"></div>
         `;
@@ -1678,7 +1675,7 @@
         const footer = popupContent.querySelector('.popup-footer');
 
         const downloadButton = linkElement;
-        downloadButton.textContent = 'Unduh File Backup';
+        downloadButton.textContent = 'Unduh';
         downloadButton.className = 'btn btn-confirm btn-yes';
         downloadButton.target = '_blank';
         downloadButton.rel = 'noopener noreferrer';
@@ -1700,8 +1697,8 @@
 
         closeButton.onclick = closePopup;
         downloadButton.onclick = () => {
-            showToast('Info', 'Mengalihkan ke browser untuk mengunduh...');
-            setTimeout(closePopup, 2000);
+            showToast('Info', 'Mempersiapkan unduhan...');
+            setTimeout(closePopup, 1500);
         };
     }
 
@@ -1715,8 +1712,9 @@
         const file = event.target.files[0];
         if (!file) return;
 
-        if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-            showToast('Error', 'Harap pilih file JSON yang valid.');
+        // Izinkan import dari file JSON atau file tanpa ekstensi yang mungkin dari octet-stream
+        if (file.type && file.type !== 'application/json' && !file.name.endsWith('.json')) {
+            showToast('Error', 'Harap pilih file JSON (.json) yang valid.');
             return;
         }
 
@@ -1739,7 +1737,7 @@
         };
         
         reader.readAsText(file);
-        event.target.value = ''; // Reset input agar bisa import file yang sama lagi
+        event.target.value = '';
     }
 
     function importProject(importData) {
@@ -1782,7 +1780,6 @@
 
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', function() {
-      // Event listeners
       document.getElementById('loginBtn').addEventListener('click', handleLogin);
       document.getElementById('nama').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('nimInput').focus(); });
       document.getElementById('nimInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
@@ -1803,12 +1800,9 @@
           const content = document.getElementById('updateInfoContent');
           content.style.display = (content.style.display === "block") ? "none" : "block";
       });
-      
       document.getElementById('confirmExitYes').onclick = () => { exitApplication(); };
       document.getElementById('confirmExitNo').onclick = () => { playClickSound(); closeExitConfirmPopup(); };
-
       window.addEventListener('popstate', (e) => { isNavigatingBack = true; handlePopState(e.state); });
-
       loadSavedTheme(); 
       if (lastLoggedInUser) {
         document.getElementById('nama').value = lastLoggedInUser;
@@ -1857,29 +1851,23 @@
                 data[day].forEach((item, index) => {
                     const li = document.createElement('li');
                     li.className = item.selesai ? 'selesai' : '';
-
                     const checkbox = document.createElement('div');
                     checkbox.className = 'jadwal-checkbox';
                     checkbox.setAttribute('onclick', `toggleSelesai('${containerId}', '${day}', ${index})`);
-
                     const teksJadwal = document.createElement('span');
                     teksJadwal.className = 'jadwal-teks';
-
                     let timeString = '-:';
                     if (item.type === 'specific' && item.startTime && item.endTime) {
                          timeString = `${item.startTime.replace(':', '.')}-${item.endTime.replace(':', '.')}:`;
                     } else if (item.type === 'general' && item.time) {
                         timeString = `${item.time}:`;
                     }
-                    
                     const locationString = item.location ? `<span class="location-text">(${item.location})</span>` : '';
-
                     if (item.activity === "Libur" && item.time === "Libur") {
                         teksJadwal.innerHTML = 'Libur';
                     } else {
                         teksJadwal.innerHTML = `<strong>${timeString}</strong> ${item.activity || ''} ${locationString}`;
                     }
-
                     li.appendChild(checkbox);
                     li.appendChild(teksJadwal);
                     ul.appendChild(li);
@@ -1912,13 +1900,10 @@
         playClickSound();
         const item = appData[contentId]?.[hari]?.[index];
         if (!item) return;
-
         item.selesai = !item.selesai;
-
         if (item.selesai) {
             showToast('Selamat!', `Anda sudah menyelesaikan: "${item.activity}"`);
         }
-
         saveData(contentId);
         renderJadwal(appData[contentId], contentId);
     }
@@ -1934,6 +1919,7 @@
         const activePopup = document.querySelector('.popup-overlay.active, .tutorial-overlay.active, #agendakuSidebar.active');
         if(activePopup) {
             if (activePopup.id.includes('Popup') || activePopup.id.includes('tutorial')) activePopup.classList.remove('active');
+            if(document.body.contains(activePopup)) document.body.removeChild(activePopup);
             if (activePopup.id === 'agendakuSidebar') closeAgendakuBranding();
             history.pushState(historyState[historyState.length-1], '', `#${historyState[historyState.length-1].slideId}`);
             return;
@@ -2054,9 +2040,7 @@
         loadAllData();
         showToast('Selamat Datang!', `Halo ${namaUser}, Aplikasi Agendaku siap digunakan.`);
         showMainTutorial();
-
         requestNotificationPermissionAndStartChecker();
-
       }, 200);
     }
 
@@ -2066,11 +2050,9 @@
           clearInterval(scheduleCheckerInterval);
           scheduleCheckerInterval = null;
       }
-      
       document.querySelectorAll('.popup-overlay.active, .sidebar-overlay-blur.active, #agendakuSidebar.active').forEach(el => {
           el.classList.remove('active');
       });
-
       navigateTo('login');
       updateCircularButtonVisibility('login');
     }
@@ -2087,19 +2069,16 @@
         const data = appData[currentEditTargetId];
         const title = currentEditTargetId === 'jadwalContent' ? 'Edit Jadwal Kegiatan' : 'Edit Jadwal Kuliah/Sekolah';
         document.getElementById('editJadwalTitle').textContent = title;
-
         for(const day in data) {
             const groupDiv = document.createElement('div');
             groupDiv.className = 'edit-schedule-group';
             groupDiv.innerHTML = `<h3>${day}:</h3>`;
-            
             if (data[day]) {
                 data[day].forEach(item => {
                     const itemDiv = createEditorItem(item);
                     groupDiv.appendChild(itemDiv);
                 });
             }
-            
             groupDiv.appendChild(createAddNewEntry(day));
             fragment.appendChild(groupDiv);
         }
@@ -2111,10 +2090,8 @@
         itemDiv.className = 'edit-schedule-item';
         const type = (item.type === 'specific' || item.type === 'general') ? item.type : 'general';
         itemDiv.dataset.timeType = type;
-
         const generalTimes = ["", "Shubuh", "Pagi", "Dhuhur", "Siang", "Ashar", "Sore", "Maghrib", "Isya", "Malam", "Libur"];
         const options = generalTimes.map(t => `<option value="${t}" ${item.time === t ? 'selected' : ''}>${t || 'waktu tidak ditentukan'}</option>`).join('');
-
         itemDiv.innerHTML = `
             <div class="edit-schedule-inputs">
                 <div class="time-input-container">
@@ -2138,11 +2115,9 @@
                 <button class="delete-item-btn" title="Hapus Item">🗑️</button>
             </div>
         `;
-        
         itemDiv.querySelector('.toggle-time-type-btn').addEventListener('click', function() { toggleTimeInput(this); });
         itemDiv.querySelector('.add-item-btn').addEventListener('click', function() { addItem(this); });
         itemDiv.querySelector('.delete-item-btn').addEventListener('click', function() { confirmDeleteItem(this); });
-
         updateTimeInputVisibility(itemDiv);
         return itemDiv;
     }
@@ -2160,13 +2135,12 @@
         const generalContainer = itemDiv.querySelector('.time-input-container-general');
         const specificContainer = itemDiv.querySelector('.time-input-container-specific');
         const toggleBtn = itemDiv.querySelector('.toggle-time-type-btn');
-
         if (type === 'specific') {
             generalContainer.style.display = 'none';
             specificContainer.style.display = 'flex';
             toggleBtn.textContent = '🗓️';
             toggleBtn.title = "Ubah ke Waktu Umum";
-        } else { // 'general'
+        } else {
             generalContainer.style.display = 'flex';
             specificContainer.style.display = 'none';
             toggleBtn.textContent = '⏱️';
@@ -2190,7 +2164,6 @@
             showToast('Peringatan', 'Isi deskripsi entri baru terlebih dahulu.');
             return;
         }
-
         const newItemData = { type: 'general', time: 'Pagi', activity: textInput.value.trim(), location: '', selesai: false };
         const newItemDiv = createEditorItem(newItemData);
         newEntryContainer.parentNode.insertBefore(newItemDiv, newEntryContainer);
@@ -2212,7 +2185,6 @@
         const editorContainer = document.getElementById('editScheduleContent');
         const newData = {};
         const oldData = appData[currentEditTargetId];
-
         editorContainer.querySelectorAll('.edit-schedule-group').forEach(groupDiv => {
             const day = groupDiv.querySelector('h3').textContent.replace(':', '');
             newData[day] = [];
@@ -2220,21 +2192,13 @@
             groupDiv.querySelectorAll('.edit-schedule-item').forEach(itemDiv => {
                 const activityInput = itemDiv.querySelector('.activity-input');
                 const locationInput = itemDiv.querySelector('.location-input');
-
                 if (activityInput && (activityInput.value.trim() || itemDiv.dataset.timeType === 'general' && itemDiv.querySelector('.time-selector').value === 'Libur')) {
                     const type = itemDiv.dataset.timeType;
                     const oldItem = oldData?.[day]?.[originalIndexCounter] || { selesai: false };
-                    
-                    let newItem = {
-                        type: type,
-                        activity: activityInput.value.trim(),
-                        location: locationInput.value.trim(),
-                        selesai: oldItem.selesai 
-                    };
-
+                    let newItem = { type, activity: activityInput.value.trim(), location: locationInput.value.trim(), selesai: oldItem.selesai };
                     if (type === 'general') {
                         newItem.time = itemDiv.querySelector('.time-selector').value;
-                    } else { // 'specific'
+                    } else {
                         newItem.startTime = itemDiv.querySelector('.start-time-input').value;
                         newItem.endTime = itemDiv.querySelector('.end-time-input').value;
                     }
@@ -2246,24 +2210,26 @@
         return newData;
     }
 
+    // REVISI #3: Otomatis keluar setelah menyimpan
     function saveEditedSchedule() {
         playClickSound();
         const newData = buildScheduleDataFromEditor();
         appData[currentEditTargetId] = newData;
         saveData(currentEditTargetId);
-        
         renderJadwal(newData, currentEditTargetId); 
-        
         showToast('Berhasil', 'Jadwal telah disimpan.');
+        history.back(); // Kembali ke slide sebelumnya
     }
     
     function handleSaveConfirmation() {
         playClickSound();
-        if (activeEditableContentId === 'editCatatan') saveCatatan();
-        else if (activeEditableContentId === 'editJadwal') saveEditedSchedule();
+        if (activeEditableContentId === 'editCatatan') {
+            saveCatatan();
+        } else if (activeEditableContentId === 'editJadwal') {
+            saveEditedSchedule();
+        }
         closeSaveConfirmPopup();
-        if (historyState.length > 1) history.back();
-        else goToMenu();
+        // Tidak perlu navigasi di sini karena sudah ditangani fungsi save
     }
 
     function handleDiscardChanges() {
@@ -2278,13 +2244,15 @@
         document.getElementById('saveConfirmPopup').classList.remove('active');
     }
 
+    // REVISI #3: Otomatis keluar setelah menyimpan
     function saveCatatan() {
+        playClickSound();
         const newContent = document.getElementById('editCatatanTextarea').value;
         appData.catatanContent = newContent.split('\n');
         saveData('catatanContent');
         renderCatatan(appData.catatanContent);
         showToast('Tersimpan', 'Catatan pribadi berhasil diperbarui.');
-        tutupSlide('editCatatan');
+        history.back(); // Kembali ke slide sebelumnya
     }
     
     function confirmResetSchedule(contentId) {
@@ -2326,7 +2294,6 @@
       const schoolActivities = appData.kuliahContent[dayName] || [];
       let kegiatanHtml = `<div class="no-schedule-message">Tidak ada kegiatan terjadwal.</div>`;
       let kuliahHtml = `<div class="no-schedule-message">Tidak ada jadwal kuliah.</div>`;
-
       const renderItemToHtml = (item) => {
           let timeString = '-:';
           if (item.type === 'specific' && item.startTime && item.endTime) {
@@ -2334,29 +2301,23 @@
           } else if (item.type === 'general' && item.time) {
               timeString = `${item.time}:`;
           }
-
           const locationString = item.location ? `<span class="location-text">(${item.location})</span>` : '';
           const fullText = `<strong>${timeString}</strong> ${item.activity || ''} ${locationString}`;
-
           if (item.activity === "Libur" && item.time === "Libur") return '<li>Libur</li>';
-          
           if (item.selesai) {
               return `<li class="popup-selesai">✅ <span class="popup-jadwal-teks">${fullText}</span></li>`;
           } else {
               return `<li>${fullText}</li>`;
           }
       };
-      
       const validDaily = dailyActivities.filter(item => item.activity && item.activity !== 'Silakan edit kegiatan Anda.');
       if (validDaily.length > 0) {
           kegiatanHtml = '<ul>' + validDaily.map(renderItemToHtml).join('') + '</ul>';
       }
-      
       const validSchool = schoolActivities.filter(item => item.activity && !item.activity.includes('Mata Kuliah/Pelajaran Anda'));
       if (validSchool.length > 0) {
           kuliahHtml = '<ul>' + validSchool.map(renderItemToHtml).join('') + '</ul>';
       }
-      
       document.getElementById('notificationContent').innerHTML = `
         <div class="jadwal-group"><h4>Kegiatan Harian (${dayName}):</h4>${kegiatanHtml}</div>
         <div class="jadwal-group"><h4>Kuliah/Sekolah (${dayName}):</h4>${kuliahHtml}</div>`;
@@ -2429,11 +2390,9 @@
     function updateCircularButtonVisibility(activeSlideId) {
         const isMenuVisible = activeSlideId === 'menu';
         const displayStyle = isMenuVisible ? 'flex' : 'none';
-
         document.getElementById('homeBtn').style.display = displayStyle;
         document.getElementById('quoteBtn').style.display = displayStyle;
         document.getElementById('tutorialHelpBtn').style.display = displayStyle;
-
         const isLoginOrMenuVisible = (activeSlideId === 'login' || activeSlideId === 'menu');
         document.querySelector('.menu-icon-top-right').style.display = isLoginOrMenuVisible ? 'flex' : 'none';
     }
@@ -2581,7 +2540,6 @@
 
         allTodaySchedules.forEach(item => {
             if (item.selesai) return;
-
             if (item.type === 'specific' && item.startTime) {
                 const uniqueId = `${currentDayName}-${item.startTime}-${item.activity}`;
                 if (item.startTime === currentTime && !notifiedSchedules.includes(uniqueId)) {
@@ -2595,23 +2553,19 @@
             const range = timeRanges[period];
             if (currentHour >= range.start && currentHour < range.end) {
                 const uniquePeriodId = `${currentDayName}-${period}`;
-                
                 if (!notifiedSchedules.includes(uniquePeriodId)) {
                     const activitiesInPeriod = allTodaySchedules
                         .filter(item => item.type === 'general' && item.time === period && !item.selesai)
                         .map(item => item.activity);
-                    
                     if (activitiesInPeriod.length > 0) {
                         const notificationBody = "Jangan lupa: " + activitiesInPeriod.join(', ');
                         showBrowserNotification(range.title, notificationBody);
                     }
-                    
                     notifiedSchedules.push(uniquePeriodId);
                 }
             }
         }
     }
-
 
     function startScheduleChecker() {
         notifiedSchedules = []; 
@@ -2626,7 +2580,6 @@
             console.log("Browser ini tidak mendukung notifikasi desktop.");
             return;
         }
-
         if (Notification.permission === 'granted') {
             startScheduleChecker();
         } else if (Notification.permission !== 'denied') {
