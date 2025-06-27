@@ -113,6 +113,20 @@
     .btn:active {
       transform: translateY(1px);
     }
+    .btn-secondary {
+        background: linear-gradient(45deg, #6c757d, #5a6268);
+        font-size: 16px;
+        margin-top: 5px;
+    }
+    .btn-secondary:hover {
+        background: linear-gradient(45deg, #5a6268, #495057);
+    }
+    .btn-custom-theme {
+        background: linear-gradient(45deg, #9c27b0, #673ab7);
+    }
+    .btn-custom-theme:hover {
+        background: linear-gradient(45deg, #8e24aa, #5e35b1);
+    }
     .btn-reset-custom {
       background: linear-gradient(45deg, #ff5722, #f44336);
     }
@@ -701,16 +715,17 @@
         margin-top: 15px;
         word-wrap: break-word;
     }
-    #kritikSaranPopup .feedback-fallback code {
-        font-weight: bold;
-        color: #0055aa;
-    }
     #kritikSaranPopup .btn-copy-email {
         background: linear-gradient(45deg, #607D8B, #455A64);
         padding: 8px 15px;
         font-size: 14px;
-        min-width: 80px;
+        min-width: 100px;
         margin-left: 10px;
+    }
+    #kritikSaranPopup .feedback-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
     #kritikSaranPopup .btn-confirm-container {
         display: flex;
@@ -789,7 +804,7 @@
       gap: 10px;
       padding: 20px 0;
       overflow-y: auto;
-      max-height: calc(100vh - 200px);
+      max-height: calc(100vh - 250px); /* Adjusted for custom button */
       align-items: center;
     }
     .background-grid img {
@@ -804,6 +819,14 @@
     }
     .background-grid img:hover {
       border: 2px solid #888;
+    }
+    .custom-theme-container {
+        padding: 20px 0;
+        text-align: center;
+        border-top: 1px solid #eee;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
     }
     .copyright-info {
         text-align: center;
@@ -852,7 +875,7 @@
     }
     .jadwal-empty { 
       color: #757575;
-      padding: 10px; 
+      padding: 20px; 
       text-align: center; 
       font-style: italic;
     }
@@ -870,12 +893,21 @@
     }
     .tutorial-section ul {
       list-style-type: none;
-      padding-left: 20px;
+      padding-left: 0;
     }
-    .tutorial-section li {
+    .tutorial-section > ul > li {
       margin-bottom: 10px;
-      padding-left: 10px;
+      padding-left: 15px;
       border-left: 3px solid #00c853;
+      list-style-type: none;
+    }
+     .tutorial-section ul ul {
+        margin-top: 10px;
+        padding-left: 20px;
+     }
+    .tutorial-section ul ul li {
+        border-left: 3px solid #ff9800;
+        font-size: 0.95em;
     }
     .tutorial-section li strong { color: #0055aa; }
     #agendakuSidebar {
@@ -1110,6 +1142,67 @@
     .hidden-file-input {
         display: none;
     }
+
+    .export-popup .popup-body, .import-popup .popup-body {
+        text-align: center;
+    }
+    .export-data-display {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        max-height: 250px;
+        overflow-y: auto;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        text-align: left;
+        white-space: pre-wrap;
+        word-break: break-all;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .io-instructions {
+        background: #e3f2fd;
+        border: 1px solid #b3e5fc;
+        color: #01579b;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .io-instructions h4 {
+        color: #0277bd;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .io-instructions ol {
+        padding-left: 20px;
+        margin: 0;
+        line-height: 1.6;
+    }
+    .io-instructions li {
+        margin-bottom: 8px;
+    }
+    #importDataTextarea {
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        resize: vertical;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .import-popup .popup-footer {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+    .import-popup .popup-footer .btn {
+      flex: 1;
+    }
+
   </style>
 </head>
 <body>
@@ -1120,6 +1213,7 @@
     <input type="text" id="nama" placeholder="Masukkan Nama Anda">
     <input type="text" id="nimInput" placeholder="Masukkan Nim/Kelas (Opsional)">
     <button class="btn" id="loginBtn">Masuk</button>
+    <button class="btn btn-secondary" id="guestLoginBtn">Masuk sebagai Tamu</button>
     <div class="digital-time info-frame" id="digitalClock"></div>
     <div class="user-info info-frame" id="userInfoDisplayLogin">
       <span id="userNameDisplayLogin"></span>
@@ -1148,7 +1242,7 @@
       <button class="btn btn-reset-custom" onclick="confirmResetSchedule('jadwalContent')">Reset</button>
       <button class="btn" onclick="tutupSlide('jadwal')">Kembali</button>
     </div>
-    <h2>Kegiatan Harian</h2> <div class="jadwal-section">
+    <h2>Kegiatan Harian</h2> <div class="jadwal-section" id="jadwalContainer">
       <div id="jadwalContent">
         </div>
     </div>
@@ -1182,7 +1276,10 @@
       <img src="https://files.catbox.moe/29u9l1.jpg" onclick="confirmImageTheme('https://files.catbox.moe/29u9l1.jpg')" alt="Latar 8" />
       <img src="https://files.catbox.moe/dp6gal.jpg" onclick="confirmImageTheme('https://files.catbox.moe/dp6gal.jpg')" alt="Latar 9" />
       <img src="https://files.catbox.moe/2juexf.jpg" onclick="confirmImageTheme('https://files.catbox.moe/2juexf.jpg')" alt="Latar 10" />
-      </div>
+    </div>
+    <div class="custom-theme-container">
+        <button class="btn btn-custom-theme" onclick="triggerCustomTheme()">Unggah Tema Custom</button>
+    </div>
   </div>
 
   <div class="slide" id="catatan">
@@ -1211,14 +1308,23 @@
       <p id="nimInfo">Nim/Kelas: -</p>
     </div>
     <div class="developer-description-container" id="developerDescriptionScrollable">
-      <h3>Deskripsi Developer</h3>
-      <p> (Baca jika perlu !)</p>
-      <p style="margin-top: 10px;">Sebelumnya perlu diketahui bahwa aplikasi ini berbasis online web, maka mengharuskan pengguna untuk mempunyai akses internet terlebih dahulu untuk menggunakan aplikasi ini, Aplikasi ini dibuat untuk menampilkan jadwal secara sederhana, tentunya masih ada banyak bug dan kekurangan di aplikasi ini, nantinya aplikasi ini akan dikembangkan secara berkala. Segera hubungi admin jika kamu menemukan bug, Semoga bermanfaat dan sampai jumpa (◉⁠‿⁠◉)/</p>
-      <p>....</p>
-      <p>...</p>
+        <h3>Sebuah Pesan dari Developer</h3>
+        <p style="margin-top: 10px;">
+            Halo Pengguna Agendaku,
+        </p>
+        <p>
+            Terima kasih telah memilih dan menggunakan aplikasi ini. Agendaku dibuat dengan tujuan sederhana: membantu Anda mengelola jadwal harian dengan lebih mudah dan efisien. Saya sadar bahwa aplikasi ini masih dalam tahap pengembangan dan jauh dari kata sempurna. Mungkin Anda akan menemukan bug atau kekurangan di beberapa fitur.
+        </p>
+        <p>
+            Untuk itu, saya memohon maaf atas segala ketidaknyamanan yang mungkin timbul. Setiap masukan, kritik, dan saran dari Anda sangatlah berharga bagi saya untuk terus memperbaiki dan mengembangkan Agendaku menjadi lebih baik. Jangan ragu untuk menghubungi saya melalui tombol "Kritik dan Saran".
+        </p>
+        <p>
+            Sekali lagi, terima kasih atas dukungan Anda. Semoga aplikasi ini bermanfaat!
+        </p>
+        <p>Hormat saya,<br><strong>amiieen</strong></p>
     </div>
     <div class="info-footer-buttons">
-      <button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Tampilkan Instruksi</button>
+      <button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Panduan Aplikasi</button>
       <button class="btn" onclick="tutupSlide('info')">Kembali</button>
       <button class="btn btn-kritik-saran" onclick="showKritikSaranPopup()">Kritik dan Saran</button>
       <div class="copyright-info">•</div>
@@ -1227,70 +1333,68 @@
 
   <div class="slide" id="instruksi">
     <div class="button-container">
-      <button class="btn" onclick="tutupSlide('instruksi')">Kembali ke Info</button>
+        <button class="btn" onclick="tutupSlide('instruksi')">Kembali ke Info</button>
     </div>
     <h2>Panduan Penggunaan Aplikasi</h2>
     <div class="tutorial-content">
-      <div class="tutorial-section">
-        <h3>Pendahuluan</h3>
-        <p>Aplikasi Jadwal ini dirancang untuk membantu Anda mengatur kegiatan harian, jadwal kuliah/sekolah, dan catatan pribadi. Berikut adalah panduan lengkap penggunaan aplikasi.</p>
-      </div>
-      
-      <div class="tutorial-section">
-        <h3>Memulai Aplikasi</h3>
-        <ul>
-          <li><strong>Masukkan Nama:</strong> Pada halaman awal, masukkan nama Anda di kolom yang tersedia.</li>
-          <li><strong>NIM/Kelas (Opsional):</strong> Anda dapat memasukkan identitas tambahan jika diperlukan.</li>
-          <li><strong>Tombol Masuk:</strong> Tekan tombol "Masuk" untuk mengakses menu utama aplikasi.</li>
-        </ul>
-      </div>
-      
-      <div class="tutorial-section">
-        <h3>Menu Utama</h3>
-        <ul>
-          <li><strong>Jadwal Kegiatan:</strong> Atur aktivitas harian Anda.</li> <li><strong>Jadwal Kuliah/Sekolah:</strong> Kelola jadwal akademik Anda per hari.</li>
-          <li><strong>Ganti Tema Aplikasi:</strong> Ubah tampilan latar belakang aplikasi sesuai preferensi.</li>
-          <li><strong>Buat Catatan:</strong> Simpan ide, tugas, atau informasi penting lainnya.</li>
-          <li><strong>Info:</strong> Akses informasi pengguna dan panduan aplikasi.</li>
-          <li><strong>Tentang Agendaku:</strong> Lihat informasi branding tentang aplikasi Agendaku.</li>
-        </ul>
-      </div>
-      
-      <div class="tutorial-section">
-        <h3>Mengelola Jadwal</h3>
-        <ul>
-          <li><strong>Edit Jadwal:</strong> Tekan tombol "Edit" di jadwal (Kegiatan atau Kuliah) yang ingin Anda ubah.</li>
-          <li><strong>Mode Waktu Fleksibel:</strong> Di halaman edit, setiap item jadwal kini memiliki mode waktu yang bisa diubah.
-            <ul>
-              <li style="border-left-color: #ff9800; margin-top: 10px;"><strong>Tombol ⏱️/🗓️:</strong> Gunakan tombol ini untuk beralih antara input 'Jam Spesifik' dan 'Waktu Umum'.</li>
-              <li style="border-left-color: #ff9800;"><strong>Input Tempat:</strong> Tambahkan lokasi atau ruangan di kolom "Tempat (Opsional)". Jika diisi, lokasi akan muncul di samping jadwal Anda.</li>
-            </ul>
-          </li>
-          <li><strong>Simpan & Reset:</strong> Setelah selesai mengedit, tekan "Simpan". Jadwal akan disimpan dan Anda akan otomatis kembali ke halaman sebelumnya. Gunakan tombol "Reset" untuk mengembalikan jadwal ke pengaturan awal (default).</li>
-        </ul>
-      </div>
+        <div class="tutorial-section">
+            <h3>Selamat Datang di Agendaku!</h3>
+            <p>Aplikasi ini dirancang untuk menjadi asisten pribadi Anda dalam mengatur jadwal kegiatan, perkuliahan/sekolah, dan catatan penting. Mari kita mulai!</p>
+        </div>
 
-      <div class="tutorial-section">
-        <h3>Export/Import Project</h3>
-        <ul>
-            <li><strong>Export Project:</strong> Buka sidebar (☰), klik "Export Project". Sebuah popup akan muncul.</li>
-            <li><strong>Salin & Unduh:</strong> Tekan tombol "Salin Link", kemudian buka browser (misal: Chrome), tempel link di address bar, lalu tekan Enter untuk mengunduh file backup Anda.</li>
-            <li><strong>Import Project:</strong> Gunakan "Import Project" untuk memulihkan data dari file backup yang telah diekspor sebelumnya.</li>
-        </ul>
-      </div>
-      
-      <div class="tutorial-section">
-        <h3>Tombol Bantuan & Keluar</h3>
-        <ul>
-          <li><strong>Tombol "💡":</strong> Tampilkan ringkasan jadwal hari ini. Jadwal yang sudah selesai akan ditandai.</li>
-          <li><strong>Tombol "?":</strong> Akses bantuan kontekstual sesuai halaman yang sedang dibuka.</li>
-          <li><strong>Tombol Rumah:</strong> Kembali ke halaman login.</li>
-          <li><strong>Tombol Kutipan:</strong> Tampilkan motivasi harian.</li>
-          <li><strong>Keluar Aplikasi:</strong> Dari ikon menu ☰, pilih "Keluar". Konfirmasi "Ya, Keluar" akan mencoba menutup tab browser Anda.</li>
-        </ul>
-      </div>
+        <div class="tutorial-section">
+            <h3>Memulai Aplikasi</h3>
+            <ul>
+                <li><strong>Login Pengguna:</strong> Masukkan nama Anda untuk personalisasi. Data Anda akan disimpan secara lokal di browser Anda.</li>
+                <li><strong>Mode Tamu:</strong> Jika Anda hanya ingin mencoba, gunakan "Masuk sebagai Tamu". Tidak ada data yang akan disimpan secara permanen dengan nama Anda.</li>
+            </ul>
+        </div>
+        
+        <div class="tutorial-section">
+            <h3>Mengelola Tema Latar</h3>
+            <ul>
+                <li><strong>Pilih Tema:</strong> Masuk ke menu "Ganti Tema Aplikasi" untuk memilih dari daftar latar belakang yang tersedia.</li>
+                <li><strong>Tema Custom:</strong>
+                    <ul>
+                       <li>Di bagian bawah halaman tema, klik tombol "Unggah Tema Custom".</li>
+                       <li>Pilih gambar dari perangkat Anda. <strong>Disarankan menggunakan gambar dengan orientasi potrait (tegak)</strong> agar tampilan optimal di perangkat mobile.</li>
+                       <li>Konfirmasi untuk menerapkan tema baru Anda.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="tutorial-section">
+            <h3>Mengelola Jadwal Anda</h3>
+            <ul>
+                <li><strong>Edit:</strong> Klik tombol "Edit" untuk masuk ke mode pengeditan. Jadwal kini memiliki template awal untuk memudahkan Anda.</li>
+                <li><strong>Mode Waktu Fleksibel:</strong> Gunakan ikon ⏱️/🗓️ di samping setiap item untuk beralih antara waktu spesifik (misal: 08.00-09.00) dan waktu umum (misal: Pagi, Siang).</li>
+                <li><strong>Lokasi:</strong> Tambahkan detail tempat atau lokasi pada kolom yang tersedia.</li>
+                <li><strong>Simpan & Reset:</strong> Jangan lupa "Simpan" perubahan Anda. Tombol "Reset" akan mengembalikan jadwal ke template awal.</li>
+            </ul>
+        </div>
+
+        <div class="tutorial-section">
+            <h3>Backup Data (Export/Import)</h3>
+            <ul>
+                <li><strong>Export Project:</strong> Buka menu samping (☰) dan pilih "Export Project". Salin kode yang muncul dan simpan di tempat aman (misal: file .txt). Ini adalah cadangan seluruh data Anda.</li>
+                <li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project", tempelkan (paste) kode backup Anda, dan klik "Import". Ini akan menimpa data yang ada saat ini.</li>
+                <li><strong>Penting:</strong> Lakukan backup secara berkala untuk menghindari kehilangan data.</li>
+            </ul>
+        </div>
+
+        <div class="tutorial-section">
+            <h3>Tombol Bantuan Cepat</h3>
+            <ul>
+                <li><strong>Tombol "💡":</strong> Menampilkan ringkasan jadwal untuk hari ini.</li>
+                <li><strong>Tombol Rumah (⌂):</strong> Kembali ke halaman login awal.</li>
+                <li><strong>Tombol Kutipan (💬):</strong> Dapatkan kutipan motivasi singkat.</li>
+                <li><strong>Keluar Aplikasi:</strong> Dari menu samping (☰), pilih "Keluar" untuk mencoba menutup tab aplikasi.</li>
+            </ul>
+        </div>
     </div>
-  </div>
+</div>
+
 
   <div class="slide" id="editJadwal">
     <div class="button-container">
@@ -1348,10 +1452,9 @@
         <div class="popup-body">
             <textarea id="kritikSaranTextarea" placeholder="Tulis kritik atau saran Anda di sini..."></textarea>
             <div class="feedback-fallback">
-                Jika tombol "Kirim" tidak membuka aplikasi email Anda, silakan kirim manual ke:
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
-                    <code id="adminEmailAddress">uchihafans2@gmail.com</code>
-                    <button class="btn btn-copy-email" onclick="copyEmailToClipboard()">Copy</button>
+                <div class="feedback-container">
+                    <span>Jika 'Kirim' gagal, copy & kirim manual:</span>
+                    <button class="btn btn-copy-email" onclick="copyEmailToClipboard()">Copy Email</button>
                 </div>
             </div>
         </div>
@@ -1361,6 +1464,7 @@
         </div>
     </div>
   </div>
+
 
   <div class="popup-overlay" id="resetConfirmPopup">
     <div class="popup-content reset-confirm-popup">
@@ -1441,6 +1545,53 @@
     </div>
   </div>
 
+  <div class="popup-overlay" id="exportPopup">
+        <div class="popup-content export-popup">
+            <button class="popup-close-btn" onclick="closeExportPopup()">×</button>
+            <h3 class="popup-header">📤 Export Data Proyek</h3>
+            <div class="popup-body">
+                <div class="io-instructions">
+                    <h4>Cara Menyimpan Data Anda:</h4>
+                    <ol>
+                        <li>Klik <strong>"Copy Data"</strong> untuk menyalin kode di bawah ini.</li>
+                        <li>Buka aplikasi catatan (Notes) di perangkat Anda.</li>
+                        <li>Tempel (paste) kode tersebut dan simpan file.</li>
+                        <li>Beri nama file yang mudah diingat, misal: <strong>Agendaku_Backup.txt</strong></li>
+                    </ol>
+                </div>
+                <div class="export-data-display" id="exportDataDisplay"></div>
+            </div>
+            <div class="popup-footer">
+                <button class="btn" onclick="copyExportData()">📋 Copy Data</button>
+                <button class="btn" onclick="closeExportPopup()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="importPopup">
+        <div class="popup-content import-popup">
+            <button class="popup-close-btn" onclick="closeImportPopup()">×</button>
+            <h3 class="popup-header">📥 Import Data Proyek</h3>
+            <div class="popup-body">
+                <div class="io-instructions">
+                    <h4>Cara Memulihkan Data:</h4>
+                    <ol>
+                        <li>Salin semua teks dari file backup Anda.</li>
+                        <li>Klik tombol <strong>"Paste dari Clipboard"</strong> di bawah ini.</li>
+                        <li>Periksa datanya di kotak teks (jika perlu).</li>
+                        <li>Klik tombol <strong>"Import Data"</strong> untuk memulihkan.</li>
+                    </ol>
+                </div>
+                <button class="btn" onclick="pasteAndImportData()" style="width:100%; margin-bottom: 15px;">📋 Paste dari Clipboard</button>
+                <textarea id="importDataTextarea" placeholder="Data backup Anda akan muncul di sini setelah di-paste..."></textarea>
+            </div>
+            <div class="popup-footer">
+                <button class="btn" onclick="processImportData()">📥 Import Data</button>
+                <button class="btn" onclick="closeImportPopup()">Batal</button>
+            </div>
+        </div>
+    </div>
+
   <div id="agendakuSidebar">
       <div class="sidebar-header">
           <h3>Tentang Agendaku</h3>
@@ -1453,22 +1604,25 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-               <p><strong>Versi 1.9.4 - Perbaikan Final Ekspor:</strong></p>
+              <p><strong>Versi 1.5 - WebView Update:</strong></p>
               <ul>
-                  <li><strong>Metode Ekspor "Salin Link":</strong> Metode ekspor diubah menjadi "Salin Link" untuk keandalan maksimal di WebView. Pengguna kini menyalin link dan membukanya di browser secara manual untuk mengunduh.</li>
-                  <li><strong>Perbaikan Tata Letak Popup:</strong> Tombol pada popup ekspor sekarang ditampilkan sejajar untuk tampilan yang lebih rapi.</li>
-                  <li><strong>Format Nama File Baru:</strong> Nama file ekspor diubah menjadi `Agendaku_eksport_(nama)_(nomor urut).json` untuk identifikasi yang lebih mudah.</li>
+                  <li><strong>Login Tamu:</strong> Menambahkan opsi login sebagai tamu tanpa menyimpan data personal.</li>
+                  <li><strong>Tema Custom:</strong> Fitur baru untuk mengunggah gambar latar sendiri dari menu Catatan.</li>
+                  <li><strong>UI/UX Export/Import:</strong> Tampilan dan alur proses ekspor dan impor data telah disempurnakan.</li>
+                  <li><strong>Perbaikan Teks:</strong> Konten informasi dan panduan telah ditulis ulang agar lebih profesional.</li>
+                  <li><strong>Indikator Selesai:</strong> Popup jadwal hari ini (💡) sekarang menandai jadwal yang sudah selesai.</li>
+                  <li><strong>Input Lokasi:</strong> Menambahkan kolom 'Tempat (Opsional)' di editor jadwal.</li>
               </ul>
           </div>
-          
+
           <div class="sidebar-action-buttons">
               <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="btn-sidebar-action btn-new-update">
-                  🔥 New Update
+                  🔥 Cek Update
               </a>
-              <button class="btn-sidebar-action btn-export-project" onclick="exportProject()">
+              <button class="btn-sidebar-action btn-export-project" onclick="showExportPopup()">
                   📤 Export Project
               </button>
-              <button class="btn-sidebar-action btn-import-project" onclick="triggerImportFile()">
+              <button class="btn-sidebar-action btn-import-project" onclick="showImportPopup()">
                   📥 Import Project
               </button>
           </div>
@@ -1488,11 +1642,12 @@
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.9.4
+          Versi 1.5
       </div>
   </div>
 
-  <input type="file" id="importFileInput" class="hidden-file-input" accept=".json" onchange="handleImportFile(event)">
+  <input type="file" id="importFileInput" class="hidden-file-input" accept=".json,.txt" onchange="handleImportFile(event)">
+  <input type="file" id="customThemeInput" class="hidden-file-input" accept="image/*" onchange="handleCustomTheme(event)">
 
   <div id="toast-container"></div>
   <audio id="toast-sound" src="https://files.catbox.moe/vxltiz.mp3" preload="auto"></audio>
@@ -1537,12 +1692,12 @@
     };
 
     const defaultKuliahData = {
-        "Senin": [{ type: "specific", startTime: "08:00", endTime: "10:00", activity: "Mata Kuliah/Pelajaran Anda", location: "Ruang 101", selesai: false }],
-        "Selasa": [{ type: "specific", startTime: "09:00", endTime: "11:00", activity: "Mata Kuliah/Pelajaran Anda", location: "", selesai: false }],
-        "Rabu": [],
-        "Kamis": [],
-        "Jumat": [],
-        "Sabtu": [],
+        "Senin": [{ type: "specific", startTime: "08:00", endTime: "10:00", activity: "Edit Mata Kuliah/Pelajaran", location: "Edit Ruangan", selesai: false }],
+        "Selasa": [{ type: "specific", startTime: "09:00", endTime: "11:00", activity: "Edit Mata Kuliah/Pelajaran", location: "Edit Ruangan", selesai: false }],
+        "Rabu": [{ type: "specific", startTime: "08:00", endTime: "10:00", activity: "Edit Mata Kuliah/Pelajaran", location: "Edit Ruangan", selesai: false }],
+        "Kamis": [{ type: "specific", startTime: "08:00", endTime: "10:00", activity: "Edit Mata Kuliah/Pelajaran", location: "Edit Ruangan", selesai: false }],
+        "Jumat": [{ type: "specific", startTime: "08:00", endTime: "10:00", activity: "Edit Mata Kuliah/Pelajaran", location: "Edit Ruangan", selesai: false }],
+        "Sabtu": [{ type: "general", time: "Pagi", activity: "Edit Kegiatan Akhir Pekan", location: "", selesai: false }],
         "Minggu": [{ type: "general", time: "Libur", activity: "Libur", location: "", selesai: false }]
     };
     
@@ -1596,7 +1751,7 @@
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(20px) scale(0.9)';
         setTimeout(() => {
-          if(toast.parentElement) toast.parentElement.removeChild(toast);
+          toast.remove();
           currentToastTimeout = null;
         }, 300);
       }, duration);
@@ -1610,181 +1765,133 @@
       const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       return days[dayIndex];
     }
-    
+
     // --- REVISED EXPORT/IMPORT FUNCTIONS ---
-
-    // REVISI FINAL: Metode Ekspor "Salin Link"
-    async function exportProject() {
+    function showExportPopup() {
         playClickSound();
-        try {
-            const exportData = {
-                version: "1.9.4",
-                timestamp: new Date().toISOString(),
-                userData: { namaUser, nimUser },
-                appData: { 
-                    jadwalContent: appData.jadwalContent, 
-                    kuliahContent: appData.kuliahContent, 
-                    catatanContent: appData.catatanContent 
-                },
-                preferences: { 
-                    savedTheme: localStorage.getItem('savedTheme') || DEFAULT_BACKGROUND_IMAGE 
-                }
-            };
-
-            const dataStr = JSON.stringify(exportData, null, 2);
-
-            // REVISI #4: Format nama file baru dengan nomor urut
-            const counterKey = `${namaUser}_exportCounter`;
-            let counter = parseInt(localStorage.getItem(counterKey) || 0) + 1;
-            const fileName = `Agendaku_eksport_${namaUser || 'User'}_${counter}.json`;
-            localStorage.setItem(counterKey, counter);
-            
-            // REVISI #1: Menggunakan octet-stream untuk keandalan
-            const dataBlob = new Blob([dataStr], { type: "application/octet-stream" });
-
-            const reader = new FileReader();
-            reader.readAsDataURL(dataBlob);
-            reader.onloadend = function() {
-                const dataUrl = reader.result;
-                const linkElement = document.createElement('a');
-                linkElement.href = dataUrl;
-                linkElement.download = fileName; // Browser akan menggunakan nama ini saat diunduh
-                showCopyLinkPopup(linkElement);
-            };
-        } catch (err) {
-            console.error('Error preparing export link:', err);
-            showToast('Export Gagal', 'Terjadi kesalahan saat menyiapkan data.');
-        } finally {
-            closeAgendakuBranding();
-        }
-    }
-
-    // REVISI FINAL: Popup "Salin Link"
-    function showCopyLinkPopup(linkElement) {
-        const popupOverlay = document.createElement('div');
-        popupOverlay.className = 'popup-overlay active';
-        popupOverlay.style.zIndex = '4000'; 
-
-        const popupContent = document.createElement('div');
-        popupContent.className = 'popup-content';
-        popupContent.style.textAlign = 'center';
-
-        // REVISI #2: Teks popup minimalis
-        popupContent.innerHTML = `
-            <h3 class="popup-header">Ekspor Data</h3>
-            <div class="popup-body centered" style="text-align:left; line-height: 1.6;">
-                <p>Untuk menyimpan backup, ikuti langkah berikut:</p>
-                <ol style="padding-left: 25px;">
-                  <li>Tekan tombol <strong>"Salin Link"</strong>.</li>
-                  <li>Buka browser Anda (Chrome, dll).</li>
-                  <li>Tempel link di address bar & tekan Enter.</li>
-                </ol>
-            </div>
-            <div class="popup-footer btn-confirm-container"></div>
-        `;
         
-        const footer = popupContent.querySelector('.popup-footer');
-
-        const copyButton = document.createElement('button');
-        copyButton.textContent = 'Salin Link';
-        copyButton.className = 'btn btn-confirm btn-yes';
-
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Tutup';
-        closeButton.className = 'btn btn-confirm btn-no';
-        
-        // REVISI #2: Tombol sejajar
-        footer.appendChild(copyButton);
-        footer.appendChild(closeButton);
-        popupOverlay.appendChild(popupContent);
-        document.body.appendChild(popupOverlay);
-
-        const closePopup = () => {
-            if (document.body.contains(popupOverlay)) {
-                document.body.removeChild(popupOverlay);
+        const exportData = {
+            version: "1.5",
+            timestamp: new Date().toISOString(),
+            userData: {
+                namaUser: namaUser,
+                nimUser: nimUser
+            },
+            appData: {
+                jadwalContent: appData.jadwalContent,
+                kuliahContent: appData.kuliahContent,
+                catatanContent: appData.catatanContent
+            },
+            preferences: {
+                savedTheme: localStorage.getItem(`${namaUser}_savedTheme`) || DEFAULT_BACKGROUND_IMAGE
             }
         };
 
-        closeButton.onclick = closePopup;
-
-        copyButton.onclick = () => {
-            navigator.clipboard.writeText(linkElement.href).then(() => {
-                showToast('Berhasil!', 'Link unduhan telah disalin.');
-                closePopup();
-            }).catch(err => {
-                showToast('Gagal', 'Tidak dapat menyalin link.');
-            });
-        };
+        const dataStr = JSON.stringify(exportData, null, 2);
+        document.getElementById('exportDataDisplay').textContent = dataStr;
+        document.getElementById('exportPopup').classList.add('active');
+        playToastSound();
+        closeAgendakuBranding();
     }
 
-
-    function triggerImportFile() {
+    function copyExportData() {
         playClickSound();
-        document.getElementById('importFileInput').click();
+        const dataText = document.getElementById('exportDataDisplay').textContent;
+        
+        navigator.clipboard.writeText(dataText).then(() => {
+            showToast('Berhasil', 'Data backup telah disalin ke clipboard!');
+        }).catch(err => {
+            showToast('Gagal', 'Gagal menyalin. Silakan salin manual.');
+            console.error('Clipboard error:', err);
+        });
+    }
+    
+    function closeExportPopup() {
+        document.getElementById('exportPopup').classList.remove('active');
     }
 
-    function handleImportFile(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        if (file.type && file.type !== 'application/json' && !file.name.endsWith('.json')) {
-            showToast('Error', 'Harap pilih file JSON (.json) yang valid.');
+    function showImportPopup() {
+        playClickSound();
+        document.getElementById('importDataTextarea').value = '';
+        document.getElementById('importPopup').classList.add('active');
+        playToastSound();
+        closeAgendakuBranding();
+    }
+    
+    function pasteAndImportData() {
+        playClickSound();
+        if (navigator.clipboard && navigator.clipboard.readText) {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById('importDataTextarea').value = text;
+                showToast('Berhasil', 'Data dari clipboard telah ditempel.');
+            }).catch(err => {
+                showToast('Gagal', 'Tidak dapat membaca clipboard. Pastikan Anda telah memberikan izin.');
+                console.error('Clipboard paste error:', err);
+            });
+        } else {
+            showToast('Error', 'Browser Anda tidak mendukung fitur ini. Silakan paste manual.');
+        }
+    }
+
+    function closeImportPopup() {
+        document.getElementById('importPopup').classList.remove('active');
+    }
+
+    function processImportData() {
+        playClickSound();
+        const importText = document.getElementById('importDataTextarea').value.trim();
+        
+        if (!importText) {
+            showToast('Error', 'Silakan paste data backup terlebih dahulu.');
             return;
         }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importData = JSON.parse(e.target.result);
-                if (!importData.appData || !importData.userData) {
-                    throw new Error('Format file tidak valid.');
-                }
-                if (confirm(`Impor data dari backup "${importData.userData.namaUser}"?\n\nPERINGATAN: Semua data Anda saat ini akan diganti.`)) {
-                    importProject(importData);
-                }
-            } catch (error) {
-                console.error('Error parsing import file:', error);
-                showToast('Error', 'File backup tidak valid atau rusak.');
+
+        try {
+            const importData = JSON.parse(importText);
+            
+            if (!importData.appData || !importData.userData) {
+                throw new Error('Format data tidak valid');
             }
-        };
-        reader.readAsText(file);
-        event.target.value = '';
+
+            if (confirm(`Impor data dari backup "${importData.userData.namaUser}"?\n\nPERHATIAN: Ini akan menimpa seluruh data Anda saat ini (${namaUser}).`)) {
+                importProject(importData);
+                closeImportPopup();
+            }
+        } catch (error) {
+            console.error('Error parsing import data:', error);
+            showToast('Error', 'Format data backup tidak valid. Pastikan Anda paste data yang benar.');
+        }
     }
 
     function importProject(importData) {
         try {
-            namaUser = importData.userData.namaUser || '';
-            nimUser = importData.userData.nimUser || '';
             appData.jadwalContent = importData.appData.jadwalContent || JSON.parse(JSON.stringify(defaultJadwalData));
             appData.kuliahContent = importData.appData.kuliahContent || JSON.parse(JSON.stringify(defaultKuliahData));
             appData.catatanContent = importData.appData.catatanContent || [...defaultCatatanData];
 
-            localStorage.setItem('lastLoggedInUser', namaUser);
-            localStorage.setItem(`${namaUser}_nim`, nimUser);
             saveData('jadwalContent');
             saveData('kuliahContent');
             saveData('catatanContent');
 
             if (importData.preferences && importData.preferences.savedTheme) {
-                localStorage.setItem('savedTheme', importData.preferences.savedTheme);
+                localStorage.setItem(`${namaUser}_savedTheme`, importData.preferences.savedTheme);
                 document.body.style.setProperty('--bg-image-url', `url('${importData.preferences.savedTheme}')`);
             }
-            document.getElementById('userNameDisplayMenu').textContent = namaUser;
-            document.getElementById('userNimDisplayMenu').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
-            document.getElementById('namaInfo').textContent = `Nama: ${namaUser}`;
-            document.getElementById('nimInfo').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
-            renderJadwal(appData.jadwalContent, 'jadwalContent');
-            renderJadwal(appData.kuliahContent, 'kuliahContent');
-            renderCatatan(appData.catatanContent);
-            showToast('Import Berhasil', `Data untuk ${namaUser} berhasil dipulihkan!`);
-            closeAgendakuBranding();
+
+            renderAllData();
+            showToast('Import Berhasil', `Data berhasil dipulihkan & diterapkan.`);
+            
         } catch (error) {
             console.error('Error importing project:', error);
             showToast('Error', 'Gagal mengimpor data. Periksa format file.');
         }
     }
-
+    
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('loginBtn').addEventListener('click', handleLogin);
+      document.getElementById('guestLoginBtn').addEventListener('click', handleGuestLogin);
+
       document.getElementById('nama').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('nimInput').focus(); });
       document.getElementById('nimInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
       document.getElementById('confirmResetYes').onclick = () => { playClickSound(); if (currentResetContentId) resetSchedule(currentResetContentId); closeResetConfirmPopup(); };
@@ -1804,17 +1911,20 @@
           const content = document.getElementById('updateInfoContent');
           content.style.display = (content.style.display === "block") ? "none" : "block";
       });
+      
       document.getElementById('confirmExitYes').onclick = () => { exitApplication(); };
       document.getElementById('confirmExitNo').onclick = () => { playClickSound(); closeExitConfirmPopup(); };
+
       window.addEventListener('popstate', (e) => { isNavigatingBack = true; handlePopState(e.state); });
-      loadSavedTheme(); 
+
       if (lastLoggedInUser) {
         document.getElementById('nama').value = lastLoggedInUser;
         const storedNim = localStorage.getItem(`${lastLoggedInUser}_nim`);
         if (storedNim) document.getElementById('nimInput').value = storedNim;
       }
+      
+      loadSavedTheme();
       updateCircularButtonVisibility('login');
-      loadAllData();
       updateDigitalClock();
       setInterval(updateDigitalClock, 1000);
       if (document.getElementById('login').style.display !== 'none') {
@@ -1822,77 +1932,104 @@
       }
     });
 
-    // --- DATA MANAGEMENT (LOAD, SAVE, RENDER) ---
-    function loadAllData() {
-        const savedJadwal = localStorage.getItem('jadwalContent');
+    // --- USER & DATA MANAGEMENT (MULTI-USER SUPPORT) ---
+    function loadUserData(username) {
+        const savedJadwal = localStorage.getItem(`${username}_jadwalContent`);
         appData.jadwalContent = savedJadwal ? JSON.parse(savedJadwal) : JSON.parse(JSON.stringify(defaultJadwalData));
-        renderJadwal(appData.jadwalContent, 'jadwalContent');
-        const savedKuliah = localStorage.getItem('kuliahContent');
+        
+        const savedKuliah = localStorage.getItem(`${username}_kuliahContent`);
         appData.kuliahContent = savedKuliah ? JSON.parse(savedKuliah) : JSON.parse(JSON.stringify(defaultKuliahData));
-        renderJadwal(appData.kuliahContent, 'kuliahContent');
-        const savedCatatan = localStorage.getItem('catatanContent');
+        
+        const savedCatatan = localStorage.getItem(`${username}_catatanContent`);
         appData.catatanContent = savedCatatan ? JSON.parse(savedCatatan) : [...defaultCatatanData];
+
+        renderAllData();
+    }
+
+    function renderAllData() {
+        renderJadwal(appData.jadwalContent, 'jadwalContent');
+        renderJadwal(appData.kuliahContent, 'kuliahContent');
         renderCatatan(appData.catatanContent);
     }
 
     function saveData(key) {
-        localStorage.setItem(key, JSON.stringify(appData[key]));
+        if (!namaUser) return;
+        localStorage.setItem(`${namaUser}_${key}`, JSON.stringify(appData[key]));
     }
     
     function renderJadwal(data, containerId) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
         const fragment = document.createDocumentFragment();
+        
+        let hasContent = false;
         for (const day in data) {
-            const h3 = document.createElement('h3');
-            h3.textContent = `${day}:`;
-            const ul = document.createElement('ul');
             if (data[day] && data[day].length > 0) {
-                data[day].forEach((item, index) => {
-                    const li = document.createElement('li');
-                    li.className = item.selesai ? 'selesai' : '';
-                    const checkbox = document.createElement('div');
-                    checkbox.className = 'jadwal-checkbox';
-                    checkbox.setAttribute('onclick', `toggleSelesai('${containerId}', '${day}', ${index})`);
-                    const teksJadwal = document.createElement('span');
-                    teksJadwal.className = 'jadwal-teks';
-                    let timeString = '-:';
-                    if (item.type === 'specific' && item.startTime && item.endTime) {
-                         timeString = `${item.startTime.replace(':', '.')}-${item.endTime.replace(':', '.')}:`;
-                    } else if (item.type === 'general' && item.time) {
-                        timeString = `${item.time}:`;
-                    }
-                    const locationString = item.location ? `<span class="location-text">(${item.location})</span>` : '';
-                    if (item.activity === "Libur" && item.time === "Libur") {
-                        teksJadwal.innerHTML = 'Libur';
-                    } else {
-                        teksJadwal.innerHTML = `<strong>${timeString}</strong> ${item.activity || ''} ${locationString}`;
-                    }
-                    li.appendChild(checkbox);
-                    li.appendChild(teksJadwal);
-                    ul.appendChild(li);
-                });
-            } else {
-                const li = document.createElement('li');
-                li.textContent = 'Tidak ada jadwal';
-                li.style.fontStyle = 'italic';
-                ul.appendChild(li);
+              hasContent = true;
+              const h3 = document.createElement('h3');
+              h3.textContent = `${day}:`;
+              const ul = document.createElement('ul');
+            
+              data[day].forEach((item, index) => {
+                  const li = document.createElement('li');
+                  li.className = item.selesai ? 'selesai' : '';
+
+                  const checkbox = document.createElement('div');
+                  checkbox.className = 'jadwal-checkbox';
+                  checkbox.setAttribute('onclick', `toggleSelesai('${containerId}', '${day}', ${index})`);
+
+                  const teksJadwal = document.createElement('span');
+                  teksJadwal.className = 'jadwal-teks';
+
+                  let timeString = '-:';
+                  if (item.type === 'specific' && item.startTime && item.endTime) {
+                       timeString = `${item.startTime.replace(':', '.')}-${item.endTime.replace(':', '.')}:`;
+                  } else if (item.type === 'general' && item.time) {
+                      timeString = `${item.time}:`;
+                  }
+                  
+                  const locationString = item.location ? `<span class="location-text">(${item.location})</span>` : '';
+
+                  if (item.activity === "Libur" && item.time === "Libur") {
+                      teksJadwal.innerHTML = 'Libur';
+                  } else {
+                      teksJadwal.innerHTML = `<strong>${timeString}</strong> ${item.activity || ''} ${locationString}`;
+                  }
+
+                  li.appendChild(checkbox);
+                  li.appendChild(teksJadwal);
+                  ul.appendChild(li);
+              });
+              fragment.appendChild(h3);
+              fragment.appendChild(ul);
             }
-            fragment.appendChild(h3);
-            fragment.appendChild(ul);
+        }
+
+        if (!hasContent) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.className = 'jadwal-empty';
+            emptyMsg.textContent = 'Belum ada jadwal. Klik "Edit" untuk menambahkan.';
+            fragment.appendChild(emptyMsg);
         }
         container.appendChild(fragment);
     }
 
     function renderCatatan(data) {
         const container = document.getElementById('catatanContent');
-        const fragment = document.createDocumentFragment();
-        data.forEach(line => {
-            const p = document.createElement('p');
-            p.textContent = line;
-            fragment.appendChild(p);
-        });
         container.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        if (data && data.length > 0 && (data.length > 1 || data[0] !== '')) {
+            data.forEach(line => {
+                const p = document.createElement('p');
+                p.textContent = line;
+                fragment.appendChild(p);
+            });
+        } else {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.className = 'jadwal-empty';
+            emptyMsg.textContent = 'Belum ada catatan. Klik "Edit" untuk menambahkan.';
+            fragment.appendChild(emptyMsg);
+        }
         container.appendChild(fragment);
     }
     
@@ -1900,10 +2037,13 @@
         playClickSound();
         const item = appData[contentId]?.[hari]?.[index];
         if (!item) return;
+
         item.selesai = !item.selesai;
+
         if (item.selesai) {
             showToast('Selamat!', `Anda sudah menyelesaikan: "${item.activity}"`);
         }
+
         saveData(contentId);
         renderJadwal(appData[contentId], contentId);
     }
@@ -1919,11 +2059,11 @@
         const activePopup = document.querySelector('.popup-overlay.active, .tutorial-overlay.active, #agendakuSidebar.active');
         if(activePopup) {
             if (activePopup.id.includes('Popup') || activePopup.id.includes('tutorial')) activePopup.classList.remove('active');
-            if(document.body.contains(activePopup)) document.body.removeChild(activePopup);
             if (activePopup.id === 'agendakuSidebar') closeAgendakuBranding();
             history.pushState(historyState[historyState.length-1], '', `#${historyState[historyState.length-1].slideId}`);
             return;
         }
+
         if (historyState.length === 1 && historyState[0].slideId === 'login') {
             backPressOnLoginCount++;
             if (backPressOnLoginCount === 1) {
@@ -1937,6 +2077,7 @@
             }
             return;
         }
+
         if (historyState.length > 1) {
             historyState.pop();
             const previousState = historyState[historyState.length - 1];
@@ -1949,6 +2090,7 @@
 
     function navigateTo(slideId, contentId = null, pushToHistory = true) {
         document.querySelectorAll('.overlay.active, .slide.active').forEach(el => el.classList.remove('active'));
+        
         setTimeout(() => {
             document.querySelectorAll('.overlay, .slide').forEach(el => el.style.display = 'none');
             const targetElement = document.getElementById(slideId);
@@ -1957,9 +2099,11 @@
                 setTimeout(() => targetElement.classList.add('active'), 10);
             }
             if (pushToHistory) pushState(slideId, contentId);
+            
             updateCircularButtonVisibility(slideId);
             document.getElementById('helpBtnJadwal').style.display = (slideId === 'jadwal') ? 'flex' : 'none';
             document.getElementById('helpBtnKuliah').style.display = (slideId === 'kuliah') ? 'flex' : 'none';
+
             if (slideId === 'editJadwal' && contentId) {
                 currentEditTargetId = contentId;
                 loadScheduleToEditor();
@@ -1981,6 +2125,7 @@
         playClickSound();
         let shouldPromptSave = false;
         let message = '';
+
         if (slideId === 'editJadwal') {
             const editorData = buildScheduleDataFromEditor();
             if (JSON.stringify(editorData) !== JSON.stringify(appData[currentEditTargetId])) {
@@ -1996,6 +2141,7 @@
             navigateTo('info', null, false);
             return;
         }
+
         if (shouldPromptSave) {
             activeEditableContentId = slideId;
             document.getElementById('saveConfirmMessage').textContent = message;
@@ -2003,36 +2149,60 @@
             playToastSound();
             return;
         }
+
         if (historyState.length > 1) history.back();
         else goToMenu();
     }
     
     // --- CORE APP LOGIC ---
     function handleLogin() {
-      const inputNama = document.getElementById('nama').value.trim();
-      if (!inputNama) {
-        showToast('Peringatan', 'Silakan masukkan nama Anda terlebih dahulu.');
-        return;
-      }
-      namaUser = inputNama;
-      nimUser = document.getElementById('nimInput').value.trim();
-      localStorage.setItem('lastLoggedInUser', namaUser);
-      localStorage.setItem(`${namaUser}_nim`, nimUser);
-      const loginBtn = document.getElementById('loginBtn');
-      loginBtn.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        loginBtn.style.transform = 'scale(1)';
-        navigateTo('menu');
-        document.getElementById('userNameDisplayMenu').textContent = namaUser;
-        document.getElementById('userNimDisplayMenu').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
-        document.getElementById('userInfoDisplayMenu').style.display = 'block';
-        document.getElementById('namaInfo').textContent = `Nama: ${namaUser}`;
-        document.getElementById('nimInfo').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
-        loadAllData();
-        showToast('Selamat Datang!', `Halo ${namaUser}, Aplikasi Agendaku siap digunakan.`);
-        showMainTutorial();
-        requestNotificationPermissionAndStartChecker();
-      }, 200);
+        const inputNama = document.getElementById('nama').value.trim();
+        if (!inputNama) {
+            showToast('Peringatan', 'Silakan masukkan nama Anda terlebih dahulu.');
+            return;
+        }
+        const inputNim = document.getElementById('nimInput').value.trim();
+        loginUser(inputNama, inputNim);
+    }
+
+    function handleGuestLogin() {
+        loginUser('Tamu', '');
+    }
+
+    function loginUser(name, nim) {
+        namaUser = name;
+        nimUser = nim;
+        
+        localStorage.setItem('lastLoggedInUser', namaUser);
+        if (namaUser !== 'Tamu') {
+            localStorage.setItem(`${namaUser}_nim`, nim);
+        }
+
+        loadUserData(namaUser);
+        loadSavedTheme();
+
+        const loginBtn = document.getElementById('loginBtn');
+        loginBtn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            loginBtn.style.transform = 'scale(1)';
+            navigateTo('menu');
+            
+            const displayName = (namaUser === 'Tamu') ? '-' : namaUser;
+            const displayNim = nimUser ? `Nim/Kelas: ${nimUser}` : (namaUser === 'Tamu' ? 'Mode Tamu' : 'Nim/Kelas: -');
+            
+            document.getElementById('userNameDisplayMenu').textContent = displayName;
+            document.getElementById('userNimDisplayMenu').textContent = displayNim;
+            document.getElementById('userInfoDisplayMenu').style.display = 'block';
+            document.getElementById('namaInfo').textContent = `Nama: ${displayName}`;
+            document.getElementById('nimInfo').textContent = displayNim;
+
+            showToast('Selamat Datang!', `Halo ${namaUser}, Aplikasi Agendaku siap digunakan.`);
+            if (!localStorage.getItem('hasSeenTutorial')) {
+                showMainTutorial();
+                localStorage.setItem('hasSeenTutorial', 'true');
+            }
+            requestNotificationPermissionAndStartChecker();
+        }, 200);
     }
 
     function kembaliKeLogin() {
@@ -2041,9 +2211,14 @@
           clearInterval(scheduleCheckerInterval);
           scheduleCheckerInterval = null;
       }
+      
       document.querySelectorAll('.popup-overlay.active, .sidebar-overlay-blur.active, #agendakuSidebar.active').forEach(el => {
           el.classList.remove('active');
       });
+
+      namaUser = '';
+      nimUser = '';
+
       navigateTo('login');
       updateCircularButtonVisibility('login');
     }
@@ -2060,16 +2235,19 @@
         const data = appData[currentEditTargetId];
         const title = currentEditTargetId === 'jadwalContent' ? 'Edit Jadwal Kegiatan' : 'Edit Jadwal Kuliah/Sekolah';
         document.getElementById('editJadwalTitle').textContent = title;
+
         for(const day in data) {
             const groupDiv = document.createElement('div');
             groupDiv.className = 'edit-schedule-group';
             groupDiv.innerHTML = `<h3>${day}:</h3>`;
-            if (data[day]) {
+            
+            if (data[day] && data[day].length > 0) {
                 data[day].forEach(item => {
                     const itemDiv = createEditorItem(item);
                     groupDiv.appendChild(itemDiv);
                 });
             }
+            
             groupDiv.appendChild(createAddNewEntry(day));
             fragment.appendChild(groupDiv);
         }
@@ -2081,8 +2259,10 @@
         itemDiv.className = 'edit-schedule-item';
         const type = (item.type === 'specific' || item.type === 'general') ? item.type : 'general';
         itemDiv.dataset.timeType = type;
+
         const generalTimes = ["", "Shubuh", "Pagi", "Dhuhur", "Siang", "Ashar", "Sore", "Maghrib", "Isya", "Malam", "Libur"];
         const options = generalTimes.map(t => `<option value="${t}" ${item.time === t ? 'selected' : ''}>${t || 'waktu tidak ditentukan'}</option>`).join('');
+
         itemDiv.innerHTML = `
             <div class="edit-schedule-inputs">
                 <div class="time-input-container">
@@ -2106,9 +2286,11 @@
                 <button class="delete-item-btn" title="Hapus Item">🗑️</button>
             </div>
         `;
+        
         itemDiv.querySelector('.toggle-time-type-btn').addEventListener('click', function() { toggleTimeInput(this); });
         itemDiv.querySelector('.add-item-btn').addEventListener('click', function() { addItem(this); });
         itemDiv.querySelector('.delete-item-btn').addEventListener('click', function() { confirmDeleteItem(this); });
+
         updateTimeInputVisibility(itemDiv);
         return itemDiv;
     }
@@ -2126,12 +2308,13 @@
         const generalContainer = itemDiv.querySelector('.time-input-container-general');
         const specificContainer = itemDiv.querySelector('.time-input-container-specific');
         const toggleBtn = itemDiv.querySelector('.toggle-time-type-btn');
+
         if (type === 'specific') {
             generalContainer.style.display = 'none';
             specificContainer.style.display = 'flex';
             toggleBtn.textContent = '🗓️';
             toggleBtn.title = "Ubah ke Waktu Umum";
-        } else {
+        } else { // 'general'
             generalContainer.style.display = 'flex';
             specificContainer.style.display = 'none';
             toggleBtn.textContent = '⏱️';
@@ -2155,6 +2338,7 @@
             showToast('Peringatan', 'Isi deskripsi entri baru terlebih dahulu.');
             return;
         }
+
         const newItemData = { type: 'general', time: 'Pagi', activity: textInput.value.trim(), location: '', selesai: false };
         const newItemDiv = createEditorItem(newItemData);
         newEntryContainer.parentNode.insertBefore(newItemDiv, newEntryContainer);
@@ -2176,6 +2360,7 @@
         const editorContainer = document.getElementById('editScheduleContent');
         const newData = {};
         const oldData = appData[currentEditTargetId];
+
         editorContainer.querySelectorAll('.edit-schedule-group').forEach(groupDiv => {
             const day = groupDiv.querySelector('h3').textContent.replace(':', '');
             newData[day] = [];
@@ -2183,13 +2368,21 @@
             groupDiv.querySelectorAll('.edit-schedule-item').forEach(itemDiv => {
                 const activityInput = itemDiv.querySelector('.activity-input');
                 const locationInput = itemDiv.querySelector('.location-input');
+
                 if (activityInput && (activityInput.value.trim() || itemDiv.dataset.timeType === 'general' && itemDiv.querySelector('.time-selector').value === 'Libur')) {
                     const type = itemDiv.dataset.timeType;
                     const oldItem = oldData?.[day]?.[originalIndexCounter] || { selesai: false };
-                    let newItem = { type, activity: activityInput.value.trim(), location: locationInput.value.trim(), selesai: oldItem.selesai };
+                    
+                    let newItem = {
+                        type: type,
+                        activity: activityInput.value.trim(),
+                        location: locationInput.value.trim(),
+                        selesai: oldItem.selesai 
+                    };
+
                     if (type === 'general') {
                         newItem.time = itemDiv.querySelector('.time-selector').value;
-                    } else {
+                    } else { // 'specific'
                         newItem.startTime = itemDiv.querySelector('.start-time-input').value;
                         newItem.endTime = itemDiv.querySelector('.end-time-input').value;
                     }
@@ -2200,16 +2393,24 @@
         });
         return newData;
     }
-    
-    // REVISI #3: Otomatis keluar setelah menyimpan
+
     function saveEditedSchedule() {
         playClickSound();
         const newData = buildScheduleDataFromEditor();
         appData[currentEditTargetId] = newData;
         saveData(currentEditTargetId);
+        
         renderJadwal(newData, currentEditTargetId); 
+        
         showToast('Berhasil', 'Jadwal telah disimpan.');
-        history.back(); // Kembali ke slide sebelumnya
+        
+        setTimeout(() => {
+            if (currentEditTargetId === 'jadwalContent') {
+                navigateTo('jadwal');
+            } else if (currentEditTargetId === 'kuliahContent') {
+                navigateTo('kuliah');
+            }
+        }, 1000);
     }
     
     function handleSaveConfirmation() {
@@ -2220,6 +2421,11 @@
             saveEditedSchedule();
         }
         closeSaveConfirmPopup();
+        
+        if (activeEditableContentId === 'editCatatan') {
+            if (historyState.length > 1) history.back();
+            else goToMenu();
+        }
     }
 
     function handleDiscardChanges() {
@@ -2234,15 +2440,13 @@
         document.getElementById('saveConfirmPopup').classList.remove('active');
     }
 
-    // REVISI #3: Otomatis keluar setelah menyimpan
     function saveCatatan() {
-        playClickSound();
         const newContent = document.getElementById('editCatatanTextarea').value;
         appData.catatanContent = newContent.split('\n');
         saveData('catatanContent');
         renderCatatan(appData.catatanContent);
         showToast('Tersimpan', 'Catatan pribadi berhasil diperbarui.');
-        history.back(); // Kembali ke slide sebelumnya
+        tutupSlide('editCatatan');
     }
     
     function confirmResetSchedule(contentId) {
@@ -2284,6 +2488,7 @@
       const schoolActivities = appData.kuliahContent[dayName] || [];
       let kegiatanHtml = `<div class="no-schedule-message">Tidak ada kegiatan terjadwal.</div>`;
       let kuliahHtml = `<div class="no-schedule-message">Tidak ada jadwal kuliah.</div>`;
+
       const renderItemToHtml = (item) => {
           let timeString = '-:';
           if (item.type === 'specific' && item.startTime && item.endTime) {
@@ -2291,23 +2496,29 @@
           } else if (item.type === 'general' && item.time) {
               timeString = `${item.time}:`;
           }
+
           const locationString = item.location ? `<span class="location-text">(${item.location})</span>` : '';
           const fullText = `<strong>${timeString}</strong> ${item.activity || ''} ${locationString}`;
+
           if (item.activity === "Libur" && item.time === "Libur") return '<li>Libur</li>';
+          
           if (item.selesai) {
               return `<li class="popup-selesai">✅ <span class="popup-jadwal-teks">${fullText}</span></li>`;
           } else {
               return `<li>${fullText}</li>`;
           }
       };
+      
       const validDaily = dailyActivities.filter(item => item.activity && item.activity !== 'Silakan edit kegiatan Anda.');
       if (validDaily.length > 0) {
           kegiatanHtml = '<ul>' + validDaily.map(renderItemToHtml).join('') + '</ul>';
       }
+      
       const validSchool = schoolActivities.filter(item => item.activity && !item.activity.includes('Mata Kuliah/Pelajaran Anda'));
       if (validSchool.length > 0) {
           kuliahHtml = '<ul>' + validSchool.map(renderItemToHtml).join('') + '</ul>';
       }
+      
       document.getElementById('notificationContent').innerHTML = `
         <div class="jadwal-group"><h4>Kegiatan Harian (${dayName}):</h4>${kegiatanHtml}</div>
         <div class="jadwal-group"><h4>Kuliah/Sekolah (${dayName}):</h4>${kuliahHtml}</div>`;
@@ -2321,11 +2532,8 @@
     }
 
     function showMainTutorial() {
-      if (!localStorage.getItem('tutorialShown')) {
-          document.getElementById('tutorialPopup').style.display = 'flex';
-          playToastSound();
-          localStorage.setItem('tutorialShown', 'true');
-      }
+      document.getElementById('tutorialPopup').style.display = 'flex';
+      playToastSound();
     }
 
     function closeMainTutorial() {
@@ -2339,13 +2547,32 @@
       document.getElementById('themeConfirmPopup').classList.add('active');
       playToastSound();
     }
+    
+    function triggerCustomTheme() {
+        playClickSound();
+        document.getElementById('customThemeInput').click();
+    }
+
+    function handleCustomTheme(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imageDataUrl = e.target.result;
+            selectedImageTheme = imageDataUrl;
+            document.getElementById('themeConfirmPopup').classList.add('active');
+            playToastSound();
+        }
+        reader.readAsDataURL(file);
+        event.target.value = ''; // Reset input
+    }
 
     function applyTheme() {
       document.body.style.setProperty('--bg-image-url', `url('${selectedImageTheme}')`); 
-      localStorage.setItem('savedTheme', selectedImageTheme);
+      localStorage.setItem(`${namaUser}_savedTheme`, selectedImageTheme);
       showToast('Berhasil', 'Tema latar belakang berhasil diganti.');
       closeThemeConfirmPopup();
-      tutupSlide('ubahTema');
     }
 
     function closeThemeConfirmPopup() {
@@ -2361,7 +2588,7 @@
 
     function applyDefaultTheme() {
       document.body.style.setProperty('--bg-image-url', `url('${DEFAULT_BACKGROUND_IMAGE}')`); 
-      localStorage.removeItem('savedTheme');
+      localStorage.removeItem(`${namaUser}_savedTheme`);
       showToast('Berhasil', 'Tema latar belakang kembali ke default.');
       closeDefaultThemeConfirmPopup();
       tutupSlide('ubahTema');
@@ -2380,9 +2607,11 @@
     function updateCircularButtonVisibility(activeSlideId) {
         const isMenuVisible = activeSlideId === 'menu';
         const displayStyle = isMenuVisible ? 'flex' : 'none';
+
         document.getElementById('homeBtn').style.display = displayStyle;
         document.getElementById('quoteBtn').style.display = displayStyle;
         document.getElementById('tutorialHelpBtn').style.display = displayStyle;
+
         const isLoginOrMenuVisible = (activeSlideId === 'login' || activeSlideId === 'menu');
         document.querySelector('.menu-icon-top-right').style.display = isLoginOrMenuVisible ? 'flex' : 'none';
     }
@@ -2404,7 +2633,7 @@
         title = "Bantuan: Mengelola Jadwal";
         contentHtml = `<p>Di sini Anda bisa mengelola jadwal Anda secara fleksibel.</p>
                        <ul>
-                         <li><strong>Edit Jadwal:</strong> Klik "Edit" untuk mengubah item, menambah, atau menghapus.</li>
+                         <li><strong>Edit Jadwal:</strong>  Klik "Edit" untuk mengubah item, menambah, atau menghapus.</li>
                          <li><strong>Mode Waktu Fleksibel:</strong> Di halaman edit, gunakan tombol ⏱️/🗓️ untuk beralih antara input 'Jam Spesifik' dan 'Waktu Umum' untuk setiap kegiatan.</li>
                          <li><strong>Input Tempat:</strong> Isi kolom 'Tempat (Opsional)' untuk menambahkan detail lokasi.</li>
                          <li><strong>Reset Jadwal:</strong> Tombol "Reset" akan mengembalikan jadwal ke pengaturan awal.</li>
@@ -2423,7 +2652,7 @@
     }
 
     function loadSavedTheme() {
-      const savedTheme = localStorage.getItem('savedTheme');
+      const savedTheme = localStorage.getItem(`${namaUser}_savedTheme`);
       const themeUrl = savedTheme || DEFAULT_BACKGROUND_IMAGE;
       document.body.style.setProperty('--bg-image-url', `url('${themeUrl}')`);
     }
@@ -2448,7 +2677,7 @@
         return;
       }
       const subject = encodeURIComponent('Kritik dan Saran Aplikasi Agendaku');
-      const body = encodeURIComponent(`Dari Pengguna ${namaUser} (${nimUser || 'Tidak Ada NIM'}):\n\n${kritikSaranText}`);
+      const body = encodeURIComponent(`Dari Pengguna: ${namaUser}\nNIM/Kelas: ${nimUser || 'Tidak Ada'}\n\n${kritikSaranText}`);
       window.location.href = `mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`;
       showToast('Membuka Email', 'Silakan kirim dari aplikasi email Anda.');
       closeKritikSaranPopup();
@@ -2489,9 +2718,11 @@
         playClickSound();
         closeExitConfirmPopup();
         showToast('Terima Kasih!', 'Menutup aplikasi...');
+        
         window.close();
+
         setTimeout(() => {
-            showToast('Gagal Menutup Tab', 'Browser Anda mencegah penutupan tab secara otomatis. Kembali ke halaman login.', 5000);
+            showToast('Gagal Menutup Tab', 'Browser Anda mungkin mencegah penutupan tab secara otomatis.', 5000);
             kembaliKeLogin();
         }, 500);
     }
@@ -2499,7 +2730,7 @@
     const timeRanges = {
         "Shubuh": { start: 4, end: 6, title: "Waktunya Shubuh!" },
         "Pagi": { start: 7, end: 11, title: "Selamat Pagi!" },
-        "Dhuhur": { start: 12,  end: 14, title: "Waktunya Dhuhur!" },
+        "Dhuhur": { start: 12, end: 14, title: "Waktunya Dhuhur!" },
         "Ashar": { start: 15, end: 17, title: "Waktunya Ashar!" },
         "Maghrib": { start: 18, end: 19, title: "Waktunya Maghrib!" },
         "Isya": { start: 19, end: 21, title: "Waktunya Isya!" },
@@ -2520,12 +2751,15 @@
         const currentDayName = getDayNameID(now.getDay());
         const currentHour = now.getHours();
         const currentTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+
         const allTodaySchedules = [
             ...(appData.jadwalContent[currentDayName] || []),
             ...(appData.kuliahContent[currentDayName] || [])
         ];
+
         allTodaySchedules.forEach(item => {
             if (item.selesai) return;
+
             if (item.type === 'specific' && item.startTime) {
                 const uniqueId = `${currentDayName}-${item.startTime}-${item.activity}`;
                 if (item.startTime === currentTime && !notifiedSchedules.includes(uniqueId)) {
@@ -2534,23 +2768,28 @@
                 }
             }
         });
+        
         for (const period in timeRanges) {
             const range = timeRanges[period];
             if (currentHour >= range.start && currentHour < range.end) {
                 const uniquePeriodId = `${currentDayName}-${period}`;
+                
                 if (!notifiedSchedules.includes(uniquePeriodId)) {
                     const activitiesInPeriod = allTodaySchedules
                         .filter(item => item.type === 'general' && item.time === period && !item.selesai)
                         .map(item => item.activity);
+                    
                     if (activitiesInPeriod.length > 0) {
                         const notificationBody = "Jangan lupa: " + activitiesInPeriod.join(', ');
                         showBrowserNotification(range.title, notificationBody);
                     }
+                    
                     notifiedSchedules.push(uniquePeriodId);
                 }
             }
         }
     }
+
 
     function startScheduleChecker() {
         notifiedSchedules = []; 
@@ -2565,6 +2804,7 @@
             console.log("Browser ini tidak mendukung notifikasi desktop.");
             return;
         }
+
         if (Notification.permission === 'granted') {
             startScheduleChecker();
         } else if (Notification.permission !== 'denied') {
