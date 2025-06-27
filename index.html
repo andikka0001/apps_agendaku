@@ -1060,8 +1060,6 @@
         height: 24px;
         fill: #fff;
     }
-
-    /* NEW STYLES FOR SIDEBAR BUTTONS */
     .sidebar-action-buttons {
         display: flex;
         flex-direction: column;
@@ -1275,7 +1273,7 @@
       <div class="tutorial-section">
         <h3>Export/Import Project</h3>
         <ul>
-          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project" untuk menyimpan semua data aplikasi Anda ke file JSON. Anda akan diminta memilih lokasi penyimpanan.</li>
+          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project". Sebuah popup akan muncul, klik tombol unduh untuk menyimpan file backup melalui browser eksternal Anda.</li>
           <li><strong>Import Project:</strong> Gunakan "Import Project" untuk memulihkan data dari file backup yang telah diekspor sebelumnya.</li>
           <li><strong>Backup Otomatis:</strong> Selalu backup data Anda secara berkala agar tidak kehilangan jadwal dan catatan penting.</li>
         </ul>
@@ -1455,24 +1453,17 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-              <p><strong>Versi 1.9.1 - Perbaikan Export/Import:</strong></p>
+               <p><strong>Versi 1.9.2 - Perbaikan Ekspor WebView:</strong></p>
+              <ul>
+                  <li><strong>Metode Ekspor Baru:</strong> Fitur "Export Project" sekarang menampilkan sebuah popup. Dengan menekan tombol unduh di popup, aplikasi akan mencoba membuka browser eksternal perangkat Anda untuk menangani pengunduhan file.</li>
+                  <li>Metode ini dirancang sebagai solusi untuk keterbatasan unduhan di dalam aplikasi WebView.</li>
+              </ul>
+              <p style="margin-top:10px;"><strong>Versi 1.9.1 - Perbaikan Export/Import:</strong></p>
               <ul>
                   <li><strong>Perbaikan Export:</strong> Fitur "Export Project" telah diperbarui agar kompatibel dengan perangkat modern (termasuk Android 14) dengan menggunakan API browser terbaru dan menyediakan metode lama sebagai cadangan.</li>
-                  <li>Sekarang, Anda akan melihat dialog "Simpan Sebagai" dari sistem saat mengekspor, memberikan kontrol penuh atas lokasi penyimpanan file.</li>
-              </ul>
-              <p style="margin-top:10px;"><strong>Versi 1.9 - Fitur Export/Import Awal:</strong></p>
-              <ul>
-                  <li><strong>Export Project:</strong> Backup semua data aplikasi ke file JSON.</li>
-                  <li><strong>Import Project:</strong> Restore data dari file backup.</li>
-                  <li><strong>New Update Button:</strong> Akses update terbaru dengan mudah.</li>
-              </ul>
-              <p style="margin-top:10px;"><strong>Versi 1.8 - Detail & Informasi:</strong></p>
-              <ul>
-                  <li><strong>Input Lokasi:</strong> Menambahkan kolom 'Tempat (Opsional)' di editor jadwal.</li>
-                  <li><strong>Indikator Selesai:</strong> Popup jadwal hari ini (💡) sekarang menandai jadwal yang sudah selesai.</li>
               </ul>
           </div>
-
+          
           <div class="sidebar-action-buttons">
               <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="btn-sidebar-action btn-new-update">
                   🔥 New Update
@@ -1500,7 +1491,7 @@
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.9.1
+          Versi 1.9.2
       </div>
   </div>
 
@@ -1608,7 +1599,7 @@
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(20px) scale(0.9)';
         setTimeout(() => {
-          toast.remove();
+          if(toast.parentElement) toast.parentElement.removeChild(toast);
           currentToastTimeout = null;
         }, 300);
       }, duration);
@@ -1622,75 +1613,98 @@
       const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       return days[dayIndex];
     }
-
+    
     // --- REVISED EXPORT/IMPORT FUNCTIONS ---
 
-    // REVISI: Fungsi Ekspor Diperbarui untuk kompatibilitas modern
+    // REVISI: Fungsi Ekspor dengan metode pengalihan ke browser eksternal
     async function exportProject() {
         playClickSound();
-
         try {
             const exportData = {
-                version: "1.9.1",
+                version: "1.9.2",
                 timestamp: new Date().toISOString(),
-                userData: {
-                    namaUser: namaUser,
-                    nimUser: nimUser
+                userData: { namaUser, nimUser },
+                appData: { 
+                    jadwalContent: appData.jadwalContent, 
+                    kuliahContent: appData.kuliahContent, 
+                    catatanContent: appData.catatanContent 
                 },
-                appData: {
-                    jadwalContent: appData.jadwalContent,
-                    kuliahContent: appData.kuliahContent,
-                    catatanContent: appData.catatanContent
-                },
-                preferences: {
-                    savedTheme: localStorage.getItem('savedTheme') || DEFAULT_BACKGROUND_IMAGE
+                preferences: { 
+                    savedTheme: localStorage.getItem('savedTheme') || DEFAULT_BACKGROUND_IMAGE 
                 }
             };
 
             const dataStr = JSON.stringify(exportData, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
             const fileName = `Agendaku_Backup_${namaUser || 'User'}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.json`;
 
-            // Pendekatan Modern: File System Access API
-            if (window.showSaveFilePicker) {
-                const handle = await window.showSaveFilePicker({
-                    suggestedName: fileName,
-                    types: [{
-                        description: 'JSON Backup File',
-                        accept: { 'application/json': ['.json'] },
-                    }],
-                });
-                const writable = await handle.createWritable();
-                await writable.write(dataBlob);
-                await writable.close();
-                showToast('Export Berhasil', `Project disimpan sebagai ${fileName}`);
-            } else {
-                // Pendekatan Cadangan (Fallback) untuk browser lama
+            const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+            const reader = new FileReader();
+            reader.readAsDataURL(dataBlob);
+            reader.onloadend = function() {
+                const dataUrl = reader.result;
                 const link = document.createElement('a');
-                link.href = URL.createObjectURL(dataBlob);
+                link.href = dataUrl;
                 link.download = fileName;
-
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                setTimeout(() => URL.revokeObjectURL(link.href), 100);
-                
-                showToast('Export Dimulai', 'File backup Anda sedang diunduh.');
-            }
-
+                showDownloadLinkPopup(link, fileName);
+            };
         } catch (err) {
-            // Menangani pembatalan dialog "Simpan Sebagai" oleh pengguna atau kesalahan lain
-            if (err.name !== 'AbortError') {
-                console.error('Error exporting project:', err);
-                showToast('Export Gagal', 'Terjadi kesalahan saat mengekspor data.');
-            } else {
-                 showToast('Info', 'Proses ekspor dibatalkan oleh pengguna.');
-            }
+            console.error('Error preparing export link:', err);
+            showToast('Export Gagal', 'Terjadi kesalahan saat menyiapkan data.');
         } finally {
             closeAgendakuBranding();
         }
     }
+
+    // Fungsi BANTUAN BARU untuk menampilkan popup dengan link download
+    function showDownloadLinkPopup(linkElement, fileName) {
+        const popupOverlay = document.createElement('div');
+        popupOverlay.className = 'popup-overlay active';
+        popupOverlay.style.zIndex = '4000'; 
+
+        const popupContent = document.createElement('div');
+        popupContent.className = 'popup-content';
+        popupContent.style.textAlign = 'center';
+
+        popupContent.innerHTML = `
+            <h3 class="popup-header">Siap untuk Ekspor</h3>
+            <div class="popup-body centered">
+                <p>Klik tombol di bawah untuk mengunduh file backup Anda. Fitur ini akan mencoba membuka browser eksternal.</p>
+                <p style="margin-top:10px;"><strong>Nama File:</strong><br><span style="word-break: break-all;">${fileName}</span></p>
+            </div>
+            <div class="popup-footer btn-confirm-container"></div>
+        `;
+        
+        const footer = popupContent.querySelector('.popup-footer');
+
+        const downloadButton = linkElement;
+        downloadButton.textContent = 'Unduh File Backup';
+        downloadButton.className = 'btn btn-confirm btn-yes';
+        downloadButton.target = '_blank';
+        downloadButton.rel = 'noopener noreferrer';
+
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Batal';
+        closeButton.className = 'btn btn-confirm btn-no';
+        
+        footer.appendChild(downloadButton);
+        footer.appendChild(closeButton);
+        popupOverlay.appendChild(popupContent);
+        document.body.appendChild(popupOverlay);
+
+        const closePopup = () => {
+            if (document.body.contains(popupOverlay)) {
+                document.body.removeChild(popupOverlay);
+            }
+        };
+
+        closeButton.onclick = closePopup;
+        downloadButton.onclick = () => {
+            showToast('Info', 'Mengalihkan ke browser untuk mengunduh...');
+            setTimeout(closePopup, 2000);
+        };
+    }
+
 
     function triggerImportFile() {
         playClickSound();
@@ -1730,35 +1744,29 @@
 
     function importProject(importData) {
         try {
-            // Restore user data
             namaUser = importData.userData.namaUser || '';
             nimUser = importData.userData.nimUser || '';
             
-            // Restore app data
             appData.jadwalContent = importData.appData.jadwalContent || JSON.parse(JSON.stringify(defaultJadwalData));
             appData.kuliahContent = importData.appData.kuliahContent || JSON.parse(JSON.stringify(defaultKuliahData));
             appData.catatanContent = importData.appData.catatanContent || [...defaultCatatanData];
 
-            // Save to localStorage
             localStorage.setItem('lastLoggedInUser', namaUser);
             localStorage.setItem(`${namaUser}_nim`, nimUser);
             saveData('jadwalContent');
             saveData('kuliahContent');
             saveData('catatanContent');
 
-            // Restore theme
             if (importData.preferences && importData.preferences.savedTheme) {
                 localStorage.setItem('savedTheme', importData.preferences.savedTheme);
                 document.body.style.setProperty('--bg-image-url', `url('${importData.preferences.savedTheme}')`);
             }
 
-            // Update UI
             document.getElementById('userNameDisplayMenu').textContent = namaUser;
             document.getElementById('userNimDisplayMenu').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
             document.getElementById('namaInfo').textContent = `Nama: ${namaUser}`;
             document.getElementById('nimInfo').textContent = nimUser ? `Nim/Kelas: ${nimUser}` : 'Nim/Kelas: -';
 
-            // Re-render all data
             renderJadwal(appData.jadwalContent, 'jadwalContent');
             renderJadwal(appData.kuliahContent, 'kuliahContent');
             renderCatatan(appData.catatanContent);
@@ -2362,8 +2370,11 @@
     }
 
     function showMainTutorial() {
-      document.getElementById('tutorialPopup').style.display = 'flex';
-      playToastSound();
+      if (!localStorage.getItem('tutorialShown')) {
+          document.getElementById('tutorialPopup').style.display = 'flex';
+          playToastSound();
+          localStorage.setItem('tutorialShown', 'true');
+      }
     }
 
     function closeMainTutorial() {
