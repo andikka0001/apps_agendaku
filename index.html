@@ -1275,7 +1275,7 @@
       <div class="tutorial-section">
         <h3>Export/Import Project</h3>
         <ul>
-          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project" untuk menyimpan semua data aplikasi Anda ke file JSON.</li>
+          <li><strong>Export Project:</strong> Buka sidebar (☰) dan klik "Export Project" untuk menyimpan semua data aplikasi Anda ke file JSON. Anda akan diminta memilih lokasi penyimpanan.</li>
           <li><strong>Import Project:</strong> Gunakan "Import Project" untuk memulihkan data dari file backup yang telah diekspor sebelumnya.</li>
           <li><strong>Backup Otomatis:</strong> Selalu backup data Anda secara berkala agar tidak kehilangan jadwal dan catatan penting.</li>
         </ul>
@@ -1455,7 +1455,12 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-              <p><strong>Versi 1.9 - Fitur Export/Import:</strong></p>
+              <p><strong>Versi 1.9.1 - Perbaikan Export/Import:</strong></p>
+              <ul>
+                  <li><strong>Perbaikan Export:</strong> Fitur "Export Project" telah diperbarui agar kompatibel dengan perangkat modern (termasuk Android 14) dengan menggunakan API browser terbaru dan menyediakan metode lama sebagai cadangan.</li>
+                  <li>Sekarang, Anda akan melihat dialog "Simpan Sebagai" dari sistem saat mengekspor, memberikan kontrol penuh atas lokasi penyimpanan file.</li>
+              </ul>
+              <p style="margin-top:10px;"><strong>Versi 1.9 - Fitur Export/Import Awal:</strong></p>
               <ul>
                   <li><strong>Export Project:</strong> Backup semua data aplikasi ke file JSON.</li>
                   <li><strong>Import Project:</strong> Restore data dari file backup.</li>
@@ -1466,15 +1471,8 @@
                   <li><strong>Input Lokasi:</strong> Menambahkan kolom 'Tempat (Opsional)' di editor jadwal.</li>
                   <li><strong>Indikator Selesai:</strong> Popup jadwal hari ini (💡) sekarang menandai jadwal yang sudah selesai.</li>
               </ul>
-              <p style="margin-top:10px;"><strong>Versi 1.7 - Perbaikan Stabilitas:</strong></p>
-              <ul>
-                  <li><strong>Tombol Keluar:</strong> Fungsi tombol 'Keluar' disempurnakan.</li>
-                  <li><strong>Perbaikan Bug Editor:</strong> Bug pada tombol 'Toggle Waktu' (⏱️/🗓️) telah diperbaiki.</li>
-                  <li><strong>Tampilan Jadwal:</strong> Waktu yang belum diatur sekarang ditampilkan sebagai '-'.</li>
-              </ul>
           </div>
 
-          <!-- NEW ACTION BUTTONS -->
           <div class="sidebar-action-buttons">
               <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="btn-sidebar-action btn-new-update">
                   🔥 New Update
@@ -1502,11 +1500,10 @@
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.9
+          Versi 1.9.1
       </div>
   </div>
 
-  <!-- Hidden file input for importing -->
   <input type="file" id="importFileInput" class="hidden-file-input" accept=".json" onchange="handleImportFile(event)">
 
   <div id="toast-container"></div>
@@ -1541,7 +1538,6 @@
         catatanContent: []
     };
 
-    // REVISI 1: Menambahkan properti location pada data default
     const defaultJadwalData = {
         "Senin": [{ type: "general", time: "Pagi", activity: "Silakan edit kegiatan Anda.", location: "", selesai: false }],
         "Selasa": [{ type: "general", time: "Pagi", activity: "Silakan edit kegiatan Anda.", location: "", selesai: false }],
@@ -1627,42 +1623,73 @@
       return days[dayIndex];
     }
 
-    // --- EXPORT/IMPORT FUNCTIONS ---
-    function exportProject() {
-        playClickSound();
-        
-        const exportData = {
-            version: "1.9",
-            timestamp: new Date().toISOString(),
-            userData: {
-                namaUser: namaUser,
-                nimUser: nimUser
-            },
-            appData: {
-                jadwalContent: appData.jadwalContent,
-                kuliahContent: appData.kuliahContent,
-                catatanContent: appData.catatanContent
-            },
-            preferences: {
-                savedTheme: localStorage.getItem('savedTheme') || DEFAULT_BACKGROUND_IMAGE
-            }
-        };
+    // --- REVISED EXPORT/IMPORT FUNCTIONS ---
 
-        const dataStr = JSON.stringify(exportData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(dataBlob);
-        link.download = `Agendaku_Backup_${namaUser}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.json`;
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        URL.revokeObjectURL(link.href);
-        
-        showToast('Export Berhasil', `Project berhasil diekspor ke file ${link.download}`);
-        closeAgendakuBranding();
+    // REVISI: Fungsi Ekspor Diperbarui untuk kompatibilitas modern
+    async function exportProject() {
+        playClickSound();
+
+        try {
+            const exportData = {
+                version: "1.9.1",
+                timestamp: new Date().toISOString(),
+                userData: {
+                    namaUser: namaUser,
+                    nimUser: nimUser
+                },
+                appData: {
+                    jadwalContent: appData.jadwalContent,
+                    kuliahContent: appData.kuliahContent,
+                    catatanContent: appData.catatanContent
+                },
+                preferences: {
+                    savedTheme: localStorage.getItem('savedTheme') || DEFAULT_BACKGROUND_IMAGE
+                }
+            };
+
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const fileName = `Agendaku_Backup_${namaUser || 'User'}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.json`;
+
+            // Pendekatan Modern: File System Access API
+            if (window.showSaveFilePicker) {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: fileName,
+                    types: [{
+                        description: 'JSON Backup File',
+                        accept: { 'application/json': ['.json'] },
+                    }],
+                });
+                const writable = await handle.createWritable();
+                await writable.write(dataBlob);
+                await writable.close();
+                showToast('Export Berhasil', `Project disimpan sebagai ${fileName}`);
+            } else {
+                // Pendekatan Cadangan (Fallback) untuk browser lama
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = fileName;
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                setTimeout(() => URL.revokeObjectURL(link.href), 100);
+                
+                showToast('Export Dimulai', 'File backup Anda sedang diunduh.');
+            }
+
+        } catch (err) {
+            // Menangani pembatalan dialog "Simpan Sebagai" oleh pengguna atau kesalahan lain
+            if (err.name !== 'AbortError') {
+                console.error('Error exporting project:', err);
+                showToast('Export Gagal', 'Terjadi kesalahan saat mengekspor data.');
+            } else {
+                 showToast('Info', 'Proses ekspor dibatalkan oleh pengguna.');
+            }
+        } finally {
+            closeAgendakuBranding();
+        }
     }
 
     function triggerImportFile() {
@@ -1684,13 +1711,11 @@
             try {
                 const importData = JSON.parse(e.target.result);
                 
-                // Validasi struktur data
                 if (!importData.appData || !importData.userData) {
-                    throw new Error('Format file tidak valid');
+                    throw new Error('Format file tidak valid. Pastikan ini adalah file backup Agendaku yang benar.');
                 }
 
-                // Konfirmasi import
-                if (confirm(`Import data dari backup ${importData.userData.namaUser}?\n\nSemua data saat ini akan diganti dengan data dari backup.`)) {
+                if (confirm(`Impor data dari backup "${importData.userData.namaUser}"?\n\nPERINGATAN: Semua data Anda saat ini akan diganti.`)) {
                     importProject(importData);
                 }
             } catch (error) {
@@ -1700,7 +1725,7 @@
         };
         
         reader.readAsText(file);
-        event.target.value = ''; // Reset input
+        event.target.value = ''; // Reset input agar bisa import file yang sama lagi
     }
 
     function importProject(importData) {
@@ -1738,7 +1763,7 @@
             renderJadwal(appData.kuliahContent, 'kuliahContent');
             renderCatatan(appData.catatanContent);
 
-            showToast('Import Berhasil', `Data ${namaUser} berhasil dipulihkan!`);
+            showToast('Import Berhasil', `Data untuk ${namaUser} berhasil dipulihkan!`);
             closeAgendakuBranding();
             
         } catch (error) {
@@ -1810,7 +1835,6 @@
         localStorage.setItem(key, JSON.stringify(appData[key]));
     }
     
-    // REVISI 1: Tampilkan location jika ada
     function renderJadwal(data, containerId) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -2074,7 +2098,6 @@
         editorContainer.appendChild(fragment);
     }
     
-    // REVISI 1: Menambahkan input location
     function createEditorItem(item) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'edit-schedule-item';
@@ -2108,7 +2131,6 @@
             </div>
         `;
         
-        // Attach event listeners directly to avoid bugs
         itemDiv.querySelector('.toggle-time-type-btn').addEventListener('click', function() { toggleTimeInput(this); });
         itemDiv.querySelector('.add-item-btn').addEventListener('click', function() { addItem(this); });
         itemDiv.querySelector('.delete-item-btn').addEventListener('click', function() { confirmDeleteItem(this); });
@@ -2178,7 +2200,6 @@
         showToast('Berhasil', 'Item baru ditambahkan.');
     }
 
-    // REVISI 1: Simpan data location
     function buildScheduleDataFromEditor() {
         const editorContainer = document.getElementById('editScheduleContent');
         const newData = {};
@@ -2290,7 +2311,6 @@
         currentDeleteItemElement = null;
     }
 
-    // REVISI 2: Tambahkan indikator selesai di popup
     function showScheduleNow() {
       playClickSound();
       const dayName = getDayNameID(new Date().getDay());
