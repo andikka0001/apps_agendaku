@@ -11,11 +11,10 @@
   <title>Agendaku</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   
   <style>
-    /* --- Seluruh CSS dari kode Anda sebelumnya --- */
-    /* (Tidak ada perubahan pada CSS, jadi kita bisa langsung salin) */
+    /* Seluruh CSS Anda, tidak ada perubahan */
     * {
       margin: 0;
       padding: 0;
@@ -190,12 +189,12 @@
         align-items: center;
     }
     .time-input-container-specific {
-        display: none;
+        display: none; /* Default hidden */
         align-items: center;
         gap: 5px;
     }
     .time-input-container-general {
-        display: flex;
+        display: flex; /* Default shown */
         flex-grow: 1;
     }
     .time-input-container-specific input[type="time"] {
@@ -216,8 +215,9 @@
     }
     .description-input-container .activity-input,
     .description-input-container .location-input {
-        flex: 1 1 180px;
+        flex: 1 1 180px; /* Allow wrapping on small screens */
     }
+    
     .edit-schedule-item input[type="text"],
     .edit-schedule-item select.time-selector {
       width: 100%;
@@ -253,6 +253,7 @@
     .item-controls .toggle-time-type-btn:hover { background-color: rgba(0, 123, 255, 0.1); }
     .item-controls .add-item-btn:hover { background-color: rgba(40, 167, 69, 0.1); }
     .item-controls .delete-item-btn:hover { background-color: rgba(220, 53, 69, 0.1); }
+    
     .edit-schedule-group .add-new-entry {
         margin-top: 15px;
         display: flex;
@@ -419,7 +420,7 @@
       flex-direction: column;
     }
     .popup-overlay.active .popup-content { 
-      transform: translateY(0);
+      transform: translateY(0); 
     }
     .popup-content .popup-header {
       color: #0055aa;
@@ -616,7 +617,7 @@
         color: white;
     }
     .circular-btn:hover { 
-      transform: scale(1.1);
+      transform: scale(1.1); 
     }
     .home-btn { 
       bottom: 20px;
@@ -626,7 +627,7 @@
       background-position: center;
     }
     .quote-btn { 
-      bottom: 85px;
+      bottom: 85px; 
     }
     .quote-btn::before { 
       content: "💬"; 
@@ -634,7 +635,7 @@
       color: white;
     }
     .tutorial-help-btn { 
-      bottom: 150px;
+      bottom: 150px; 
     }
     .tutorial-help-btn::before { 
       content: "💡"; 
@@ -651,12 +652,12 @@
       line-height: 1;
     }
     .button-container .btn { 
-      padding: 8px 15px;
+      padding: 8px 15px; 
       margin: 0;
       font-size: 14px; 
       border-radius: 20px; 
       flex-grow: 1; 
-      min-width: 70px;
+      min-width: 70px; 
     }
     .button-container .btn:active { 
       transform: scale(0.95);
@@ -677,7 +678,7 @@
       background: white; 
       border-radius: 15px; 
       width: 90%;
-      max-width: 400px;
+      max-width: 400px; 
       padding: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
       position: relative; 
@@ -731,7 +732,7 @@
     .save-confirm-popup .question-mark,
     .exit-confirm-popup .question-mark,
     .delete-confirm-popup .question-mark { 
-        font-size: 60px;
+        font-size: 60px; 
         display: block; 
         margin-bottom: 15px;
     }
@@ -811,7 +812,7 @@
     .exit-confirm-popup .btn-confirm-container,
     .delete-confirm-popup .btn-confirm-container,
     #helpPopupContent .popup-footer .btn {
-        display: flex;
+        display: flex; 
         justify-content: space-around;
         gap: 10px;
         flex-wrap: wrap;
@@ -1249,7 +1250,6 @@
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         margin-top: 15px;
     }
-    /* [IMPLEMENTASI 4] Penyesuaian Tombol Footer untuk Opsi File */
     .popup-footer {
         display: flex;
         gap: 10px;
@@ -1454,7 +1454,7 @@
 </div>
 
 
-  <div class="slide" id="editJadwal">
+    <div class="slide" id="editJadwal">
     <div class="button-container">
       <button class="btn btn-edit-save" onclick="saveEditedSchedule()">Simpan</button>
       <button class="btn" onclick="tutupSlide('editJadwal')">Kembali</button>
@@ -1463,7 +1463,6 @@
     <div class="edit-schedule-container" id="editScheduleContent">
       </div>
   </div>
-
 
   <div class="circular-btn home-btn" onclick="kembaliKeLogin()" id="homeBtn" style="display:none" aria-label="Kembali ke Login"></div>
   <div class="circular-btn quote-btn" id="quoteBtn" style="display:none" onclick="showQuotePopup()" aria-label="Tampilkan Kutipan Motivasi"></div>
@@ -1639,7 +1638,7 @@
                 <textarea id="importDataTextarea" placeholder="Tempel (Paste) data backup Anda di sini..."></textarea>
             </div>
             <div class="popup-footer">
-                <button class="btn" onclick="processImportData()">📥 Import dari Teks</button>
+                <button class="btn" onclick="processImportData(null)">📥 Import dari Teks</button>
                 <button class="btn btn-secondary" onclick="triggerImportFile()">📂 Pilih File</button>
             </div>
         </div>
@@ -1667,12 +1666,11 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-              <p><strong>Versi 1.6 - PDF & File System:</strong></p>
+              <p><strong>Versi 2.0 - Final Build:</strong></p>
               <ul>
-                  <li><strong>Ekspor ke PDF:</strong> Fitur baru untuk mengekspor semua jadwal dan catatan ke dalam satu file PDF.</li>
-                  <li><strong>Simpan & Muat File:</strong> Opsi untuk menyimpan data backup sebagai file .txt dan memuatnya kembali dari file.</li>
-                  <li><strong>Integrasi Plugin:</strong> Menambahkan dukungan plugin ExitApp dan File untuk pengalaman aplikasi yang lebih baik.</li>
-                  <li><strong>Peningkatan UI:</strong> Tampilan dan alur proses ekspor/impor data telah disempurnakan.</li>
+                  <li><strong>PDF Profesional:</strong> Fitur ekspor PDF dirombak total menggunakan AutoTable untuk hasil yang rapi dan terstruktur.</li>
+                  <li><strong>Kompatibilitas APK:</strong> Menghapus semua plugin premium untuk memastikan fungsionalitas penuh pada VoltBuilder Free Plan.</li>
+                  <li><strong>Stabilitas Fitur:</strong> Fitur ekspor/impor file dan keluar aplikasi disempurnakan agar berjalan lancar di web dan APK.</li>
               </ul>
           </div>
 
@@ -1702,18 +1700,18 @@
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A2.02 2.02 0 0 0 4 6.02V16.2C4 17.65 5.35 19 6.78 19h8.43c1.45 0 2.78-1.35 2.78-2.78V7.8c0-1.45-1.35-2.78-2.78-2.78H7.6zm9.6.48c-.9 0-1.62.73-1.62 1.62s.73 1.62 1.62 1.62c.9 0 1.62-.73 1.62-1.62s-.73-1.62-1.62-1.62zm-4.8 3.7c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 2.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
           </a>
           <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="social-icon" aria-label="Website">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43-2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43 2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.6
+          Versi 2.0
       </div>
   </div>
 
-    <input type="file" id="importFileInput" class="hidden-file-input" accept=".json,.txt" onchange="handleImportFile(event)">
+  <input type="file" id="importFileInput" class="hidden-file-input" accept=".json,.txt" onchange="handleImportFile(event)">
   <input type="file" id="customThemeInput" class="hidden-file-input" accept="image/*" onchange="handleCustomTheme(event)">
 
-  <div id="toast-container"></div>
+    <div id="toast-container"></div>
   <audio id="toast-sound" src="https://files.catbox.moe/vxltiz.mp3" preload="auto"></audio>
   <audio id="click-sound" src="https://files.catbox.moe/x35kz3.wav" preload="auto"></audio>
 
@@ -1838,7 +1836,7 @@
     // --- REVISED EXPORT/IMPORT & PDF FUNCTIONS ---
     function getExportData() {
         return {
-            version: "1.6",
+            version: "2.0",
             timestamp: new Date().toISOString(),
             userData: { namaUser: namaUser, nimUser: nimUser },
             appData: {
@@ -1879,32 +1877,13 @@
         const dataStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([dataStr], { type: 'text/plain;charset=utf-8' });
         const fileName = `Agendaku_Backup_${namaUser}_${new Date().toISOString().split('T')[0]}.txt`;
-
-        if (window.cordova && window.cordova.file) {
-            const dir = window.cordova.file.externalRootDirectory + 'Download/';
-            window.resolveLocalFileSystemURL(dir, function(dirEntry) {
-                dirEntry.getFile(fileName, { create: true, exclusive: false }, function(fileEntry) {
-                    fileEntry.createWriter(function(fileWriter) {
-                        fileWriter.onwriteend = function() {
-                            showToast('Berhasil!', `File backup disimpan di folder Downloads.`);
-                        };
-                        fileWriter.onerror = function(e) {
-                            showToast('Gagal Menyimpan', 'Terjadi kesalahan saat menyimpan file.');
-                            console.error('Write failed: ' + e.toString());
-                        };
-                        fileWriter.write(blob);
-                    });
-                }, (err) => { showToast('Error', 'Gagal membuat file. Kode: ' + err.code); });
-            }, (err) => { showToast('Error', 'Gagal mengakses folder Downloads. Kode: ' + err.code); });
-        } else {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast('Download Dimulai', 'File backup sedang diunduh.');
-        }
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('Download Dimulai', 'File backup sedang diunduh.');
     }
 
     function closeExportPopup() { document.getElementById('exportPopup').classList.remove('active'); }
@@ -1964,113 +1943,105 @@
         }
     }
     
-    // GANTI SELURUH FUNGSI LAMA DENGAN VERSI SUPERIOR INI
-async function exportToPdf() {
-    closeAgendakuBranding();
-    showToast('Membuat PDF...', 'Harap tunggu, menyusun laporan profesional...');
-    playClickSound();
+    // --- [REVISI FINAL] FUNGSI EKSPOR PDF DENGAN AUTOTABLE ---
+    async function exportToPdf() {
+        closeAgendakuBranding();
+        showToast('Membuat PDF...', 'Harap tunggu, menyusun laporan profesional...');
+        playClickSound();
 
-    try {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        const margin = 15;
-        let finalY = 20; // Posisi vertikal awal
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 15;
+            let finalY = 20;
 
-        // --- Judul Utama ---
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(20);
-        pdf.text(`Laporan Agendaku`, pdf.internal.pageSize.getWidth() / 2, finalY, { align: 'center' });
-        finalY += 8;
-        pdf.setFontSize(12);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(`Pengguna: ${namaUser || 'Tamu'}`, pdf.internal.pageSize.getWidth() / 2, finalY, { align: 'center' });
-        finalY += 15;
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(20);
+            pdf.text(`Laporan Agendaku`, pdf.internal.pageSize.getWidth() / 2, finalY, { align: 'center' });
+            finalY += 8;
+            pdf.setFontSize(12);
+            pdf.setFont("helvetica", "normal");
+            pdf.text(`Pengguna: ${namaUser || 'Tamu'}`, pdf.internal.pageSize.getWidth() / 2, finalY, { align: 'center' });
+            finalY += 15;
 
-        // Fungsi untuk mengubah data jadwal menjadi format tabel
-        const createTableData = (data) => {
-            const body = [];
-            const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
-            daysOrder.forEach(day => {
-                if (data[day] && data[day].length > 0) {
-                    data[day].forEach(item => {
-                        let timeString = item.type === 'specific' ? `${item.startTime || ''}-${item.endTime || ''}` : `[${item.time || 'Umum'}]`;
-                        // Tambahkan simbol ceklis jika sudah selesai
-                        let activityString = (item.selesai ? '✓ ' : '') + (item.activity || '');
-                        body.push([day, timeString, activityString, item.location || '-']);
-                    });
+            const createTableData = (data) => {
+                const body = [];
+                const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+                daysOrder.forEach(day => {
+                    if (data[day] && data[day].length > 0) {
+                        data[day].forEach(item => {
+                            let timeString = item.type === 'specific' ? `${item.startTime || ''}-${item.endTime || ''}` : `[${item.time || 'Umum'}]`;
+                            let activityString = (item.selesai ? '✓ ' : '') + (item.activity || '');
+                            body.push([day, timeString, activityString, item.location || '-']);
+                        });
+                    }
+                });
+                return body;
+            };
+
+            pdf.autoTable({
+                startY: finalY,
+                head: [['Hari', 'Waktu', 'Kegiatan', 'Lokasi']],
+                body: createTableData(appData.jadwalContent),
+                theme: 'grid',
+                headStyles: { fillColor: [0, 85, 170] },
+                didDrawPage: (data) => {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(16);
+                    pdf.text('Jadwal Kegiatan', margin, data.settings.startY - 5);
                 }
             });
-            return body;
-        };
+            finalY = pdf.autoTable.previous.finalY + 15;
 
-        // --- Render Tabel Jadwal Kegiatan ---
-        pdf.autoTable({
-            startY: finalY,
-            head: [['Hari', 'Waktu', 'Kegiatan', 'Lokasi']],
-            body: createTableData(appData.jadwalContent),
-            theme: 'grid', // 'striped', 'grid', atau 'plain'
-            headStyles: { fillColor: [0, 85, 170] }, // Warna biru untuk header
-            didDrawPage: (data) => {
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(16);
-                pdf.text('Jadwal Kegiatan', margin, data.settings.startY - 5);
+            if (finalY >= pageHeight - 40) {
+                pdf.addPage();
+                finalY = margin;
             }
-        });
-        finalY = pdf.autoTable.previous.finalY + 15; // Dapatkan posisi Y terakhir dari tabel
+            pdf.autoTable({
+                startY: finalY,
+                head: [['Hari', 'Waktu', 'Mata Kuliah/Pelajaran', 'Ruangan']],
+                body: createTableData(appData.kuliahContent),
+                theme: 'grid',
+                headStyles: { fillColor: [0, 85, 170] },
+                didDrawPage: (data) => {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(16);
+                    pdf.text('Jadwal Kuliah/Sekolah', margin, data.settings.startY - 5);
+                }
+            });
+            finalY = pdf.autoTable.previous.finalY + 15;
 
-        // --- Render Tabel Jadwal Kuliah ---
-        if (finalY >= pageHeight - 40) { // Cek jika butuh halaman baru sebelum tabel kedua
-            pdf.addPage();
-            finalY = margin;
-        }
-        pdf.autoTable({
-            startY: finalY,
-            head: [['Hari', 'Waktu', 'Mata Kuliah/Pelajaran', 'Ruangan']],
-            body: createTableData(appData.kuliahContent),
-            theme: 'grid',
-            headStyles: { fillColor: [0, 85, 170] },
-            didDrawPage: (data) => {
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(16);
-                pdf.text('Jadwal Kuliah/Sekolah', margin, data.settings.startY - 5);
+            if (finalY >= pageHeight - 40) {
+                pdf.addPage();
+                finalY = margin;
             }
-        });
-        finalY = pdf.autoTable.previous.finalY + 15;
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.text('Catatan Pribadi', margin, finalY);
+            finalY += 8;
+            
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(10);
+            const noteLines = pdf.splitTextToSize(appData.catatanContent.join('\n'), pdf.internal.pageSize.getWidth() - (margin * 2));
+            pdf.text(noteLines, margin, finalY);
 
-        // --- Render Catatan ---
-        if (finalY >= pageHeight - 40) {
-            pdf.addPage();
-            finalY = margin;
+            const pageCount = pdf.internal.getNumberOfPages();
+            for(let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(8);
+                pdf.setTextColor(150);
+                pdf.text(`Halaman ${i} dari ${pageCount}`, pdf.internal.pageSize.getWidth() / 2, pageHeight - 10, { align: 'center' });
+            }
+
+            pdf.save(`Agendaku_Laporan_${namaUser}_v2.pdf`);
+            showToast('Berhasil!', 'Laporan PDF profesional berhasil dibuat.');
+
+        } catch (error) {
+            console.error("Gagal membuat PDF dengan autoTable:", error);
+            showToast('Error', 'Terjadi kesalahan saat membuat PDF.');
         }
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.text('Catatan Pribadi', margin, finalY);
-        finalY += 8;
-        
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(10);
-        const noteLines = pdf.splitTextToSize(appData.catatanContent.join('\n'), pdf.internal.pageSize.getWidth() - (margin * 2));
-        pdf.text(noteLines, margin, finalY);
-
-        // --- Tambahkan Footer Halaman ---
-        const pageCount = pdf.internal.getNumberOfPages();
-        for(let i = 1; i <= pageCount; i++) {
-            pdf.setPage(i);
-            pdf.setFontSize(8);
-            pdf.setTextColor(150);
-            pdf.text(`Halaman ${i} dari ${pageCount}`, pdf.internal.pageSize.getWidth() / 2, pageHeight - 10, { align: 'center' });
-        }
-
-        // --- Simpan PDF ---
-        pdf.save(`Agendaku_Laporan_${namaUser}_v2.pdf`);
-        showToast('Berhasil!', 'Laporan PDF profesional berhasil dibuat.');
-
-    } catch (error) {
-        console.error("Gagal membuat PDF dengan autoTable:", error);
-        showToast('Error', 'Terjadi kesalahan saat membuat PDF.');
     }
-}
 
 
     // --- INITIALIZATION ---
@@ -2096,7 +2067,6 @@ async function exportToPdf() {
           const content = document.getElementById('updateInfoContent');
           content.style.display = (content.style.display === "block") ? "none" : "block";
       });
-      // [REVISI FINAL] Event listener untuk tombol keluar
       document.getElementById('confirmExitYes').onclick = () => { exitApplication(); };
       document.getElementById('confirmExitNo').onclick = () => { playClickSound(); closeExitConfirmPopup(); };
       window.addEventListener('popstate', (e) => { isNavigatingBack = true; handlePopState(e.state); });
@@ -2115,7 +2085,7 @@ async function exportToPdf() {
       }
     });
 
-    // --- USER & DATA MANAGEMENT (MULTI-USER SUPPORT) ---
+    // --- USER & DATA MANAGEMENT ---
     function loadUserData(username) {
         const savedJadwal = localStorage.getItem(`${username}_jadwalContent`);
         appData.jadwalContent = savedJadwal ? JSON.parse(savedJadwal) : JSON.parse(JSON.stringify(defaultJadwalData));
@@ -2361,8 +2331,10 @@ async function exportToPdf() {
     }
     function goToMenu() { navigateTo('menu'); }
 
-    // --- UNIFIED SCHEDULE EDITOR LOGIC ---
-    function loadScheduleToEditor() {
+    // --- SCHEDULE EDITOR & OTHER FUNCTIONS ---
+    // (Seluruh fungsi lain seperti loadScheduleToEditor, createEditorItem, dll. tetap sama seperti sebelumnya)
+    // ... [Semua fungsi dari loadScheduleToEditor hingga updateDigitalClock disalin di sini] ...
+        function loadScheduleToEditor() {
         const editorContainer = document.getElementById('editScheduleContent');
         editorContainer.innerHTML = ''; 
         const fragment = document.createDocumentFragment();
@@ -2750,7 +2722,7 @@ async function exportToPdf() {
     }
     function closeExitConfirmPopup() { document.getElementById('exitConfirmPopup').classList.remove('active'); }
     
-    // --- [REVISI FINAL] FUNGSI KELUAR APLIKASI ---
+    // --- [REVISI FINAL] FUNGSI KELUAR APLIKASI TANPA PLUGIN ---
     function exitApplication() {
         playClickSound();
         closeExitConfirmPopup();
@@ -2828,26 +2800,8 @@ async function exportToPdf() {
             });
         }
     }
-    
-    // Fungsi untuk meminta izin file (tetap ada untuk masa depan)
-    function requestFilePermissions() {
-        if (window.cordova && window.cordova.plugins && window.cordova.plugins.permissions) {
-            const permissions = window.cordova.plugins.permissions;
-            const list = [ permissions.WRITE_EXTERNAL_STORAGE, permissions.READ_EXTERNAL_STORAGE ];
-            permissions.checkPermission(list, (status) => {
-                if (!status.hasPermission) {
-                    permissions.requestPermissions(list, 
-                        (status) => {
-                            if (status.hasPermission) { showToast('Info', 'Izin penyimpanan diberikan.'); } 
-                            else { showToast('Peringatan', 'Izin penyimpanan ditolak. Fitur simpan file mungkin tidak bekerja.'); }
-                        },
-                        () => { console.warn('Gagal meminta izin penyimpanan.'); }
-                    );
-                }
-            }, null);
-        }
-    }
-
   </script>
 </body>
 </html>
+
+
