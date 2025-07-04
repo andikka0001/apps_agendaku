@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <title>Agendaku</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
   <style>
     /* CSS tidak ada perubahan dari revisi sebelumnya */
     * {
@@ -1183,6 +1192,13 @@
     .btn-import-project:hover {
         background: linear-gradient(45deg, #1976d2, #1565c0);
     }
+    /* [IMPLEMENTASI 3] Tombol Ekspor PDF */
+    .btn-export-pdf {
+        background: linear-gradient(45deg, #c0392b, #e74c3c);
+    }
+    .btn-export-pdf:hover {
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+    }
     .hidden-file-input {
         display: none;
     }
@@ -1239,14 +1255,17 @@
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         margin-top: 15px;
     }
-    .import-popup .popup-footer {
+    /* [IMPLEMENTASI 4] Penyesuaian Tombol Footer untuk Opsi File */
+    .popup-footer {
         display: flex;
         gap: 10px;
         justify-content: center;
+        flex-wrap: wrap;
     }
-    .import-popup .popup-footer .btn {
-      flex: 1;
+    .popup-footer .btn {
+      flex-grow: 1;
     }
+
 
   </style>
 </head>
@@ -1366,7 +1385,7 @@
         <p>
             Sekali lagi, terima kasih atas dukungan Anda. Semoga aplikasi ini bermanfaat!
         </p>
-        <p>Hormat saya,<br><strong>amiieen</strong></p>
+        <p>Hormat saya,<br><strong>#Amin Fa</strong></p>
     </div>
     <div class="info-footer-buttons">
       <button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Panduan Aplikasi</button>
@@ -1422,8 +1441,8 @@
         <div class="tutorial-section">
             <h3>Backup Data (Export/Import)</h3>
             <ul>
-                <li><strong>Export Project:</strong> Buka menu samping (☰) dan pilih "Export Project". Salin kode yang muncul dan simpan di tempat aman (misal: file .txt). Ini adalah cadangan seluruh data Anda.</li>
-                <li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project". **Tekan dan tahan** di dalam kotak teks lalu pilih 'Tempel' (Paste) untuk memasukkan kode backup Anda, kemudian klik "Import".</li>
+                <li><strong>Export Project:</strong> Buka menu samping (☰) dan pilih "Export Project". Anda bisa menyalin kode ke clipboard atau mengunduhnya sebagai file.</li>
+                <li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project". Anda bisa menempelkan kode dari clipboard atau memilih file backup dari perangkat Anda.</li>
                 <li><strong>Penting:</strong> Lakukan backup secara berkala untuk menghindari kehilangan data.</li>
             </ul>
         </div>
@@ -1498,12 +1517,12 @@
             <textarea id="kritikSaranTextarea" placeholder="Tulis kritik atau saran Anda di sini..."></textarea>
             <div class="feedback-fallback">
                 <div class="feedback-container">
-                    <span>Jika 'Kirim' gagal, copy & kirim manual:</span>
+                    <span>Jika 'Kirim' gagal, klik tombol copy & kirim manual dengan platform email anda</span>
                     <button class="btn btn-copy-email" onclick="copyEmailToClipboard()">Copy Email</button>
                 </div>
             </div>
         </div>
-        <div class="popup-footer btn-confirm-container">
+        <div class="popup-footer">
             <button class="btn btn-confirm btn-kirim" onclick="sendKritikSaran()">Kirim</button>
             <button class="btn btn-confirm btn-batal" onclick="closeKritikSaranPopup()">Batal</button>
         </div>
@@ -1517,7 +1536,7 @@
       <div class="popup-body centered">
          <p>Kamu yakin ingin mereset jadwal kembali ke default?</p>
       </div>
-      <div class="popup-footer btn-confirm-container">
+      <div class="popup-footer">
         <button class="btn btn-confirm btn-yes" id="confirmResetYes">Ya</button>
         <button class="btn btn-confirm btn-no" id="confirmResetNo">Tidak</button>
       </div>
@@ -1530,7 +1549,7 @@
       <div class="popup-body centered">
          <p>Kamu yakin ingin menghapus item ini?</p>
       </div>
-      <div class="popup-footer btn-confirm-container">
+      <div class="popup-footer">
         <button class="btn btn-confirm btn-yes" id="confirmDeleteYes">Ya</button>
         <button class="btn btn-confirm btn-no" id="confirmDeleteNo">Tidak</button>
       </div>
@@ -1543,7 +1562,7 @@
       <div class="popup-body centered">
          <p>Apakah Anda yakin ingin menerapkan tema ini?</p>
       </div>
-      <div class="popup-footer btn-confirm-container">
+      <div class="popup-footer">
         <button class="btn btn-confirm btn-yes" id="confirmThemeYes">Ya</button>
         <button class="btn btn-confirm btn-no" id="confirmThemeNo">Tidak</button>
       </div>
@@ -1556,7 +1575,7 @@
       <div class="popup-body centered">
          <p>Anda yakin ingin kembali ke tema awal aplikasi?</p>
       </div>
-      <div class="popup-footer btn-confirm-container">
+      <div class="popup-footer">
         <button class="btn btn-confirm btn-yes" id="confirmDefaultThemeYes">Ya</button>
         <button class="btn btn-confirm btn-no" id="confirmDefaultThemeNo">Tidak</button>
       </div>
@@ -1569,7 +1588,7 @@
       <div class="popup-body centered">
          <p id="saveConfirmMessage">Apakah Anda ingin menyimpan perubahan?</p>
       </div>
-      <div class="popup-footer btn-confirm-container">
+      <div class="popup-footer">
         <button class="btn btn-confirm btn-yes" id="confirmSaveYes">Simpan</button>
         <button class="btn btn-confirm btn-no" id="confirmSaveNo">Jangan Simpan</button>
         <button class="btn btn-confirm btn-cancel" id="confirmSaveCancel">Batal</button>
@@ -1583,7 +1602,7 @@
       <div class="popup-body centered">
          <p>Apakah Anda yakin ingin keluar dari aplikasi?</p>
       </div>
-      <div class="popup-footer btn-confirm-container">
+      <div class="popup-footer">
         <button class="btn btn-confirm btn-yes" id="confirmExitYes">Ya, Keluar</button>
         <button class="btn btn-confirm btn-no" id="confirmExitNo">Tidak</button>
       </div>
@@ -1598,17 +1617,15 @@
                 <div class="io-instructions">
                     <h4>Cara Menyimpan Data Anda:</h4>
                     <ol>
-                        <li>Klik <strong>"Copy Data"</strong> untuk menyalin kode di bawah ini.</li>
-                        <li>Buka aplikasi catatan (Notes) di perangkat Anda.</li>
-                        <li>Tempel (paste) kode tersebut dan simpan file.</li>
-                        <li>Beri nama file yang mudah diingat, misal: <strong>Agendaku_Backup.txt</strong></li>
+                        <li>Klik <strong>"Copy Data"</strong> untuk menyalin kode ke clipboard, lalu simpan di file teks.</li>
+                        <li>Atau, klik <strong>"Download File"</strong> untuk menyimpan data langsung sebagai file <code>Agendaku_Backup.txt</code>.</li>
                     </ol>
                 </div>
                 <div class="export-data-display" id="exportDataDisplay"></div>
             </div>
             <div class="popup-footer">
                 <button class="btn" onclick="copyExportData()">📋 Copy Data</button>
-                <button class="btn" onclick="closeExportPopup()">Tutup</button>
+                <button class="btn btn-secondary" onclick="downloadExportData()">💾 Download File</button>
             </div>
         </div>
     </div>
@@ -1621,21 +1638,20 @@
                 <div class="io-instructions">
                     <h4>Cara Memulihkan Data:</h4>
                     <ol>
-                        <li>Salin semua teks dari file backup Anda.</li>
-                        <li><strong>Tekan dan tahan</strong> di dalam kotak di bawah lalu pilih 'Tempel' (Paste).</li>
-                        <li>Klik tombol <strong>"Import Data"</strong> untuk memulihkan.</li>
+                        <li><strong>Tempel (Paste)</strong> teks backup Anda di kotak bawah.</li>
+                        <li>Atau, klik <strong>"Pilih File"</strong> untuk memuat data dari file backup <code>.txt</code> atau <code>.json</code>.</li>
                     </ol>
                 </div>
                 <textarea id="importDataTextarea" placeholder="Tempel (Paste) data backup Anda di sini..."></textarea>
             </div>
             <div class="popup-footer">
-                <button class="btn" onclick="processImportData()">📥 Import Data</button>
-                <button class="btn" onclick="closeImportPopup()">Batal</button>
+                <button class="btn" onclick="processImportData()">📥 Import dari Teks</button>
+                <button class="btn btn-secondary" onclick="triggerImportFile()">📂 Pilih File</button>
             </div>
         </div>
     </div>
     
-  <div class="popup-overlay" id="quotePopup">
+    <div class="popup-overlay" id="quotePopup">
     <div class="popup-content quote-popup-content">
       <button class="popup-close-btn" onclick="closeQuotePopup()">×</button>
       <blockquote>
@@ -1657,14 +1673,12 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-              <p><strong>Versi 1.5 - WebView Update:</strong></p>
+              <p><strong>Versi 1.6 - PDF & File System:</strong></p>
               <ul>
-                  <li><strong>Login Tamu:</strong> Menambahkan opsi login sebagai tamu tanpa menyimpan data personal.</li>
-                  <li><strong>Tema Custom:</strong> Fitur baru untuk mengunggah gambar latar sendiri dari menu Catatan.</li>
-                  <li><strong>UI/UX Export/Import:</strong> Tampilan dan alur proses ekspor dan impor data telah disempurnakan.</li>
-                  <li><strong>Perbaikan Teks:</strong> Konten informasi dan panduan telah ditulis ulang agar lebih profesional.</li>
-                  <li><strong>Indikator Selesai:</strong> Popup jadwal hari ini (💡) sekarang menandai jadwal yang sudah selesai.</li>
-                  <li><strong>Input Lokasi:</strong> Menambahkan kolom 'Tempat (Opsional)' di editor jadwal.</li>
+                  <li><strong>Ekspor ke PDF:</strong> Fitur baru untuk mengekspor semua jadwal dan catatan ke dalam satu file PDF.</li>
+                  <li><strong>Simpan & Muat File:</strong> Opsi untuk menyimpan data backup sebagai file .txt dan memuatnya kembali dari file.</li>
+                  <li><strong>Integrasi Plugin:</strong> Menambahkan dukungan plugin ExitApp dan File untuk pengalaman aplikasi yang lebih baik.</li>
+                  <li><strong>Peningkatan UI:</strong> Tampilan dan alur proses ekspor/impor data telah disempurnakan.</li>
               </ul>
           </div>
 
@@ -1677,6 +1691,9 @@
               </button>
               <button class="btn-sidebar-action btn-import-project" onclick="showImportPopup()">
                   📥 Import Project
+              </button>
+              <button class="btn-sidebar-action btn-export-pdf" onclick="exportToPdf()">
+                  📄 Export ke PDF
               </button>
           </div>
       </div>
@@ -1691,11 +1708,11 @@
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A2.02 2.02 0 0 0 4 6.02V16.2C4 17.65 5.35 19 6.78 19h8.43c1.45 0 2.78-1.35 2.78-2.78V7.8c0-1.45-1.35-2.78-2.78-2.78H7.6zm9.6.48c-.9 0-1.62.73-1.62 1.62s.73 1.62 1.62 1.62c.9 0 1.62-.73 1.62-1.62s-.73-1.62-1.62-1.62zm-4.8 3.7c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 2.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
           </a>
           <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="social-icon" aria-label="Website">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43 2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43-2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
           </a>
       </div>
       <div class="sidebar-footer">
-          Versi 1.5
+          Versi 1.6
       </div>
   </div>
 
@@ -1810,7 +1827,6 @@
       }, duration);
     }
     
-    // NEW: Revised Quotes data structure
     const quotes = [
       { text: "Imajinasi lebih penting daripada pengetahuan.", author: "Albert Einstein" },
       { text: "Satu-satunya cara untuk melakukan pekerjaan hebat adalah dengan mencintai apa yang Anda lakukan.", author: "Steve Jobs" },
@@ -1825,17 +1841,12 @@
       return days[dayIndex];
     }
 
-    // --- REVISED EXPORT/IMPORT FUNCTIONS ---
-    function showExportPopup() {
-        playClickSound();
-        
-        const exportData = {
-            version: "1.5",
+    // --- [IMPLEMENTASI 4] REVISED EXPORT/IMPORT FUNCTIONS ---
+    function getExportData() {
+        return {
+            version: "1.6",
             timestamp: new Date().toISOString(),
-            userData: {
-                namaUser: namaUser,
-                nimUser: nimUser
-            },
+            userData: { namaUser: namaUser, nimUser: nimUser },
             appData: {
                 jadwalContent: appData.jadwalContent,
                 kuliahContent: appData.kuliahContent,
@@ -1845,7 +1856,11 @@
                 savedTheme: localStorage.getItem(`${namaUser}_savedTheme`) || DEFAULT_BACKGROUND_IMAGE
             }
         };
+    }
 
+    function showExportPopup() {
+        playClickSound();
+        const exportData = getExportData();
         const dataStr = JSON.stringify(exportData, null, 2);
         document.getElementById('exportDataDisplay').textContent = dataStr;
         document.getElementById('exportPopup').classList.add('active');
@@ -1856,7 +1871,6 @@
     function copyExportData() {
         playClickSound();
         const dataText = document.getElementById('exportDataDisplay').textContent;
-        
         navigator.clipboard.writeText(dataText).then(() => {
             showToast('Berhasil', 'Data backup telah disalin ke clipboard!');
         }).catch(err => {
@@ -1864,7 +1878,43 @@
             console.error('Clipboard error:', err);
         });
     }
-    
+
+    function downloadExportData() {
+        playClickSound();
+        const exportData = getExportData();
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([dataStr], { type: 'text/plain;charset=utf-8' });
+        const fileName = `Agendaku_Backup_${namaUser}_${new Date().toISOString().split('T')[0]}.txt`;
+
+        if (window.cordova && window.cordova.file) {
+            // Menggunakan plugin file jika tersedia
+            const dir = window.cordova.file.externalRootDirectory + 'Download/';
+            window.resolveLocalFileSystemURL(dir, function(dirEntry) {
+                dirEntry.getFile(fileName, { create: true, exclusive: false }, function(fileEntry) {
+                    fileEntry.createWriter(function(fileWriter) {
+                        fileWriter.onwriteend = function() {
+                            showToast('Berhasil!', `File backup disimpan di folder Downloads.`);
+                        };
+                        fileWriter.onerror = function(e) {
+                            showToast('Gagal Menyimpan', 'Terjadi kesalahan saat menyimpan file.');
+                            console.error('Write failed: ' + e.toString());
+                        };
+                        fileWriter.write(blob);
+                    });
+                }, (err) => { showToast('Error', 'Gagal membuat file. Kode: ' + err.code); });
+            }, (err) => { showToast('Error', 'Gagal mengakses folder Downloads. Kode: ' + err.code); });
+        } else {
+            // Fallback untuk browser biasa
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Download Dimulai', 'File backup sedang diunduh.');
+        }
+    }
+
     function closeExportPopup() {
         document.getElementById('exportPopup').classList.remove('active');
     }
@@ -1881,29 +1931,42 @@
         document.getElementById('importPopup').classList.remove('active');
     }
 
-    function processImportData() {
+    function triggerImportFile() {
         playClickSound();
-        const importText = document.getElementById('importDataTextarea').value.trim();
-        
+        document.getElementById('importFileInput').click();
+    }
+
+    function handleImportFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            processImportData(e.target.result);
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function processImportData(dataText = null) {
+        playClickSound();
+        const importText = dataText || document.getElementById('importDataTextarea').value.trim();
         if (!importText) {
-            showToast('Error', 'Silakan tempel (paste) data backup terlebih dahulu.');
+            showToast('Error', 'Tidak ada data untuk diimpor.');
             return;
         }
-
         try {
             const importData = JSON.parse(importText);
-            
             if (!importData.appData || !importData.userData) {
                 throw new Error('Format data tidak valid');
             }
-
             if (confirm(`Impor data dari backup "${importData.userData.namaUser}"?\n\nPERHATIAN: Ini akan menimpa seluruh data Anda saat ini (${namaUser}).`)) {
                 importProject(importData);
                 closeImportPopup();
             }
         } catch (error) {
             console.error('Error parsing import data:', error);
-            showToast('Error', 'Format data backup tidak valid. Pastikan Anda paste data yang benar.');
+            showToast('Error', 'Format data backup tidak valid.');
         }
     }
 
@@ -1912,30 +1975,105 @@
             appData.jadwalContent = importData.appData.jadwalContent || JSON.parse(JSON.stringify(defaultJadwalData));
             appData.kuliahContent = importData.appData.kuliahContent || JSON.parse(JSON.stringify(defaultKuliahData));
             appData.catatanContent = importData.appData.catatanContent || [...defaultCatatanData];
-
             saveData('jadwalContent');
             saveData('kuliahContent');
             saveData('catatanContent');
-
             if (importData.preferences && importData.preferences.savedTheme) {
                 localStorage.setItem(`${namaUser}_savedTheme`, importData.preferences.savedTheme);
                 document.body.style.setProperty('--bg-image-url', `url('${importData.preferences.savedTheme}')`);
             }
-
             renderAllData();
             showToast('Import Berhasil', `Data berhasil dipulihkan & diterapkan.`);
-            
         } catch (error) {
             console.error('Error importing project:', error);
             showToast('Error', 'Gagal mengimpor data. Periksa format file.');
         }
     }
     
+    // --- [IMPLEMENTASI 6] FUNGSI EKSPOR PDF ---
+    async function exportToPdf() {
+        closeAgendakuBranding();
+        showToast('Memulai Ekspor PDF', 'Harap tunggu, ini mungkin memerlukan beberapa saat...');
+        playClickSound();
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const margin = 10;
+        let yPos = margin;
+
+        const sections = [
+            { id: 'jadwalContainer', title: 'Jadwal Kegiatan' },
+            { id: 'kuliahContent', title: 'Jadwal Kuliah/Sekolah' },
+            { id: 'catatanContent', title: 'Catatan Pribadi' }
+        ];
+
+        try {
+            // Tambahkan Judul Utama
+            pdf.setFontSize(22);
+            pdf.text(`Laporan Agendaku - ${namaUser}`, pdfWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+
+            for (let i = 0; i < sections.length; i++) {
+                const section = sections[i];
+                const element = document.getElementById(section.id);
+                if (!element) continue;
+
+                // Tambahkan separator dan judul bagian
+                if (i > 0) {
+                    yPos += 5;
+                    pdf.setLineWidth(0.5);
+                    pdf.line(margin, yPos, pdfWidth - margin, yPos);
+                    yPos += 10;
+                }
+                pdf.setFontSize(16);
+                pdf.text(section.title, margin, yPos);
+                yPos += 8;
+
+                if (section.id === 'catatanContent') {
+                    // Render catatan sebagai teks biasa untuk kualitas lebih baik
+                    pdf.setFontSize(10);
+                    const splitText = pdf.splitTextToSize(appData.catatanContent.join('\n'), pdfWidth - margin * 2);
+                    
+                    // Cek jika butuh halaman baru
+                    if (yPos + (splitText.length * 5) > pdf.internal.pageSize.getHeight() - margin) {
+                        pdf.addPage();
+                        yPos = margin;
+                    }
+                    pdf.text(splitText, margin, yPos);
+                } else {
+                    // Render jadwal sebagai gambar
+                    const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const imgHeight = (imgProps.height * (pdfWidth - margin * 2)) / imgProps.width;
+
+                    // Cek jika butuh halaman baru
+                    if (yPos + imgHeight > pdf.internal.pageSize.getHeight() - margin) {
+                        pdf.addPage();
+                        yPos = margin;
+                    }
+
+                    pdf.addImage(imgData, 'JPEG', margin, yPos, pdfWidth - margin * 2, imgHeight);
+                    yPos += imgHeight;
+                }
+            }
+
+            pdf.save(`Agendaku_Laporan_${namaUser}.pdf`);
+            showToast('Berhasil!', 'File PDF berhasil dibuat dan diunduh.');
+
+        } catch (error) {
+            console.error("Gagal membuat PDF:", error);
+            showToast('Error', 'Gagal membuat file PDF. Silakan coba lagi.');
+        }
+    }
+
+
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', function() {
+      // Event listeners
       document.getElementById('loginBtn').addEventListener('click', handleLogin);
       document.getElementById('guestLoginBtn').addEventListener('click', handleGuestLogin);
-
       document.getElementById('nama').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('nimInput').focus(); });
       document.getElementById('nimInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
       document.getElementById('confirmResetYes').onclick = () => { playClickSound(); if (currentResetContentId) resetSchedule(currentResetContentId); closeResetConfirmPopup(); };
@@ -1955,10 +2093,8 @@
           const content = document.getElementById('updateInfoContent');
           content.style.display = (content.style.display === "block") ? "none" : "block";
       });
-      
       document.getElementById('confirmExitYes').onclick = () => { exitApplication(); };
       document.getElementById('confirmExitNo').onclick = () => { playClickSound(); closeExitConfirmPopup(); };
-
       window.addEventListener('popstate', (e) => { isNavigatingBack = true; handlePopState(e.state); });
 
       if (lastLoggedInUser) {
@@ -1967,7 +2103,6 @@
         if (storedNim) document.getElementById('nimInput').value = storedNim;
       }
       
-      loadSavedTheme();
       updateCircularButtonVisibility('login');
       updateDigitalClock();
       setInterval(updateDigitalClock, 1000);
@@ -1980,32 +2115,25 @@
     function loadUserData(username) {
         const savedJadwal = localStorage.getItem(`${username}_jadwalContent`);
         appData.jadwalContent = savedJadwal ? JSON.parse(savedJadwal) : JSON.parse(JSON.stringify(defaultJadwalData));
-        
         const savedKuliah = localStorage.getItem(`${username}_kuliahContent`);
         appData.kuliahContent = savedKuliah ? JSON.parse(savedKuliah) : JSON.parse(JSON.stringify(defaultKuliahData));
-        
         const savedCatatan = localStorage.getItem(`${username}_catatanContent`);
         appData.catatanContent = savedCatatan ? JSON.parse(savedCatatan) : [...defaultCatatanData];
-
         renderAllData();
     }
-
     function renderAllData() {
         renderJadwal(appData.jadwalContent, 'jadwalContent');
         renderJadwal(appData.kuliahContent, 'kuliahContent');
         renderCatatan(appData.catatanContent);
     }
-
     function saveData(key) {
         if (!namaUser) return;
         localStorage.setItem(`${namaUser}_${key}`, JSON.stringify(appData[key]));
     }
-    
     function renderJadwal(data, containerId) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
         const fragment = document.createDocumentFragment();
-        
         let hasContent = false;
         for (const day in data) {
             if (data[day] && data[day].length > 0) {
@@ -2013,33 +2141,26 @@
               const h3 = document.createElement('h3');
               h3.textContent = `${day}:`;
               const ul = document.createElement('ul');
-            
               data[day].forEach((item, index) => {
                   const li = document.createElement('li');
                   li.className = item.selesai ? 'selesai' : '';
-
                   const checkbox = document.createElement('div');
                   checkbox.className = 'jadwal-checkbox';
                   checkbox.setAttribute('onclick', `toggleSelesai('${containerId}', '${day}', ${index})`);
-
                   const teksJadwal = document.createElement('span');
                   teksJadwal.className = 'jadwal-teks';
-
                   let timeString = '-:';
                   if (item.type === 'specific' && item.startTime && item.endTime) {
                        timeString = `${item.startTime.replace(':', '.')}-${item.endTime.replace(':', '.')}:`;
                   } else if (item.type === 'general' && item.time) {
                       timeString = `${item.time}:`;
                   }
-                  
                   const locationString = item.location ? `<span class="location-text">(${item.location})</span>` : '';
-
                   if (item.activity === "Libur" && item.time === "Libur") {
                       teksJadwal.innerHTML = 'Libur';
                   } else {
                       teksJadwal.innerHTML = `<strong>${timeString}</strong> ${item.activity || ''} ${locationString}`;
                   }
-
                   li.appendChild(checkbox);
                   li.appendChild(teksJadwal);
                   ul.appendChild(li);
@@ -2048,7 +2169,6 @@
               fragment.appendChild(ul);
             }
         }
-
         if (!hasContent) {
             const emptyMsg = document.createElement('p');
             emptyMsg.className = 'jadwal-empty';
@@ -2057,7 +2177,6 @@
         }
         container.appendChild(fragment);
     }
-
     function renderCatatan(data) {
         const container = document.getElementById('catatanContent');
         container.innerHTML = '';
@@ -2076,18 +2195,14 @@
         }
         container.appendChild(fragment);
     }
-    
     function toggleSelesai(contentId, hari, index) {
         playClickSound();
         const item = appData[contentId]?.[hari]?.[index];
         if (!item) return;
-
         item.selesai = !item.selesai;
-
         if (item.selesai) {
             showToast('Selamat!', `Anda sudah menyelesaikan: "${item.activity}"`);
         }
-
         saveData(contentId);
         renderJadwal(appData[contentId], contentId);
     }
@@ -2098,7 +2213,6 @@
         history.pushState(state, '', `#${slideId}`);
         historyState.push(state);
     }
-    
     function handlePopState(state) {
         const activePopup = document.querySelector('.popup-overlay.active, .tutorial-overlay.active, #agendakuSidebar.active');
         if(activePopup) {
@@ -2107,7 +2221,6 @@
             history.pushState(historyState[historyState.length-1], '', `#${historyState[historyState.length-1].slideId}`);
             return;
         }
-
         if (historyState.length === 1 && historyState[0].slideId === 'login') {
             backPressOnLoginCount++;
             if (backPressOnLoginCount === 1) {
@@ -2121,7 +2234,6 @@
             }
             return;
         }
-
         if (historyState.length > 1) {
             historyState.pop();
             const previousState = historyState[historyState.length - 1];
@@ -2131,10 +2243,8 @@
         }
         isNavigatingBack = false;
     }
-
     function navigateTo(slideId, contentId = null, pushToHistory = true) {
         document.querySelectorAll('.overlay.active, .slide.active').forEach(el => el.classList.remove('active'));
-        
         setTimeout(() => {
             document.querySelectorAll('.overlay, .slide').forEach(el => el.style.display = 'none');
             const targetElement = document.getElementById(slideId);
@@ -2143,11 +2253,9 @@
                 setTimeout(() => targetElement.classList.add('active'), 10);
             }
             if (pushToHistory) pushState(slideId, contentId);
-            
             updateCircularButtonVisibility(slideId);
             document.getElementById('helpBtnJadwal').style.display = (slideId === 'jadwal') ? 'flex' : 'none';
             document.getElementById('helpBtnKuliah').style.display = (slideId === 'kuliah') ? 'flex' : 'none';
-
             if (slideId === 'editJadwal' && contentId) {
                 currentEditTargetId = contentId;
                 loadScheduleToEditor();
@@ -2156,7 +2264,6 @@
             }
         }, 300);
     }
-    
     function bukaSlide(slideId, contentId = null) {
       playClickSound();
       if (slideId === 'editCatatan') {
@@ -2164,12 +2271,10 @@
       }
       navigateTo(slideId, contentId);
     }
-
     function tutupSlide(slideId) {
         playClickSound();
         let shouldPromptSave = false;
         let message = '';
-
         if (slideId === 'editJadwal') {
             const editorData = buildScheduleDataFromEditor();
             if (JSON.stringify(editorData) !== JSON.stringify(appData[currentEditTargetId])) {
@@ -2185,7 +2290,6 @@
             navigateTo('info', null, false);
             return;
         }
-
         if (shouldPromptSave) {
             activeEditableContentId = slideId;
             document.getElementById('saveConfirmMessage').textContent = message;
@@ -2193,7 +2297,6 @@
             playToastSound();
             return;
         }
-
         if (historyState.length > 1) history.back();
         else goToMenu();
     }
@@ -2208,65 +2311,54 @@
         const inputNim = document.getElementById('nimInput').value.trim();
         loginUser(inputNama, inputNim);
     }
-
     function handleGuestLogin() {
         loginUser('Tamu', '');
     }
-
     function loginUser(name, nim) {
         namaUser = name;
         nimUser = nim;
-        
         localStorage.setItem('lastLoggedInUser', namaUser);
         if (namaUser !== 'Tamu') {
             localStorage.setItem(`${namaUser}_nim`, nim);
         }
-
         loadUserData(namaUser);
         loadSavedTheme();
-
         const loginBtn = document.getElementById('loginBtn');
         loginBtn.style.transform = 'scale(0.95)';
         setTimeout(() => {
             loginBtn.style.transform = 'scale(1)';
             navigateTo('menu');
-            
             const displayName = (namaUser === 'Tamu') ? '-' : namaUser;
             const displayNim = nimUser ? `Nim/Kelas: ${nimUser}` : (namaUser === 'Tamu' ? 'Mode Tamu' : 'Nim/Kelas: -');
-            
             document.getElementById('userNameDisplayMenu').textContent = displayName;
             document.getElementById('userNimDisplayMenu').textContent = displayNim;
             document.getElementById('userInfoDisplayMenu').style.display = 'block';
             document.getElementById('namaInfo').textContent = `Nama: ${displayName}`;
             document.getElementById('nimInfo').textContent = displayNim;
-
             showToast('Selamat Datang!', `Halo ${namaUser}, Aplikasi Agendaku siap digunakan.`);
             if (!localStorage.getItem('hasSeenTutorial')) {
                 showMainTutorial();
                 localStorage.setItem('hasSeenTutorial', 'true');
             }
             requestNotificationPermissionAndStartChecker();
+            // [IMPLEMENTASI 7] Minta izin file setelah login
+            requestFilePermissions(); 
         }, 200);
     }
-
     function kembaliKeLogin() {
       playClickSound();
       if (scheduleCheckerInterval) {
           clearInterval(scheduleCheckerInterval);
           scheduleCheckerInterval = null;
       }
-      
       document.querySelectorAll('.popup-overlay.active, .sidebar-overlay-blur.active, #agendakuSidebar.active').forEach(el => {
           el.classList.remove('active');
       });
-
       namaUser = '';
       nimUser = '';
-
       navigateTo('login');
       updateCircularButtonVisibility('login');
     }
-    
     function goToMenu() {
         navigateTo('menu');
     }
@@ -2279,34 +2371,28 @@
         const data = appData[currentEditTargetId];
         const title = currentEditTargetId === 'jadwalContent' ? 'Edit Jadwal Kegiatan' : 'Edit Jadwal Kuliah/Sekolah';
         document.getElementById('editJadwalTitle').textContent = title;
-
         for(const day in data) {
             const groupDiv = document.createElement('div');
             groupDiv.className = 'edit-schedule-group';
             groupDiv.innerHTML = `<h3>${day}:</h3>`;
-            
             if (data[day] && data[day].length > 0) {
                 data[day].forEach(item => {
                     const itemDiv = createEditorItem(item);
                     groupDiv.appendChild(itemDiv);
                 });
             }
-            
             groupDiv.appendChild(createAddNewEntry(day));
             fragment.appendChild(groupDiv);
         }
         editorContainer.appendChild(fragment);
     }
-    
     function createEditorItem(item) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'edit-schedule-item';
         const type = (item.type === 'specific' || item.type === 'general') ? item.type : 'general';
         itemDiv.dataset.timeType = type;
-
         const generalTimes = ["", "Shubuh", "Pagi", "Dhuhur", "Siang", "Ashar", "Sore", "Maghrib", "Isya", "Malam", "Libur"];
         const options = generalTimes.map(t => `<option value="${t}" ${item.time === t ? 'selected' : ''}>${t || 'waktu tidak ditentukan'}</option>`).join('');
-
         itemDiv.innerHTML = `
             <div class="edit-schedule-inputs">
                 <div class="time-input-container">
@@ -2330,15 +2416,12 @@
                 <button class="delete-item-btn" title="Hapus Item">🗑️</button>
             </div>
         `;
-        
         itemDiv.querySelector('.toggle-time-type-btn').addEventListener('click', function() { toggleTimeInput(this); });
         itemDiv.querySelector('.add-item-btn').addEventListener('click', function() { addItem(this); });
         itemDiv.querySelector('.delete-item-btn').addEventListener('click', function() { confirmDeleteItem(this); });
-
         updateTimeInputVisibility(itemDiv);
         return itemDiv;
     }
-    
     function toggleTimeInput(button) {
         playClickSound();
         const itemDiv = button.closest('.edit-schedule-item');
@@ -2346,26 +2429,23 @@
         itemDiv.dataset.timeType = (currentType === 'general') ? 'specific' : 'general';
         updateTimeInputVisibility(itemDiv);
     }
-
     function updateTimeInputVisibility(itemDiv) {
         const type = itemDiv.dataset.timeType;
         const generalContainer = itemDiv.querySelector('.time-input-container-general');
         const specificContainer = itemDiv.querySelector('.time-input-container-specific');
         const toggleBtn = itemDiv.querySelector('.toggle-time-type-btn');
-
         if (type === 'specific') {
             generalContainer.style.display = 'none';
             specificContainer.style.display = 'flex';
             toggleBtn.textContent = '🗓️';
             toggleBtn.title = "Ubah ke Waktu Umum";
-        } else { // 'general'
+        } else {
             generalContainer.style.display = 'flex';
             specificContainer.style.display = 'none';
             toggleBtn.textContent = '⏱️';
             toggleBtn.title = "Ubah ke Jam Spesifik";
         }
     }
-
     function createAddNewEntry(day) {
         const newEntryDiv = document.createElement('div');
         newEntryDiv.className = 'add-new-entry';
@@ -2373,7 +2453,6 @@
         newEntryDiv.querySelector('button').addEventListener('click', function() { addNewEntry(this, day); });
         return newEntryDiv;
     }
-
     function addNewEntry(button, day) {
         playClickSound();
         const newEntryContainer = button.closest('.add-new-entry');
@@ -2382,14 +2461,12 @@
             showToast('Peringatan', 'Isi deskripsi entri baru terlebih dahulu.');
             return;
         }
-
         const newItemData = { type: 'general', time: 'Pagi', activity: textInput.value.trim(), location: '', selesai: false };
         const newItemDiv = createEditorItem(newItemData);
         newEntryContainer.parentNode.insertBefore(newItemDiv, newEntryContainer);
         textInput.value = '';
         showToast('Berhasil', 'Entri baru ditambahkan.');
     }
-
     function addItem(button) {
         playClickSound();
         const itemDiv = button.closest('.edit-schedule-item');
@@ -2399,12 +2476,10 @@
         newItemDiv.querySelector('.activity-input').focus();
         showToast('Berhasil', 'Item baru ditambahkan.');
     }
-
     function buildScheduleDataFromEditor() {
         const editorContainer = document.getElementById('editScheduleContent');
         const newData = {};
         const oldData = appData[currentEditTargetId];
-
         editorContainer.querySelectorAll('.edit-schedule-group').forEach(groupDiv => {
             const day = groupDiv.querySelector('h3').textContent.replace(':', '');
             newData[day] = [];
@@ -2412,21 +2487,13 @@
             groupDiv.querySelectorAll('.edit-schedule-item').forEach(itemDiv => {
                 const activityInput = itemDiv.querySelector('.activity-input');
                 const locationInput = itemDiv.querySelector('.location-input');
-
                 if (activityInput && (activityInput.value.trim() || itemDiv.dataset.timeType === 'general' && itemDiv.querySelector('.time-selector').value === 'Libur')) {
                     const type = itemDiv.dataset.timeType;
                     const oldItem = oldData?.[day]?.[originalIndexCounter] || { selesai: false };
-                    
-                    let newItem = {
-                        type: type,
-                        activity: activityInput.value.trim(),
-                        location: locationInput.value.trim(),
-                        selesai: oldItem.selesai 
-                    };
-
+                    let newItem = { type: type, activity: activityInput.value.trim(), location: locationInput.value.trim(), selesai: oldItem.selesai };
                     if (type === 'general') {
                         newItem.time = itemDiv.querySelector('.time-selector').value;
-                    } else { // 'specific'
+                    } else {
                         newItem.startTime = itemDiv.querySelector('.start-time-input').value;
                         newItem.endTime = itemDiv.querySelector('.end-time-input').value;
                     }
@@ -2437,41 +2504,28 @@
         });
         return newData;
     }
-
     function saveEditedSchedule() {
         playClickSound();
         const newData = buildScheduleDataFromEditor();
         appData[currentEditTargetId] = newData;
         saveData(currentEditTargetId);
-        
         renderJadwal(newData, currentEditTargetId); 
-        
         showToast('Berhasil', 'Jadwal telah disimpan.');
-        
         setTimeout(() => {
-            if (currentEditTargetId === 'jadwalContent') {
-                navigateTo('jadwal');
-            } else if (currentEditTargetId === 'kuliahContent') {
-                navigateTo('kuliah');
-            }
+            if (currentEditTargetId === 'jadwalContent') navigateTo('jadwal');
+            else if (currentEditTargetId === 'kuliahContent') navigateTo('kuliah');
         }, 1000);
     }
-    
     function handleSaveConfirmation() {
         playClickSound();
-        if (activeEditableContentId === 'editCatatan') {
-            saveCatatan();
-        } else if (activeEditableContentId === 'editJadwal') {
-            saveEditedSchedule();
-        }
+        if (activeEditableContentId === 'editCatatan') saveCatatan();
+        else if (activeEditableContentId === 'editJadwal') saveEditedSchedule();
         closeSaveConfirmPopup();
-        
         if (activeEditableContentId === 'editCatatan') {
             if (historyState.length > 1) history.back();
             else goToMenu();
         }
     }
-
     function handleDiscardChanges() {
         playClickSound();
         showToast('Info', 'Perubahan tidak disimpan.');
@@ -2479,11 +2533,9 @@
         if (historyState.length > 1) history.back();
         else goToMenu();
     }
-    
     function closeSaveConfirmPopup() {
         document.getElementById('saveConfirmPopup').classList.remove('active');
     }
-
     function saveCatatan() {
         const newContent = document.getElementById('editCatatanTextarea').value;
         appData.catatanContent = newContent.split('\n');
@@ -2492,14 +2544,12 @@
         showToast('Tersimpan', 'Catatan pribadi berhasil diperbarui.');
         tutupSlide('editCatatan');
     }
-    
     function confirmResetSchedule(contentId) {
       playClickSound();
       currentResetContentId = contentId;
       document.getElementById('resetConfirmPopup').classList.add('active');
       playToastSound();
     }
-
     function resetSchedule(contentId) {
         if (contentId === 'jadwalContent') appData.jadwalContent = JSON.parse(JSON.stringify(defaultJadwalData));
         if (contentId === 'kuliahContent') appData.kuliahContent = JSON.parse(JSON.stringify(defaultKuliahData));
@@ -2507,24 +2557,20 @@
         renderJadwal(appData[contentId], contentId);
         showToast('Reset Berhasil', 'Jadwal telah kembali ke pengaturan awal.');
     }
-
     function closeResetConfirmPopup() {
       document.getElementById('resetConfirmPopup').classList.remove('active');
       currentResetContentId = null;
     }
-
     function confirmDeleteItem(button) {
         playClickSound();
         currentDeleteItemElement = button.closest('.edit-schedule-item');
         document.getElementById('deleteConfirmPopup').classList.add('active');
         playToastSound();
     }
-
     function closeDeleteConfirmPopup() {
         document.getElementById('deleteConfirmPopup').classList.remove('active');
         currentDeleteItemElement = null;
     }
-
     function showScheduleNow() {
       playClickSound();
       const dayName = getDayNameID(new Date().getDay());
@@ -2532,75 +2578,51 @@
       const schoolActivities = appData.kuliahContent[dayName] || [];
       let kegiatanHtml = `<div class="no-schedule-message">Tidak ada kegiatan terjadwal.</div>`;
       let kuliahHtml = `<div class="no-schedule-message">Tidak ada jadwal kuliah.</div>`;
-
       const renderItemToHtml = (item) => {
           let timeString = '-:';
-          if (item.type === 'specific' && item.startTime && item.endTime) {
-              timeString = `${item.startTime.replace(':', '.')}-${item.endTime.replace(':', '.')}:`;
-          } else if (item.type === 'general' && item.time) {
-              timeString = `${item.time}:`;
-          }
-
+          if (item.type === 'specific' && item.startTime && item.endTime) timeString = `${item.startTime.replace(':', '.')}-${item.endTime.replace(':', '.')}:`;
+          else if (item.type === 'general' && item.time) timeString = `${item.time}:`;
           const locationString = item.location ? `<span class="location-text">(${item.location})</span>` : '';
           const fullText = `<strong>${timeString}</strong> ${item.activity || ''} ${locationString}`;
-
           if (item.activity === "Libur" && item.time === "Libur") return '<li>Libur</li>';
-          
-          if (item.selesai) {
-              return `<li class="popup-selesai">✅ <span class="popup-jadwal-teks">${fullText}</span></li>`;
-          } else {
-              return `<li>${fullText}</li>`;
-          }
+          if (item.selesai) return `<li class="popup-selesai">✅ <span class="popup-jadwal-teks">${fullText}</span></li>`;
+          else return `<li>${fullText}</li>`;
       };
-      
       const validDaily = dailyActivities.filter(item => item.activity && item.activity !== 'Silakan edit kegiatan Anda.');
-      if (validDaily.length > 0) {
-          kegiatanHtml = '<ul>' + validDaily.map(renderItemToHtml).join('') + '</ul>';
-      }
-      
+      if (validDaily.length > 0) kegiatanHtml = '<ul>' + validDaily.map(renderItemToHtml).join('') + '</ul>';
       const validSchool = schoolActivities.filter(item => item.activity && !item.activity.includes('Mata Kuliah/Pelajaran'));
-      if (validSchool.length > 0) {
-          kuliahHtml = '<ul>' + validSchool.map(renderItemToHtml).join('') + '</ul>';
-      }
-      
+      if (validSchool.length > 0) kuliahHtml = '<ul>' + validSchool.map(renderItemToHtml).join('') + '</ul>';
       document.getElementById('notificationContent').innerHTML = `
         <div class="jadwal-group"><h4>Kegiatan Harian (${dayName}):</h4>${kegiatanHtml}</div>
         <div class="jadwal-group"><h4>Kuliah/Sekolah (${dayName}):</h4>${kuliahHtml}</div>`;
       document.getElementById('notificationPopup').classList.add('active');
       playToastSound();
     }
-    
     function closeNotification() {
       playClickSound();
       document.getElementById('notificationPopup').classList.remove('active');
     }
-
     function showMainTutorial() {
       document.getElementById('tutorialPopup').style.display = 'flex';
       playToastSound();
     }
-
     function closeMainTutorial() {
       playClickSound();
       document.getElementById('tutorialPopup').style.display = 'none';
     }
-
     function confirmImageTheme(imageUrl) {
       playClickSound();
       selectedImageTheme = imageUrl;
       document.getElementById('themeConfirmPopup').classList.add('active');
       playToastSound();
     }
-    
     function triggerCustomTheme() {
         playClickSound();
         document.getElementById('customThemeInput').click();
     }
-
     function handleCustomTheme(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
             const imageDataUrl = e.target.result;
@@ -2609,27 +2631,23 @@
             playToastSound();
         }
         reader.readAsDataURL(file);
-        event.target.value = ''; // Reset input
+        event.target.value = '';
     }
-
     function applyTheme() {
       document.body.style.setProperty('--bg-image-url', `url('${selectedImageTheme}')`); 
       localStorage.setItem(`${namaUser}_savedTheme`, selectedImageTheme);
       showToast('Berhasil', 'Tema latar belakang berhasil diganti.');
       closeThemeConfirmPopup();
     }
-
     function closeThemeConfirmPopup() {
       document.getElementById('themeConfirmPopup').classList.remove('active');
       selectedImageTheme = '';
     }
-
     function confirmDefaultTheme() {
       playClickSound();
       document.getElementById('defaultThemeConfirmPopup').classList.add('active');
       playToastSound();
     }
-
     function applyDefaultTheme() {
       document.body.style.setProperty('--bg-image-url', `url('${DEFAULT_BACKGROUND_IMAGE}')`); 
       localStorage.removeItem(`${namaUser}_savedTheme`);
@@ -2637,43 +2655,32 @@
       closeDefaultThemeConfirmPopup();
       tutupSlide('ubahTema');
     }
-
     function closeDefaultThemeConfirmPopup() {
       document.getElementById('defaultThemeConfirmPopup').classList.remove('active');
     }
-    
-    // NEW: Function to show aesthetic quote popup
     function showQuotePopup() {
         playClickSound();
-        
         const randomIndex = Math.floor(Math.random() * quotes.length);
         const randomQuote = quotes[randomIndex];
-        
         document.getElementById('quotePopupText').textContent = randomQuote.text;
         document.getElementById('quotePopupAuthor').textContent = `— ${randomQuote.author}`;
-        
         const popup = document.getElementById('quotePopup');
         popup.classList.add('active');
-        playToastSound(); // Reusing the sound for a nice effect
+        playToastSound();
     }
-
     function closeQuotePopup() {
         playClickSound();
         document.getElementById('quotePopup').classList.remove('active');
     }
-    
     function updateCircularButtonVisibility(activeSlideId) {
         const isMenuVisible = activeSlideId === 'menu';
         const displayStyle = isMenuVisible ? 'flex' : 'none';
-
         document.getElementById('homeBtn').style.display = displayStyle;
         document.getElementById('quoteBtn').style.display = displayStyle;
         document.getElementById('tutorialHelpBtn').style.display = displayStyle;
-
         const isLoginOrMenuVisible = (activeSlideId === 'login' || activeSlideId === 'menu');
         document.querySelector('.menu-icon-top-right').style.display = isLoginOrMenuVisible ? 'flex' : 'none';
     }
-
     function updateDigitalClock() {
       const now = new Date();
       const dateString = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
@@ -2682,7 +2689,6 @@
       document.getElementById('digitalClock').textContent = fullDateTimeString;
       if (document.getElementById('digitalClockMenu')) document.getElementById('digitalClockMenu').textContent = fullDateTimeString;
     }
-
     function showHelp(slideId) {
       playClickSound();
       let title = "Bantuan";
@@ -2691,8 +2697,8 @@
         title = "Bantuan: Mengelola Jadwal";
         contentHtml = `<p>Di sini Anda bisa mengelola jadwal Anda secara fleksibel.</p>
                        <ul>
-                         <li><strong>Edit Jadwal:</strong>  Klik "Edit" untuk mengubah item, menambah, atau menghapus.</li>
-                         <li><strong>Mode Waktu Fleksibel:</strong> Di halaman edit, gunakan tombol ⏱️/🗓️ untuk beralih antara input 'Jam Spesifik' dan 'Waktu Umum' untuk setiap kegiatan.</li>
+                         <li><strong>Edit Jadwal:</strong> Klik "Edit" untuk mengubah item, menambah, atau menghapus.</li>
+                         <li><strong>Mode Waktu Fleksibel:</strong> Di halaman edit, gunakan tombol ⏱️/🗓️ untuk beralih antara input 'Jam Spesifik' dan 'Waktu Umum'.</li>
                          <li><strong>Input Tempat:</strong> Isi kolom 'Tempat (Opsional)' untuk menambahkan detail lokasi.</li>
                          <li><strong>Reset Jadwal:</strong> Tombol "Reset" akan mengembalikan jadwal ke pengaturan awal.</li>
                          <li><strong>Melihat Jadwal Hari Ini:</strong> Gunakan tombol "💡" untuk ringkasan jadwal hari ini.</li>
@@ -2703,30 +2709,25 @@
       document.getElementById('helpPopupOverlay').classList.add('active');
       playToastSound();
     }
-
     function closeHelpPopup() {
       playClickSound();
       document.getElementById('helpPopupOverlay').classList.remove('active');
     }
-
     function loadSavedTheme() {
       const savedTheme = localStorage.getItem(`${namaUser}_savedTheme`);
       const themeUrl = savedTheme || DEFAULT_BACKGROUND_IMAGE;
       document.body.style.setProperty('--bg-image-url', `url('${themeUrl}')`);
     }
-
     function showKritikSaranPopup() {
       playClickSound();
       document.getElementById('kritikSaranTextarea').value = ''; 
       document.getElementById('kritikSaranPopup').classList.add('active');
       playToastSound();
     }
-
     function closeKritikSaranPopup() {
       playClickSound();
       document.getElementById('kritikSaranPopup').classList.remove('active');
     }
-
     function sendKritikSaran() {
       playClickSound();
       const kritikSaranText = document.getElementById('kritikSaranTextarea').value.trim();
@@ -2740,7 +2741,6 @@
       showToast('Membuka Email', 'Silakan kirim dari aplikasi email Anda.');
       closeKritikSaranPopup();
     }
-    
     function copyEmailToClipboard() {
         playClickSound();
         navigator.clipboard.writeText(ADMIN_EMAIL).then(() => {
@@ -2749,21 +2749,18 @@
             showToast('Gagal', 'Tidak dapat menyalin alamat email.');
         });
     }
-
     function showAgendakuBranding() {
         playClickSound();
         document.getElementById('sidebarOverlay').classList.add('active');
         document.getElementById('agendakuSidebar').classList.add('active');
         document.querySelector('.menu-icon-top-right').style.opacity = '0';
     }
-
     function closeAgendakuBranding() {
         playClickSound();
         document.getElementById('sidebarOverlay').classList.remove('active');
         document.getElementById('agendakuSidebar').classList.remove('active');
         document.querySelector('.menu-icon-top-right').style.opacity = '1';
     }
-
     function showExitConfirmPopup() {
         playToastSound();
         document.getElementById('exitConfirmPopup').classList.add('active');
@@ -2772,19 +2769,23 @@
         document.getElementById('exitConfirmPopup').classList.remove('active');
     }
     
+    // [IMPLEMENTASI 8] Revisi Fungsi ExitApp dengan Fallback
     function exitApplication() {
         playClickSound();
         closeExitConfirmPopup();
         showToast('Terima Kasih!', 'Menutup aplikasi...');
         
-        window.close();
-
-        setTimeout(() => {
-            showToast('Gagal Menutup Tab', 'Browser Anda mungkin mencegah penutupan tab secara otomatis.', 5000);
-            kembaliKeLogin();
-        }, 500);
+        // Cek jika plugin cordova-plugin-exitapp ada
+        if (navigator.app && navigator.app.exitApp) {
+            navigator.app.exitApp();
+        } else {
+            // Fallback jika tidak ada plugin (misalnya di browser biasa)
+            showToast('Info', 'Fitur ini hanya berfungsi di aplikasi terinstal.', 4000);
+            window.close(); // Coba tutup tab, mungkin gagal
+        }
     }
 
+    // --- NOTIFICATION LOGIC ---
     const timeRanges = {
         "Shubuh": { start: 4, end: 6, title: "Waktunya Shubuh!" },
         "Pagi": { start: 7, end: 11, title: "Selamat Pagi!" },
@@ -2794,7 +2795,6 @@
         "Isya": { start: 19, end: 21, title: "Waktunya Isya!" },
         "Malam": { start: 21, end: 23, title: "Selamat Malam!" }
     };
-
     function showBrowserNotification(title, body) {
         if (Notification.permission === 'granted') {
             new Notification(title, {
@@ -2803,21 +2803,14 @@
             });
         }
     }
-
     function checkCurrentSchedule() {
         const now = new Date();
         const currentDayName = getDayNameID(now.getDay());
         const currentHour = now.getHours();
         const currentTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-
-        const allTodaySchedules = [
-            ...(appData.jadwalContent[currentDayName] || []),
-            ...(appData.kuliahContent[currentDayName] || [])
-        ];
-
+        const allTodaySchedules = [...(appData.jadwalContent[currentDayName] || []), ...(appData.kuliahContent[currentDayName] || [])];
         allTodaySchedules.forEach(item => {
             if (item.selesai) return;
-
             if (item.type === 'specific' && item.startTime) {
                 const uniqueId = `${currentDayName}-${item.startTime}-${item.activity}`;
                 if (item.startTime === currentTime && !notifiedSchedules.includes(uniqueId)) {
@@ -2826,52 +2819,70 @@
                 }
             }
         });
-        
         for (const period in timeRanges) {
             const range = timeRanges[period];
             if (currentHour >= range.start && currentHour < range.end) {
                 const uniquePeriodId = `${currentDayName}-${period}`;
-                
                 if (!notifiedSchedules.includes(uniquePeriodId)) {
                     const activitiesInPeriod = allTodaySchedules
                         .filter(item => item.type === 'general' && item.time === period && !item.selesai)
                         .map(item => item.activity);
-                    
                     if (activitiesInPeriod.length > 0) {
                         const notificationBody = "Jangan lupa: " + activitiesInPeriod.join(', ');
                         showBrowserNotification(range.title, notificationBody);
                     }
-                    
                     notifiedSchedules.push(uniquePeriodId);
                 }
             }
         }
     }
-
-
     function startScheduleChecker() {
         notifiedSchedules = []; 
-        if (scheduleCheckerInterval) {
-            clearInterval(scheduleCheckerInterval);
-        }
+        if (scheduleCheckerInterval) clearInterval(scheduleCheckerInterval);
         scheduleCheckerInterval = setInterval(checkCurrentSchedule, 60000); 
     }
-
     function requestNotificationPermissionAndStartChecker() {
         if (!('Notification' in window)) {
             console.log("Browser ini tidak mendukung notifikasi desktop.");
             return;
         }
-
-        if (Notification.permission === 'granted') {
-            startScheduleChecker();
-        } else if (Notification.permission !== 'denied') {
+        if (Notification.permission === 'granted') startScheduleChecker();
+        else if (Notification.permission !== 'denied') {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
                     showToast('Notifikasi Diaktifkan', 'Pengingat jadwal akan muncul jika ada.');
                     startScheduleChecker();
                 }
             });
+        }
+    }
+    
+    // [IMPLEMENTASI 7] Fungsi untuk meminta izin file
+    function requestFilePermissions() {
+        // Cek jika kita berada di lingkungan Cordova
+        if (window.cordova && window.cordova.plugins && window.cordova.plugins.permissions) {
+            const permissions = window.cordova.plugins.permissions;
+            const list = [
+                permissions.WRITE_EXTERNAL_STORAGE,
+                permissions.READ_EXTERNAL_STORAGE
+            ];
+
+            permissions.checkPermission(list, (status) => {
+                if (!status.hasPermission) {
+                    permissions.requestPermissions(list, 
+                        (status) => {
+                            if (status.hasPermission) {
+                                showToast('Info', 'Izin penyimpanan diberikan.');
+                            } else {
+                                showToast('Peringatan', 'Izin penyimpanan ditolak. Fitur simpan file mungkin tidak bekerja.');
+                            }
+                        },
+                        () => {
+                           console.warn('Gagal meminta izin penyimpanan.');
+                        }
+                    );
+                }
+            }, null);
         }
     }
 
