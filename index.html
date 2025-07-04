@@ -1990,83 +1990,81 @@
         }
     }
     
-    // --- [IMPLEMENTASI 6] FUNGSI EKSPOR PDF ---
-    async function exportToPdf() {
-        closeAgendakuBranding();
-        showToast('Memulai Ekspor PDF', 'Harap tunggu, ini mungkin memerlukan beberapa saat...');
-        playClickSound();
+    // GANTI FUNGSI LAMA DENGAN YANG INI
+async function exportToPdf() {
+    closeAgendakuBranding();
+    showToast('Memulai Ekspor PDF', 'Harap tunggu, sedang menyiapkan dokumen...');
+    playClickSound();
 
+    // Buat area cetak sementara yang tidak terlihat oleh pengguna
+    const printableArea = document.createElement('div');
+    printableArea.style.position = 'fixed';
+    printableArea.style.top = '0';
+    printableArea.style.left = '100vw'; // Posisikan di luar layar
+    printableArea.style.width = '800px'; // Lebar kertas A4
+    printableArea.style.padding = '20px';
+    printableArea.style.background = 'white';
+    printableArea.style.fontFamily = "'Poppins', sans-serif";
+    
+    // Salin konten yang ingin diekspor
+    const jadwalHtml = document.getElementById('jadwalContainer').innerHTML;
+    const kuliahHtml = document.getElementById('kuliahContent').innerHTML;
+    // Untuk catatan, kita ambil teksnya langsung agar lebih rapi
+    const catatanText = appData.catatanContent.join('\n').replace(/\n/g, '<br>');
+
+    printableArea.innerHTML = `
+        <h1 style="text-align:center; color:#0055aa; margin-bottom:15px;">Laporan Agendaku - ${namaUser}</h1>
+        <div id="pdf-jadwal">${jadwalHtml}</div>
+        <hr style="margin: 20px 0;">
+        <div id="pdf-kuliah">${kuliahHtml}</div>
+        <hr style="margin: 20px 0;">
+        <div id="pdf-catatan">
+            <h3>Catatan Pribadi:</h3>
+            <p style="white-space: pre-wrap; word-break: break-word;">${catatanText}</p>
+        </div>
+    `;
+    document.body.appendChild(printableArea);
+
+    try {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
+
+        // Gunakan html2canvas pada area cetak yang sudah bersih
+        const canvas = await html2canvas(printableArea, { 
+            scale: 2, 
+            useCORS: true 
+        });
+        
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const margin = 10;
-        let yPos = margin;
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgProps = pdf.getImageProperties(imgData);
+        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        let heightLeft = imgHeight;
+        let position = 0;
 
-        const sections = [
-            { id: 'jadwalContainer', title: 'Jadwal Kegiatan' },
-            { id: 'kuliahContent', title: 'Jadwal Kuliah/Sekolah' },
-            { id: 'catatanContent', title: 'Catatan Pribadi' }
-        ];
+        // Tambahkan gambar ke PDF, buat halaman baru jika perlu
+        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
 
-        try {
-            // Tambahkan Judul Utama
-            pdf.setFontSize(22);
-            pdf.text(`Laporan Agendaku - ${namaUser}`, pdfWidth / 2, yPos, { align: 'center' });
-            yPos += 15;
-
-            for (let i = 0; i < sections.length; i++) {
-                const section = sections[i];
-                const element = document.getElementById(section.id);
-                if (!element) continue;
-
-                // Tambahkan separator dan judul bagian
-                if (i > 0) {
-                    yPos += 5;
-                    pdf.setLineWidth(0.5);
-                    pdf.line(margin, yPos, pdfWidth - margin, yPos);
-                    yPos += 10;
-                }
-                pdf.setFontSize(16);
-                pdf.text(section.title, margin, yPos);
-                yPos += 8;
-
-                if (section.id === 'catatanContent') {
-                    // Render catatan sebagai teks biasa untuk kualitas lebih baik
-                    pdf.setFontSize(10);
-                    const splitText = pdf.splitTextToSize(appData.catatanContent.join('\n'), pdfWidth - margin * 2);
-                    
-                    // Cek jika butuh halaman baru
-                    if (yPos + (splitText.length * 5) > pdf.internal.pageSize.getHeight() - margin) {
-                        pdf.addPage();
-                        yPos = margin;
-                    }
-                    pdf.text(splitText, margin, yPos);
-                } else {
-                    // Render jadwal sebagai gambar
-                    const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                    const imgProps = pdf.getImageProperties(imgData);
-                    const imgHeight = (imgProps.height * (pdfWidth - margin * 2)) / imgProps.width;
-
-                    // Cek jika butuh halaman baru
-                    if (yPos + imgHeight > pdf.internal.pageSize.getHeight() - margin) {
-                        pdf.addPage();
-                        yPos = margin;
-                    }
-
-                    pdf.addImage(imgData, 'JPEG', margin, yPos, pdfWidth - margin * 2, imgHeight);
-                    yPos += imgHeight;
-                }
-            }
-
-            pdf.save(`Agendaku_Laporan_${namaUser}.pdf`);
-            showToast('Berhasil!', 'File PDF berhasil dibuat dan diunduh.');
-
-        } catch (error) {
-            console.error("Gagal membuat PDF:", error);
-            showToast('Error', 'Gagal membuat file PDF. Silakan coba lagi.');
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pdfHeight;
         }
+
+        pdf.save(`Agendaku_Laporan_${namaUser}.pdf`);
+        showToast('Berhasil!', 'File PDF berhasil dibuat dan diunduh.');
+
+    } catch (error) {
+        console.error("Gagal membuat PDF:", error);
+        showToast('Error', 'Gagal membuat file PDF. Silakan coba lagi.');
+    } finally {
+        // PENTING: Hapus area cetak sementara setelah selesai
+        document.body.removeChild(printableArea);
     }
+}
 
 
     // --- INITIALIZATION ---
