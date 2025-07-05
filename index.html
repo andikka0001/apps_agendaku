@@ -3271,17 +3271,17 @@
     formData.append("file", pdfBlob, "jadwal.pdf");
 
     try {
-      const res = await fetch("https://api.gofile.io/uploadFile", {
+      const res = await fetch("https://api.anonfiles.com/upload", {
         method: "POST",
         body: formData
       });
 
       const result = await res.json();
-      if (result.status === "ok") {
-        const url = result.data.downloadPage;
-        showPdfResult(true, "Berhasil diupload ke Gofile.io. Link berlaku sementara.", url);
+      if (result.status) {
+        const url = result.data.file.url.full;
+        showPdfResult(true, "Berhasil diupload ke Anonfiles", url);
       } else {
-        showPdfResult(false, "Gagal upload: " + result.status);
+        showPdfResult(false, "Gagal upload: " + result.error.message);
       }
     } catch (err) {
       showPdfResult(false, "Terjadi kesalahan saat upload: " + err.message);
