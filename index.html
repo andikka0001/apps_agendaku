@@ -3255,5 +3255,63 @@
     }
 
   </script>
+
+<script>
+  async function generateAndUploadPDF() {
+    document.getElementById('pdfLoading').style.display = 'block';
+    document.getElementById('pdfResult').style.display = 'none';
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    doc.text("Ini adalah PDF hasil ekspor dari Agendaku", 10, 20);
+    const pdfBlob = doc.output("blob");
+
+    const formData = new FormData();
+    formData.append("file", pdfBlob, "jadwal.pdf");
+
+    try {
+      const res = await fetch("https://api.gofile.io/uploadFile", {
+        method: "POST",
+        body: formData
+      });
+
+      const result = await res.json();
+      if (result.status === "ok") {
+        const url = result.data.downloadPage;
+        showPdfResult(true, "Berhasil diupload ke Gofile.io. Link berlaku sementara.", url);
+      } else {
+        showPdfResult(false, "Gagal upload: " + result.status);
+      }
+    } catch (err) {
+      showPdfResult(false, "Terjadi kesalahan saat upload: " + err.message);
+    }
+  }
+
+  function showPdfResult(success, message, downloadLink = null) {
+    document.getElementById('pdfLoading').style.display = 'none';
+    const resultDiv = document.getElementById('pdfResult');
+    const messageP = document.getElementById('pdfResultMessage');
+    const linkEl = document.getElementById('pdfDownloadLink');
+
+    resultDiv.className = success ? 'pdf-result success' : 'pdf-result error';
+    messageP.textContent = message;
+
+    if (success && downloadLink) {
+      linkEl.textContent = "📋 Salin & Buka Link Download";
+      linkEl.href = downloadLink;
+      linkEl.onclick = () => {
+        navigator.clipboard.writeText(downloadLink);
+        return true;
+      };
+      linkEl.style.display = 'inline-block';
+    } else {
+      linkEl.style.display = 'none';
+    }
+
+    resultDiv.style.display = 'block';
+  }
+</script>
+
 </body>
 </html>
