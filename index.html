@@ -4,8 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Agendaku</title>
-  <!-- jsPDF CDN untuk ekspor PDF -->
+  <!-- Prevent cache -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* CSS tidak ada perubahan dari revisi sebelumnya */
     * {
@@ -728,7 +733,8 @@
     .default-theme-confirm-popup .question-mark,
     .save-confirm-popup .question-mark,
     .exit-confirm-popup .question-mark,
-    .delete-confirm-popup .question-mark { 
+    .delete-confirm-popup .question-mark,
+    .pdf-confirm-popup .question-mark { 
         font-size: 60px; 
         display: block; 
         margin-bottom: 15px;
@@ -739,6 +745,7 @@
     .save-confirm-popup .question-mark { color: #FFA500; }
     .exit-confirm-popup .question-mark { color: #ffc107; }
     .delete-confirm-popup .question-mark { color: #dc3545; }
+    .pdf-confirm-popup .question-mark { color: #4CAF50; }
     #kritikSaranPopup textarea {
         width: 100%;
         min-height: 120px;
@@ -797,6 +804,7 @@
     .save-confirm-popup p,
     .exit-confirm-popup p,
     .delete-confirm-popup p,
+    .pdf-confirm-popup p,
     #helpPopupContent p {
         font-size: 16px; 
         color: #333; 
@@ -808,6 +816,7 @@
     .save-confirm-popup .btn-confirm-container,
     .exit-confirm-popup .btn-confirm-container,
     .delete-confirm-popup .btn-confirm-container,
+    .pdf-confirm-popup .btn-confirm-container,
     #helpPopupContent .popup-footer .btn {
         display: flex; 
         justify-content: space-around;
@@ -819,7 +828,8 @@
     .default-theme-confirm-popup .btn-confirm,
     .save-confirm-popup .btn-confirm,
     .exit-confirm-popup .btn-confirm,
-    .delete-confirm-popup .btn-confirm {
+    .delete-confirm-popup .btn-confirm,
+    .pdf-confirm-popup .btn-confirm {
         padding: 10px 20px; 
         font-size: 16px; 
         min-width: 100px;
@@ -830,7 +840,8 @@
     .default-theme-confirm-popup .btn-yes,
     .save-confirm-popup .btn-yes,
     .exit-confirm-popup .btn-yes,
-    .delete-confirm-popup .btn-yes {
+    .delete-confirm-popup .btn-yes,
+    .pdf-confirm-popup .btn-yes {
         background: linear-gradient(45deg, #00c853, #00e676);
     }
     .reset-confirm-popup .btn-no,
@@ -838,7 +849,8 @@
     .default-theme-confirm-popup .btn-no,
     .save-confirm-popup .btn-no,
     .exit-confirm-popup .btn-no,
-    .delete-confirm-popup .btn-no {
+    .delete-confirm-popup .btn-no,
+    .pdf-confirm-popup .btn-no {
         background: linear-gradient(45deg, #f44336, #ff5722);
     }
     .save-confirm-popup .btn-cancel {
@@ -1185,12 +1197,11 @@
     .btn-import-project:hover {
         background: linear-gradient(45deg, #1976d2, #1565c0);
     }
-    /* NEW: PDF Export Button Styles */
     .btn-export-pdf {
-        background: linear-gradient(45deg, #9c27b0, #673ab7);
+        background: linear-gradient(45deg, #ff9800, #f57c00);
     }
     .btn-export-pdf:hover {
-        background: linear-gradient(45deg, #8e24aa, #5e35b1);
+        background: linear-gradient(45deg, #f57c00, #ef6c00);
     }
     .hidden-file-input {
         display: none;
@@ -1257,73 +1268,102 @@
       flex: 1;
     }
 
-    /* NEW: PDF Popup Styles */
-    .pdf-popup .popup-body {
+    /* PDF Success Popup Styles */
+    .pdf-success-popup .popup-body {
         text-align: center;
     }
-    .pdf-instructions {
-        background: #f3e5f5;
-        border: 1px solid #e1bee7;
-        color: #4a148c;
+    .pdf-link-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
         border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-        text-align: left;
+        font-size: 14px;
+        margin: 15px 0;
+        background: #f9f9f9;
+        font-family: 'Courier New', monospace;
+        word-break: break-all;
     }
-    .pdf-instructions h4 {
-        color: #6a1b9a;
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-    .pdf-loading {
-        display: none;
-        padding: 20px;
-        text-align: center;
-    }
-    .pdf-loading .spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #9c27b0;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 15px;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    .pdf-result {
-        display: none;
-        padding: 15px;
-        background: #e8f5e8;
-        border: 1px solid #c8e6c9;
-        border-radius: 8px;
-        margin-top: 15px;
-    }
-    .pdf-result.error {
-        background: #ffebee;
-        border-color: #ffcdd2;
-        color: #c62828;
-    }
-    .pdf-result.success {
-        color: #2e7d32;
-    }
-    .download-link {
+    .pdf-download-link {
         display: inline-block;
-        background: linear-gradient(45deg, #9c27b0, #673ab7);
+        margin: 10px 0;
+        padding: 12px 20px;
+        background: linear-gradient(45deg, #4CAF50, #45a049);
         color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
         text-decoration: none;
-        margin-top: 10px;
-        transition: background 0.2s ease;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: transform 0.2s ease, background 0.2s ease;
     }
-    .download-link:hover {
-        background: linear-gradient(45deg, #8e24aa, #5e35b1);
+    .pdf-download-link:hover {
+        background: linear-gradient(45deg, #45a049, #388e3c);
+        transform: translateY(-2px);
     }
 
-  </style>
+  
+/* Pop-up Sambutan */
+.popup-content.welcome-popup-content {
+  background: linear-gradient(135deg, #00c853, #2962ff);
+  color: white;
+  border-radius: 20px;
+  padding: 30px 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  transform: scale(0.8);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+#welcomePopup.active .welcome-popup-content {
+  transform: scale(1);
+}
+#welcomePopup h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+#welcomePopup p {
+  font-size: 16px;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+.btn.btn-welcome {
+  background: white;
+  color: #2962ff;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 25px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+.btn.btn-welcome:hover {
+  background: #f0f0f0;
+  transform: scale(1.05);
+}
+#welcomePopup {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#welcomePopup.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+#welcomePopup .popup-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+</style>
 </head>
 <body>
 
@@ -1499,8 +1539,16 @@
             <ul>
                 <li><strong>Export Project:</strong> Buka menu samping (☰) dan pilih "Export Project". Salin kode yang muncul dan simpan di tempat aman (misal: file .txt). Ini adalah cadangan seluruh data Anda.</li>
                 <li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project". **Tekan dan tahan** di dalam kotak teks lalu pilih 'Tempel' (Paste) untuk memasukkan kode backup Anda, kemudian klik "Import".</li>
-                <li><strong>Export PDF:</strong> Fitur baru! Ekspor semua jadwal dan catatan Anda dalam format PDF yang rapi dan profesional.</li>
                 <li><strong>Penting:</strong> Lakukan backup secara berkala untuk menghindari kehilangan data.</li>
+            </ul>
+        </div>
+
+        <div class="tutorial-section">
+            <h3>Export ke PDF</h3>
+            <ul>
+                <li><strong>Fitur Baru:</strong> Klik tombol "Export ke PDF" di menu samping untuk membuat laporan profesional dalam format PDF.</li>
+                <li><strong>Cloud Storage:</strong> PDF akan diunggah ke cloud dan Anda akan mendapat link untuk mengunduh.</li>
+                <li><strong>Download Otomatis:</strong> Link yang diberikan akan langsung mengunduh file PDF ke perangkat Anda.</li>
             </ul>
         </div>
 
@@ -1666,6 +1714,38 @@
     </div>
   </div>
 
+  <!-- PDF Confirmation Popup -->
+  <div class="popup-overlay" id="pdfConfirmPopup">
+    <div class="popup-content pdf-confirm-popup">
+      <span class="question-mark">📄</span>
+      <div class="popup-body centered">
+         <p>Apakah Anda ingin membuat dan mengunggah laporan PDF ke cloud? File akan tersimpan secara online dan Anda akan mendapat link untuk mengunduh.</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmPdfYes">Buat & Unggah PDF</button>
+        <button class="btn btn-confirm btn-no" id="confirmPdfNo">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Success Popup -->
+  <div class="popup-overlay" id="pdfSuccessPopup">
+    <div class="popup-content pdf-success-popup">
+      <button class="popup-close-btn" onclick="closePdfSuccessPopup()">×</button>
+      <h3 class="popup-header">✅ PDF Berhasil Diunggah!</h3>
+      <div class="popup-body">
+        <p>File PDF Anda telah berhasil dibuat dan diunggah ke cloud. Gunakan link di bawah untuk mengunduh:</p>
+        <input type="text" id="pdfLinkInput" class="pdf-link-input" readonly>
+        <br>
+        <a id="pdfDownloadLink" class="pdf-download-link" href="#" target="_blank">⬇️ Klik untuk Download PDF</a>
+      </div>
+      <div class="popup-footer">
+        <button class="btn" onclick="copyPdfLink()">📋 Salin Link</button>
+        <button class="btn" onclick="closePdfSuccessPopup()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
   <div class="popup-overlay" id="exportPopup">
         <div class="popup-content export-popup">
             <button class="popup-close-btn" onclick="closeExportPopup()">×</button>
@@ -1710,40 +1790,6 @@
             </div>
         </div>
     </div>
-
-    <!-- NEW: PDF Export Popup -->
-    <div class="popup-overlay" id="pdfExportPopup">
-        <div class="popup-content pdf-popup">
-            <button class="popup-close-btn" onclick="closePdfExportPopup()">×</button>
-            <h3 class="popup-header">📄 Export PDF Agendaku</h3>
-            <div class="popup-body">
-                <div class="pdf-instructions">
-                    <h4>Ekspor Jadwal & Catatan ke PDF:</h4>
-                    <p>Fitur ini akan menghasilkan dokumen PDF yang berisi:</p>
-                    <ul>
-                        <li>📅 Jadwal Kegiatan Harian</li>
-                        <li>🎓 Jadwal Kuliah/Sekolah</li>
-                        <li>📝 Catatan Pribadi</li>
-                    </ul>
-                    <p>PDF akan di-upload ke file.io dan Anda akan mendapat link download yang berlaku selama 14 hari.</p>
-                </div>
-                
-                <div class="pdf-loading" id="pdfLoading">
-                    <div class="spinner"></div>
-                    <p>Sedang membuat PDF dan mengupload...</p>
-                </div>
-
-                <div class="pdf-result" id="pdfResult">
-                    <p id="pdfResultMessage"></p>
-                    <a href="#" id="pdfDownloadLink" class="download-link" target="_blank" style="display: none;">📥 Download PDF</a>
-                </div>
-            </div>
-            <div class="popup-footer">
-                <button class="btn" onclick="generateAndUploadPDF()" id="generatePdfBtn">📄 Buat PDF</button>
-                <button class="btn" onclick="closePdfExportPopup()">Tutup</button>
-            </div>
-        </div>
-    </div>
     
   <div class="popup-overlay" id="quotePopup">
     <div class="popup-content quote-popup-content">
@@ -1767,12 +1813,12 @@
 
           <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
           <div class="update-info-content" id="updateInfoContent">
-              <p><strong>Versi 1.6 - PDF Export Update:</strong></p>
+              <p><strong>Versi 1.6 - PDF Cloud Update:</strong></p>
               <ul>
-                  <li><strong>Export PDF:</strong> Fitur baru untuk mengekspor jadwal dan catatan dalam format PDF yang rapi dan profesional.</li>
-                  <li><strong>Upload Otomatis:</strong> PDF secara otomatis di-upload ke file.io untuk kemudahan download.</li>
-                  <li><strong>Format Terstruktur:</strong> Tabel yang rapi untuk jadwal dan format yang mudah dibaca untuk catatan.</li>
-                  <li><strong>Integrasi Mudah:</strong> Tombol ekspor PDF terintegrasi langsung di menu sidebar.</li>
+                  <li><strong>Export PDF ke Cloud:</strong> Fitur baru untuk membuat dan mengunggah laporan PDF ke cloud storage.</li>
+                  <li><strong>Download Otomatis:</strong> Link PDF yang dihasilkan akan langsung mengunduh file ke perangkat Anda.</li>
+                  <li><strong>Laporan Profesional:</strong> PDF berisi tabel jadwal yang rapi dan terstruktur.</li>
+                  <li><strong>Keamanan Data:</strong> Hanya pengguna terdaftar yang dapat menggunakan fitur ini (tidak tersedia untuk mode Tamu).</li>
               </ul>
           </div>
 
@@ -1786,9 +1832,8 @@
               <button class="btn-sidebar-action btn-import-project" onclick="showImportPopup()">
                   📥 Import Project
               </button>
-              <!-- NEW: PDF Export Button -->
-              <button class="btn-sidebar-action btn-export-pdf" onclick="showPdfExportPopup()">
-                  📄 Export PDF
+              <button class="btn-sidebar-action btn-export-pdf" onclick="showPdfConfirmPopup()">
+                  📄 Export ke PDF
               </button>
           </div>
       </div>
@@ -1825,6 +1870,14 @@
     let lastLoggedInUser = localStorage.getItem('lastLoggedInUser') || '';
     const DEFAULT_BACKGROUND_IMAGE = 'https://files.catbox.moe/sxim3d.jpg';
     const ADMIN_EMAIL = 'uchihafans2@gmail.com';
+
+    // Supabase Configuration
+    const SUPABASE_URL = 'https://nksyeuzkvhdmaqymjpjw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rc3lldXprdmhkbWFxeW1qcGp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4NzI3NDEsImV4cCI6MjA2NzQ0ODc0MX0.bdmVnNDlNxC1QL1vnEVZ9UuwkwX_e0bMQogvQuVCzVE';
+    const BUCKET_NAME = 'pdf';
+
+    // Initialize Supabase client
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let scheduleCheckerInterval = null;
     let notifiedSchedules = [];
@@ -2043,271 +2096,171 @@
         }
     }
 
-    // --- NEW: PDF EXPORT FUNCTIONS ---
-    function showPdfExportPopup() {
+    // --- PDF EXPORT FUNCTIONS ---
+    function showPdfConfirmPopup() {
         playClickSound();
-        
-        // Reset popup state
-        document.getElementById('pdfLoading').style.display = 'none';
-        document.getElementById('pdfResult').style.display = 'none';
-        document.getElementById('generatePdfBtn').style.display = 'inline-block';
-        
-        document.getElementById('pdfExportPopup').classList.add('active');
+        if (namaUser === 'Tamu') {
+            showToast('Akses Ditolak', 'Fitur Export PDF tidak tersedia untuk mode Tamu. Silakan login dengan nama Anda.');
+            return;
+        }
+        document.getElementById('pdfConfirmPopup').classList.add('active');
         playToastSound();
         closeAgendakuBranding();
     }
 
-    function closePdfExportPopup() {
-        document.getElementById('pdfExportPopup').classList.remove('active');
+    function closePdfConfirmPopup() {
+        document.getElementById('pdfConfirmPopup').classList.remove('active');
     }
 
-    function generateAndUploadPDF() {
+    function closePdfSuccessPopup() {
+        document.getElementById('pdfSuccessPopup').classList.remove('active');
+    }
+
+    function copyPdfLink() {
         playClickSound();
-        
-        // Show loading
-        document.getElementById('generatePdfBtn').style.display = 'none';
-        document.getElementById('pdfLoading').style.display = 'block';
-        document.getElementById('pdfResult').style.display = 'none';
+        const linkInput = document.getElementById('pdfLinkInput');
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+            showToast('Berhasil', 'Link PDF telah disalin ke clipboard!');
+        }).catch(err => {
+            showToast('Gagal', 'Gagal menyalin link. Silakan salin manual.');
+        });
+    }
 
+    async function generateAndUploadPdf() {
         try {
+            showToast('Membuat PDF...', 'Harap tunggu, menyusun laporan profesional...');
+            
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Set font untuk bahasa Indonesia
-            doc.setFont('helvetica');
-            
-            let yPosition = 20;
-            const pageHeight = doc.internal.pageSize.height;
-            const margin = 20;
-            const lineHeight = 7;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const margin = 15;
+            let finalY = 20;
 
-            // Helper function to add new page if needed
-            function checkPageBreak(needed = 20) {
-                if (yPosition + needed > pageHeight - margin) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-            }
+            // --- Judul Utama ---
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(20);
+            pdf.text(`Laporan Agendaku`, pageWidth / 2, finalY, { align: 'center' });
+            finalY += 8;
+            pdf.setFontSize(12);
+            pdf.setFont("helvetica", "normal");
+            pdf.text(`Pengguna: ${namaUser}`, pageWidth / 2, finalY, { align: 'center' });
+            finalY += 15;
 
-            // Title
-            doc.setFontSize(18);
-            doc.setFont('helvetica', 'bold');
-            doc.text('AGENDAKU - LAPORAN JADWAL & CATATAN', doc.internal.pageSize.width / 2, yPosition, { align: 'center' });
-            yPosition += 15;
-            
-            // User info
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            const currentDate = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-            doc.text(`Nama: ${namaUser === 'Tamu' ? 'Mode Tamu' : namaUser}`, margin, yPosition);
-            yPosition += 6;
-            if (nimUser) {
-                doc.text(`NIM/Kelas: ${nimUser}`, margin, yPosition);
-                yPosition += 6;
-            }
-            doc.text(`Tanggal Ekspor: ${currentDate}`, margin, yPosition);
-            yPosition += 15;
-
-            // JADWAL KEGIATAN HARIAN
-            checkPageBreak(30);
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('JADWAL KEGIATAN HARIAN', margin, yPosition);
-            yPosition += 10;
-
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-
-            for (const day in appData.jadwalContent) {
-                checkPageBreak(20);
-                
-                // Day header
-                doc.setFont('helvetica', 'bold');
-                doc.text(`${day}:`, margin, yPosition);
-                yPosition += 7;
-                
-                doc.setFont('helvetica', 'normal');
-                const activities = appData.jadwalContent[day] || [];
-                
-                if (activities.length === 0) {
-                    doc.text('  - Tidak ada kegiatan', margin + 5, yPosition);
-                    yPosition += lineHeight;
-                } else {
-                    activities.forEach(item => {
-                        checkPageBreak(10);
-                        
-                        let timeString = '';
-                        if (item.type === 'specific' && item.startTime && item.endTime) {
-                            timeString = `${item.startTime}-${item.endTime}`;
-                        } else if (item.type === 'general' && item.time) {
-                            timeString = item.time;
-                        }
-                        
-                        const status = item.selesai ? '[SELESAI] ' : '';
-                        const location = item.location ? ` (${item.location})` : '';
-                        const text = `  ${status}${timeString}: ${item.activity}${location}`;
-                        
-                        // Handle long text
-                        const splitText = doc.splitTextToSize(text, doc.internal.pageSize.width - margin * 2 - 5);
-                        splitText.forEach(line => {
-                            checkPageBreak(5);
-                            doc.text(line, margin + 5, yPosition);
-                            yPosition += lineHeight;
+            // Fungsi untuk mengubah data jadwal menjadi format tabel
+            const createTableData = (data) => {
+                const body = [];
+                const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+                daysOrder.forEach(day => {
+                    if (data[day] && data[day].length > 0) {
+                        data[day].forEach(item => {
+                            let timeString = item.type === 'specific' ? `${item.startTime || ''}-${item.endTime || ''}` : `[${item.time || 'Umum'}]`;
+                            let activityString = (item.selesai ? '✓ ' : '') + (item.activity || '');
+                            body.push([day, timeString, activityString, item.location || '-']);
                         });
-                    });
-                }
-                yPosition += 3;
-            }
-
-            yPosition += 10;
-
-            // JADWAL KULIAH/SEKOLAH
-            checkPageBreak(30);
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('JADWAL KULIAH/SEKOLAH', margin, yPosition);
-            yPosition += 10;
-
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-
-            for (const day in appData.kuliahContent) {
-                checkPageBreak(20);
-                
-                doc.setFont('helvetica', 'bold');
-                doc.text(`${day}:`, margin, yPosition);
-                yPosition += 7;
-                
-                doc.setFont('helvetica', 'normal');
-                const subjects = appData.kuliahContent[day] || [];
-                
-                if (subjects.length === 0) {
-                    doc.text('  - Tidak ada jadwal kuliah', margin + 5, yPosition);
-                    yPosition += lineHeight;
-                } else {
-                    subjects.forEach(item => {
-                        checkPageBreak(10);
-                        
-                        let timeString = '';
-                        if (item.type === 'specific' && item.startTime && item.endTime) {
-                            timeString = `${item.startTime}-${item.endTime}`;
-                        } else if (item.type === 'general' && item.time) {
-                            timeString = item.time;
-                        }
-                        
-                        const status = item.selesai ? '[SELESAI] ' : '';
-                        const location = item.location ? ` (${item.location})` : '';
-                        const text = `  ${status}${timeString}: ${item.activity}${location}`;
-                        
-                        const splitText = doc.splitTextToSize(text, doc.internal.pageSize.width - margin * 2 - 5);
-                        splitText.forEach(line => {
-                            checkPageBreak(5);
-                            doc.text(line, margin + 5, yPosition);
-                            yPosition += lineHeight;
-                        });
-                    });
-                }
-                yPosition += 3;
-            }
-
-            yPosition += 10;
-
-            // CATATAN PRIBADI
-            checkPageBreak(30);
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('CATATAN PRIBADI', margin, yPosition);
-            yPosition += 10;
-
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-
-            if (appData.catatanContent && appData.catatanContent.length > 0) {
-                appData.catatanContent.forEach(line => {
-                    if (line.trim()) {
-                        checkPageBreak(10);
-                        const splitText = doc.splitTextToSize(`• ${line}`, doc.internal.pageSize.width - margin * 2);
-                        splitText.forEach(textLine => {
-                            checkPageBreak(5);
-                            doc.text(textLine, margin, yPosition);
-                            yPosition += lineHeight;
-                        });
-                        yPosition += 2;
                     }
                 });
-            } else {
-                doc.text('Tidak ada catatan pribadi.', margin, yPosition);
-            }
+                return body;
+            };
 
-            // Footer
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.setFont('helvetica', 'normal');
-                doc.text(`Halaman ${i} dari ${totalPages} - Dibuat dengan Agendaku`, 
-                    doc.internal.pageSize.width / 2, 
-                    doc.internal.pageSize.height - 10, 
-                    { align: 'center' });
-            }
-
-            // Convert to blob and upload
-            const pdfBlob = doc.output('blob');
-            uploadPdfToFileIO(pdfBlob);
-
-        } catch (error) {
-            console.error('Error generating PDF:', error);
-            showPdfResult(false, 'Gagal membuat PDF: ' + error.message);
-        }
-    }
-
-    async function uploadPdfToFileIO(pdfBlob) {
-        try {
-            const formData = new FormData();
-            const fileName = `Agendaku_${namaUser}_${new Date().toISOString().split('T')[0]}.pdf`;
-            formData.append('file', pdfBlob, fileName);
-
-            const response = await fetch('https://file.io/', {
-                method: 'POST',
-                body: formData
+            // --- Render Tabel Jadwal Kegiatan ---
+            pdf.autoTable({
+                startY: finalY,
+                head: [['Hari', 'Waktu', 'Kegiatan', 'Lokasi']],
+                body: createTableData(appData.jadwalContent),
+                theme: 'grid',
+                headStyles: { fillColor: [0, 85, 170] },
+                didDrawPage: (data) => {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(16);
+                    pdf.text('Jadwal Kegiatan', margin, data.settings.startY - 5);
+                }
             });
+            finalY = pdf.autoTable.previous.finalY + 15;
 
-            const result = await response.json();
+            // --- Render Tabel Jadwal Kuliah ---
+            if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
+            pdf.autoTable({
+                startY: finalY,
+                head: [['Hari', 'Waktu', 'Mata Kuliah/Pelajaran', 'Ruangan']],
+                body: createTableData(appData.kuliahContent),
+                theme: 'grid',
+                headStyles: { fillColor: [0, 85, 170] },
+                didDrawPage: (data) => {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(16);
+                    pdf.text('Jadwal Kuliah/Sekolah', margin, data.settings.startY - 5);
+                }
+            });
+            finalY = pdf.autoTable.previous.finalY + 15;
 
-            if (result.success && result.link) {
-                showPdfResult(true, 'PDF berhasil dibuat dan di-upload!', result.link);
-            } else {
-                throw new Error(result.message || 'Upload gagal');
+            // --- Render Catatan ---
+            if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.text('Catatan Pribadi', margin, finalY);
+            finalY += 8;
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(10);
+            const noteLines = pdf.splitTextToSize(appData.catatanContent.join('\n'), pageWidth - (margin * 2));
+            pdf.text(noteLines, margin, finalY);
+
+            // --- Tambahkan Footer Nomor Halaman ---
+            const pageCount = pdf.internal.getNumberOfPages();
+            for(let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(8);
+                pdf.setTextColor(150);
+                pdf.text(`Halaman ${i} dari ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
             }
 
+            // Convert PDF to blob
+            const pdfBlob = pdf.output('blob');
+            const fileName = `laporan/${namaUser}.pdf`;
+
+            // Upload to Supabase
+            const { data, error } = await supabase.storage
+                .from(BUCKET_NAME)
+                .upload(fileName, pdfBlob, {
+                    cacheControl: '3600',
+                    upsert: true,
+                    contentType: 'application/pdf'
+                });
+
+            if (error) {
+                console.error('Supabase upload error:', error);
+                throw new Error(`Upload failed: ${error.message}`);
+            }
+
+            // Get public URL
+            const { data: urlData } = supabase.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(fileName);
+
+            if (!urlData?.publicUrl) {
+                throw new Error('Failed to get public URL');
+            }
+
+            // Show success popup with download link
+            showPdfSuccessPopup(urlData.publicUrl);
+
         } catch (error) {
-            console.error('Error uploading PDF:', error);
-            showPdfResult(false, 'PDF berhasil dibuat, tetapi upload gagal. Coba lagi atau gunakan fitur export project untuk backup data.');
+            console.error('PDF generation/upload error:', error);
+            showToast('Error', `Gagal membuat atau mengunggah PDF: ${error.message}`);
         }
     }
 
-    function showPdfResult(success, message, downloadLink = null) {
-        document.getElementById('pdfLoading').style.display = 'none';
+    function showPdfSuccessPopup(publicUrl) {
+        const linkInput = document.getElementById('pdfLinkInput');
+        const downloadLink = document.getElementById('pdfDownloadLink');
         
-        const resultDiv = document.getElementById('pdfResult');
-        const messageP = document.getElementById('pdfResultMessage');
-        const linkEl = document.getElementById('pdfDownloadLink');
-
-        resultDiv.className = success ? 'pdf-result success' : 'pdf-result error';
-        messageP.textContent = message;
-
-        if (success && downloadLink) {
-            linkEl.href = downloadLink;
-            linkEl.style.display = 'inline-block';
-        } else {
-            linkEl.style.display = 'none';
-        }
-
-        resultDiv.style.display = 'block';
-
-        if (success) {
-            showToast('PDF Siap!', 'PDF Agendaku berhasil dibuat dan dapat didownload.');
-        }
+        linkInput.value = publicUrl;
+        downloadLink.href = publicUrl;
+        downloadLink.setAttribute('download', `Agendaku_Laporan_${namaUser}.pdf`);
+        
+        document.getElementById('pdfSuccessPopup').classList.add('active');
+        showToast('Berhasil!', 'PDF berhasil diunggah ke cloud. Klik link untuk download.');
+        playToastSound();
     }
     
     // --- INITIALIZATION ---
@@ -2337,6 +2290,10 @@
       
       document.getElementById('confirmExitYes').onclick = () => { exitApplication(); };
       document.getElementById('confirmExitNo').onclick = () => { playClickSound(); closeExitConfirmPopup(); };
+
+      // PDF confirmation handlers
+      document.getElementById('confirmPdfYes').onclick = () => { playClickSound(); closePdfConfirmPopup(); generateAndUploadPdf(); };
+      document.getElementById('confirmPdfNo').onclick = () => { playClickSound(); closePdfConfirmPopup(); };
 
       window.addEventListener('popstate', (e) => { isNavigatingBack = true; handlePopState(e.state); });
 
@@ -3227,7 +3184,6 @@
         }
     }
 
-
     function startScheduleChecker() {
         notifiedSchedules = []; 
         if (scheduleCheckerInterval) {
@@ -3256,60 +3212,31 @@
 
   </script>
 
+<!-- Pop-up Sambutan Elegan -->
+<div class="popup-overlay" id="welcomePopup">
+  <div class="popup-content welcome-popup-content">
+    <button class="popup-close-btn" onclick="closeWelcomePopupAndRefresh()">×</button>
+    <h2>👋 Selamat Datang di Agendaku!</h2>
+    <p>
+      Terima kasih telah memilih <strong>Agendaku</strong> sebagai teman harianmu.
+      Yuk atur jadwalmu dan mulai hari dengan lebih terencana!
+    </p>
+    <button class="btn btn-welcome" onclick="closeWelcomePopupAndRefresh()">Masuk Sekarang</button>
+  </div>
+</div>
+
+
 <script>
-  async function generateAndUploadPDF() {
-    document.getElementById('pdfLoading').style.display = 'block';
-    document.getElementById('pdfResult').style.display = 'none';
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(12);
-    doc.text("Ini adalah PDF hasil ekspor dari Agendaku", 10, 20);
-    const pdfBlob = doc.output("blob");
-
-    const formData = new FormData();
-    formData.append("file", pdfBlob, "jadwal.pdf");
-
-    try {
-      const res = await fetch("https://api.anonfiles.com/upload", {
-        method: "POST",
-        body: formData
-      });
-
-      const result = await res.json();
-      if (result.status) {
-        const url = result.data.file.url.full;
-        showPdfResult(true, "Berhasil diupload ke Anonfiles", url);
-      } else {
-        showPdfResult(false, "Gagal upload: " + result.error.message);
-      }
-    } catch (err) {
-      showPdfResult(false, "Terjadi kesalahan saat upload: " + err.message);
+  document.addEventListener("DOMContentLoaded", function () {
+    const welcomePopup = document.getElementById("welcomePopup");
+    if (!localStorage.getItem("popup_shown")) {
+      welcomePopup.classList.add("active");
     }
-  }
+  });
 
-  function showPdfResult(success, message, downloadLink = null) {
-    document.getElementById('pdfLoading').style.display = 'none';
-    const resultDiv = document.getElementById('pdfResult');
-    const messageP = document.getElementById('pdfResultMessage');
-    const linkEl = document.getElementById('pdfDownloadLink');
-
-    resultDiv.className = success ? 'pdf-result success' : 'pdf-result error';
-    messageP.textContent = message;
-
-    if (success && downloadLink) {
-      linkEl.textContent = "📋 Salin & Buka Link Download";
-      linkEl.href = downloadLink;
-      linkEl.onclick = () => {
-        navigator.clipboard.writeText(downloadLink);
-        return true;
-      };
-      linkEl.style.display = 'inline-block';
-    } else {
-      linkEl.style.display = 'none';
-    }
-
-    resultDiv.style.display = 'block';
+  function closeWelcomePopupAndRefresh() {
+    localStorage.setItem("popup_shown", "true");
+    location.reload(true);
   }
 </script>
 
