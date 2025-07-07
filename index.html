@@ -1207,65 +1207,208 @@
         display: none;
     }
 
-    .export-popup .popup-body, .import-popup .popup-body {
-        text-align: center;
+    /* Enhanced Export/Import Popup Styles */
+    .export-popup .popup-content,
+    .import-popup .popup-content {
+        max-width: 600px;
+        width: 95%;
+        max-height: 85vh;
     }
+
+    .export-popup .popup-body, 
+    .import-popup .popup-body {
+        text-align: left;
+        padding: 0;
+    }
+
     .export-data-display {
-        background: #f5f5f5;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 15px 0;
-        max-height: 250px;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        max-height: 300px;
         overflow-y: auto;
         font-family: 'Courier New', monospace;
-        font-size: 12px;
-        text-align: left;
+        font-size: 13px;
+        line-height: 1.4;
         white-space: pre-wrap;
         word-break: break-all;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
+        position: relative;
     }
+
+    .export-data-display::before {
+        content: "📋 Data Backup";
+        position: absolute;
+        top: -10px;
+        left: 15px;
+        background: white;
+        padding: 0 10px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #495057;
+        font-family: 'Poppins', sans-serif;
+    }
+
     .io-instructions {
-        background: #e3f2fd;
-        border: 1px solid #b3e5fc;
+        background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+        border: 2px solid #b3e5fc;
         color: #01579b;
-        border-radius: 8px;
-        padding: 15px;
+        border-radius: 12px;
+        padding: 20px;
         margin-bottom: 20px;
-        text-align: left;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+
     .io-instructions h4 {
         color: #0277bd;
         margin-top: 0;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
+
+    .io-instructions h4::before {
+        content: "📖";
+        font-size: 20px;
+    }
+
     .io-instructions ol {
-        padding-left: 20px;
+        padding-left: 25px;
         margin: 0;
-        line-height: 1.6;
+        line-height: 1.8;
     }
+
     .io-instructions li {
-        margin-bottom: 8px;
+        margin-bottom: 12px;
+        position: relative;
     }
+
+    .io-instructions li strong {
+        background: rgba(255,255,255,0.7);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+
     #importDataTextarea {
         width: 100%;
-        height: 150px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        height: 200px;
+        padding: 15px;
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
         font-family: 'Courier New', monospace;
-        font-size: 12px;
+        font-size: 13px;
+        line-height: 1.4;
         resize: vertical;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
         margin-top: 15px;
+        transition: border-color 0.3s ease;
+        background: #f8f9fa;
     }
+
+    #importDataTextarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: inset 0 2px 8px rgba(0,0,0,0.08), 0 0 0 3px rgba(0,123,255,0.1);
+    }
+
+    #importDataTextarea::placeholder {
+        color: #6c757d;
+        font-style: italic;
+    }
+
     .import-popup .popup-footer {
         display: flex;
-        gap: 10px;
+        gap: 15px;
         justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
     }
-    .import-popup .popup-footer .btn {
-      flex: 1;
+
+    .import-popup .popup-footer .btn,
+    .export-popup .popup-footer .btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .export-popup .popup-footer {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    /* Mobile Responsive Improvements */
+    @media (max-width: 768px) {
+        .export-popup .popup-content,
+        .import-popup .popup-content {
+            width: 98%;
+            max-height: 90vh;
+            margin: 10px;
+        }
+
+        .io-instructions {
+            padding: 15px;
+        }
+
+        .io-instructions h4 {
+            font-size: 16px;
+        }
+
+        .export-data-display {
+            padding: 15px;
+            font-size: 12px;
+            max-height: 250px;
+        }
+
+        #importDataTextarea {
+            height: 150px;
+            padding: 12px;
+            font-size: 12px;
+        }
+
+        .import-popup .popup-footer .btn,
+        .export-popup .popup-footer .btn {
+            min-width: 100px;
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .export-popup .popup-content,
+        .import-popup .popup-content {
+            width: 100%;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        .io-instructions ol {
+            padding-left: 20px;
+        }
+
+        .import-popup .popup-footer,
+        .export-popup .popup-footer {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .import-popup .popup-footer .btn,
+        .export-popup .popup-footer .btn {
+            width: 100%;
+        }
     }
 
     /* PDF Success Popup Styles */
@@ -1481,7 +1624,7 @@
         <p>
             Sekali lagi, terima kasih atas dukungan Anda. Semoga aplikasi ini bermanfaat!
         </p>
-        <p>Hormat saya,<br><strong>#Amin Fa</strong></p>
+        <p>Hormat saya,<br><strong>amiieen</strong></p>
     </div>
     <div class="info-footer-buttons">
       <button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Panduan Aplikasi</button>
@@ -1738,6 +1881,9 @@
         <input type="text" id="pdfLinkInput" class="pdf-link-input" readonly>
         <br>
         <a id="pdfDownloadLink" class="pdf-download-link" href="#" target="_blank">⬇️ Klik untuk Download PDF</a>
+        <p style="color: #ff6b35; font-weight: bold; margin-top: 15px;">
+          ⚠️ Link PDF ini hanya aktif selama 5 menit. Setelah itu akan otomatis kadaluarsa.
+        </p>
       </div>
       <div class="popup-footer">
         <button class="btn" onclick="copyPdfLink()">📋 Salin Link</button>
@@ -1881,6 +2027,7 @@
 
     let scheduleCheckerInterval = null;
     let notifiedSchedules = [];
+    let pdfDeletionTimeout = null; // For tracking PDF auto-deletion
 
     // State management variables
     let currentResetContentId = null; 
@@ -1988,6 +2135,16 @@
     function getDayNameID(dayIndex) {
       const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       return days[dayIndex];
+    }
+
+    // Generate device ID for PDF naming
+    function getDeviceId() {
+        let deviceId = localStorage.getItem('deviceId');
+        if (!deviceId) {
+            deviceId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            localStorage.setItem('deviceId', deviceId);
+        }
+        return deviceId;
     }
 
     // --- REVISED EXPORT/IMPORT FUNCTIONS ---
@@ -2114,6 +2271,11 @@
 
     function closePdfSuccessPopup() {
         document.getElementById('pdfSuccessPopup').classList.remove('active');
+        // Clear deletion timeout if popup is closed manually
+        if (pdfDeletionTimeout) {
+            clearTimeout(pdfDeletionTimeout);
+            pdfDeletionTimeout = null;
+        }
     }
 
     function copyPdfLink() {
@@ -2146,6 +2308,15 @@
             pdf.setFont("helvetica", "normal");
             pdf.text(`Pengguna: ${namaUser}`, pageWidth / 2, finalY, { align: 'center' });
             finalY += 15;
+
+            // Get real-time data from DOM
+            const getCurrentNotes = () => {
+                const editTextarea = document.getElementById('editCatatanTextarea');
+                if (editTextarea && editTextarea.style.display !== 'none') {
+                    return editTextarea.value.split('\n');
+                }
+                return appData.catatanContent;
+            };
 
             // Fungsi untuk mengubah data jadwal menjadi format tabel
             const createTableData = (data) => {
@@ -2194,7 +2365,7 @@
             });
             finalY = pdf.autoTable.previous.finalY + 15;
 
-            // --- Render Catatan ---
+            // --- Render Catatan (Real-time) ---
             if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(16);
@@ -2202,7 +2373,8 @@
             finalY += 8;
             pdf.setFont("helvetica", "normal");
             pdf.setFontSize(10);
-            const noteLines = pdf.splitTextToSize(appData.catatanContent.join('\n'), pageWidth - (margin * 2));
+            const currentNotes = getCurrentNotes();
+            const noteLines = pdf.splitTextToSize(currentNotes.join('\n'), pageWidth - (margin * 2));
             pdf.text(noteLines, margin, finalY);
 
             // --- Tambahkan Footer Nomor Halaman ---
@@ -2216,7 +2388,8 @@
 
             // Convert PDF to blob
             const pdfBlob = pdf.output('blob');
-            const fileName = `laporan/${namaUser}.pdf`;
+            const deviceId = getDeviceId();
+            const fileName = `laporan/${deviceId}.pdf`;
 
             // Upload to Supabase
             const { data, error } = await supabase.storage
@@ -2242,7 +2415,7 @@
             }
 
             // Show success popup with download link
-            showPdfSuccessPopup(urlData.publicUrl);
+            showPdfSuccessPopup(urlData.publicUrl, fileName);
 
         } catch (error) {
             console.error('PDF generation/upload error:', error);
@@ -2250,7 +2423,7 @@
         }
     }
 
-    function showPdfSuccessPopup(publicUrl) {
+    function showPdfSuccessPopup(publicUrl, fileName) {
         const linkInput = document.getElementById('pdfLinkInput');
         const downloadLink = document.getElementById('pdfDownloadLink');
         
@@ -2261,6 +2434,24 @@
         document.getElementById('pdfSuccessPopup').classList.add('active');
         showToast('Berhasil!', 'PDF berhasil diunggah ke cloud. Klik link untuk download.');
         playToastSound();
+
+        // Set 5-minute auto-deletion timer
+        pdfDeletionTimeout = setTimeout(async () => {
+            try {
+                const { error } = await supabase.storage
+                    .from(BUCKET_NAME)
+                    .remove([fileName]);
+
+                if (error) {
+                    console.error('Error deleting PDF:', error);
+                } else {
+                    showToast('File Kadaluarsa', 'PDF telah otomatis dihapus setelah 5 menit.');
+                    closePdfSuccessPopup();
+                }
+            } catch (error) {
+                console.error('Error in auto-deletion:', error);
+            }
+        }, 300000); // 5 minutes = 300,000 ms
     }
     
     // --- INITIALIZATION ---
@@ -2519,6 +2710,10 @@
             }
         } else if (slideId === 'instruksi') {
             navigateTo('info', null, false);
+            return;
+        } else if (slideId === 'ubahTema') {
+            // Auto-close theme panel and return to menu
+            navigateTo('menu', null, false);
             return;
         }
 
@@ -2782,15 +2977,16 @@
         
         renderJadwal(newData, currentEditTargetId); 
         
-        showToast('Berhasil', 'Jadwal telah disimpan.');
+        showToast('Berhasil', 'Jadwal berhasil diperbarui.');
         
+        // Immediate return to schedule view (100ms instead of 1000ms)
         setTimeout(() => {
             if (currentEditTargetId === 'jadwalContent') {
                 navigateTo('jadwal');
             } else if (currentEditTargetId === 'kuliahContent') {
                 navigateTo('kuliah');
             }
-        }, 1000);
+        }, 100);
     }
     
     function handleSaveConfirmation() {
@@ -2820,13 +3016,21 @@
         document.getElementById('saveConfirmPopup').classList.remove('active');
     }
 
+    // FIXED: Save notes function - removed window.close() that was causing the bug
     function saveCatatan() {
+        playClickSound();
         const newContent = document.getElementById('editCatatanTextarea').value;
         appData.catatanContent = newContent.split('\n');
         saveData('catatanContent');
         renderCatatan(appData.catatanContent);
         showToast('Tersimpan', 'Catatan pribadi berhasil diperbarui.');
-        tutupSlide('editCatatan');
+        
+        // Navigate back properly without closing tabs
+        if (historyState.length > 1) {
+            history.back();
+        } else {
+            navigateTo('catatan');
+        }
     }
     
     function confirmResetSchedule(contentId) {
@@ -2951,8 +3155,13 @@
     function applyTheme() {
       document.body.style.setProperty('--bg-image-url', `url('${selectedImageTheme}')`); 
       localStorage.setItem(`${namaUser}_savedTheme`, selectedImageTheme);
-      showToast('Berhasil', 'Tema latar belakang berhasil diganti.');
+      showToast('Berhasil', 'Tema berhasil diganti.');
       closeThemeConfirmPopup();
+      
+      // Auto-close theme panel and return to menu
+      setTimeout(() => {
+          navigateTo('menu');
+      }, 1000);
     }
 
     function closeThemeConfirmPopup() {
@@ -2971,7 +3180,11 @@
       localStorage.removeItem(`${namaUser}_savedTheme`);
       showToast('Berhasil', 'Tema latar belakang kembali ke default.');
       closeDefaultThemeConfirmPopup();
-      tutupSlide('ubahTema');
+      
+      // Auto-close theme panel and return to menu
+      setTimeout(() => {
+          navigateTo('menu');
+      }, 1000);
     }
 
     function closeDefaultThemeConfirmPopup() {
