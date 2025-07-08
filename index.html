@@ -1882,7 +1882,7 @@
         <br>
         <a id="pdfDownloadLink" class="pdf-download-link" href="#" target="_blank">⬇️ Klik untuk Download PDF</a>
         <p style="color: #ff6b35; font-weight: bold; margin-top: 15px;">
-          ⚠️ Link PDF ini hanya aktif selama 5 menit. Setelah itu akan otomatis kadaluarsa.
+          ⚠️ Link PDF ini hanya aktif selama 1 menit. Setelah itu akan otomatis kadaluarsa.
         </p>
       </div>
       <div class="popup-footer">
@@ -1969,9 +1969,9 @@
           </div>
 
           <div class="sidebar-action-buttons">
-              <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="btn-sidebar-action btn-new-update">
+              <button class="btn-sidebar-action btn-new-update" onclick="openUpdateInBrowser()">
                   🔥 Cek Update
-              </a>
+              </button>
               <button class="btn-sidebar-action btn-export-project" onclick="showExportPopup()">
                   📤 Export Project
               </button>
@@ -2147,6 +2147,30 @@
         return deviceId;
     }
 
+    // NEW: Function to open update page in browser (WebView compatible)
+    function openUpdateInBrowser() {
+        playClickSound();
+        const updateUrl = 'https://andikka0001.github.io/agendaku-komersial/';
+        
+        // Force open in external browser for WebView compatibility
+        try {
+            // Try to open in new tab/window first
+            const newWindow = window.open(updateUrl, '_blank', 'noopener,noreferrer');
+            
+            // If blocked or in WebView, try alternative methods
+            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                // Fallback: try to navigate current window
+                window.location.href = updateUrl;
+            }
+        } catch (error) {
+            // Final fallback: direct navigation
+            window.location.href = updateUrl;
+        }
+        
+        showToast('Membuka Browser', 'Mengarahkan ke halaman update...');
+        closeAgendakuBranding();
+    }
+
     // --- REVISED EXPORT/IMPORT FUNCTIONS ---
     function showExportPopup() {
         playClickSound();
@@ -2308,15 +2332,13 @@
             pdf.setFont("helvetica", "normal");
             pdf.text(`Pengguna: ${namaUser}`, pageWidth / 2, finalY, { align: 'center' });
             finalY += 15;
-
-            // Get real-time data from DOM
-            const getCurrentNotes = () => {
-                const editTextarea = document.getElementById('editCatatanTextarea');
-                if (editTextarea && editTextarea.style.display !== 'none') {
-                    return editTextarea.value.split('\n');
-                }
-                return appData.catatanContent;
-            };
+            
+            // Di bagian header PDF (setelah judul)
+pdf.setFontSize(12);
+pdf.text(`Dibuat oleh: ${namaUser}`, margin, finalY);
+finalY += 5;
+pdf.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, margin, finalY);
+finalY += 15;
 
             // Fungsi untuk mengubah data jadwal menjadi format tabel
             const createTableData = (data) => {
@@ -2365,7 +2387,7 @@
             });
             finalY = pdf.autoTable.previous.finalY + 15;
 
-            // --- Render Catatan (Real-time) ---
+            // --- Render Catatan ---
             if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(16);
@@ -2373,8 +2395,7 @@
             finalY += 8;
             pdf.setFont("helvetica", "normal");
             pdf.setFontSize(10);
-            const currentNotes = getCurrentNotes();
-            const noteLines = pdf.splitTextToSize(currentNotes.join('\n'), pageWidth - (margin * 2));
+            const noteLines = pdf.splitTextToSize(appData.catatanContent.join('\n'), pageWidth - (margin * 2));
             pdf.text(noteLines, margin, finalY);
 
             // --- Tambahkan Footer Nomor Halaman ---
@@ -2387,15 +2408,21 @@
             }
 
             // Convert PDF to blob
-            const pdfBlob = pdf.output('blob');
-            const deviceId = getDeviceId();
-            const fileName = `laporan/${deviceId}.pdf`;
+const pdfBlob = pdf.output('blob');
+const deviceId = getDeviceId();
+const now = new Date();
+const formattedDate = now.toISOString().split('T')[0]; // Tanggal (YYYY-MM-DD)
+const hours = String(now.getHours()).padStart(2, '0'); // Jam (00-23)
+const minutes = String(now.getMinutes()).padStart(2, '0'); // Menit (00-59)
+const timestamp = `${formattedDate}_${hours}-${minutes}`; // Format: YYYY-MM-DD_HH-MM
 
+const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
+            
             // Upload to Supabase
             const { data, error } = await supabase.storage
                 .from(BUCKET_NAME)
                 .upload(fileName, pdfBlob, {
-                    cacheControl: '3600',
+                    cacheControl: '0',
                     upsert: true,
                     contentType: 'application/pdf'
                 });
@@ -2431,11 +2458,29 @@
         downloadLink.href = publicUrl;
         downloadLink.setAttribute('download', `Agendaku_Laporan_${namaUser}.pdf`);
         
+        // FIXED: Force download link to open in new tab/browser for WebView compatibility
+        downloadLink.onclick = function(e) {
+            e.preventDefault();
+            try {
+                // Try to open in new tab/window first
+                const newWindow = window.open(publicUrl, '_blank', 'noopener,noreferrer');
+                
+                // If blocked or in WebView, try alternative methods
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    // Fallback: try to navigate current window
+                    window.location.href = publicUrl;
+                }
+            } catch (error) {
+                // Final fallback: direct navigation
+                window.location.href = publicUrl;
+            }
+        };
+        
         document.getElementById('pdfSuccessPopup').classList.add('active');
         showToast('Berhasil!', 'PDF berhasil diunggah ke cloud. Klik link untuk download.');
         playToastSound();
 
-        // Set 5-minute auto-deletion timer
+        // Set 1-minute auto-deletion timer (FIXED: Changed from 5 minutes to 1 minute)
         pdfDeletionTimeout = setTimeout(async () => {
             try {
                 const { error } = await supabase.storage
@@ -2445,13 +2490,13 @@
                 if (error) {
                     console.error('Error deleting PDF:', error);
                 } else {
-                    showToast('File Kadaluarsa', 'PDF telah otomatis dihapus setelah 5 menit.');
+                    showToast('File Kadaluarsa', 'PDF telah otomatis dihapus setelah 1 menit.');
                     closePdfSuccessPopup();
                 }
             } catch (error) {
                 console.error('Error in auto-deletion:', error);
             }
-        }, 300000); // 5 minutes = 300,000 ms
+        }, 5000); // FIXED: Changed from 300000 (5 minutes) to 60000 (1 minute)
     }
     
     // --- INITIALIZATION ---
