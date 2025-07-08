@@ -1624,7 +1624,7 @@
         <p>
             Sekali lagi, terima kasih atas dukungan Anda. Semoga aplikasi ini bermanfaat!
         </p>
-        <p>Hormat saya,<br><strong>amiieen</strong></p>
+        <p>Hormat saya,<br><strong>#Amin FA</strong></p>
     </div>
     <div class="info-footer-buttons">
       <button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Panduan Aplikasi</button>
@@ -1862,10 +1862,10 @@
     <div class="popup-content pdf-confirm-popup">
       <span class="question-mark">📄</span>
       <div class="popup-body centered">
-         <p>Apakah Anda ingin membuat dan mengunggah laporan PDF ke cloud? File akan tersimpan secara online dan Anda akan mendapat link untuk mengunduh.</p>
+         <p>Apakah Anda ingin membuat File Pdf laporan Anda? File akan tersimpan secara online dan Anda akan mendapat link untuk mengunduh.</p>
       </div>
       <div class="popup-footer btn-confirm-container">
-        <button class="btn btn-confirm btn-yes" id="confirmPdfYes">Buat & Unggah PDF</button>
+        <button class="btn btn-confirm btn-yes" id="confirmPdfYes">Siap Buat PDF</button>
         <button class="btn btn-confirm btn-no" id="confirmPdfNo">Batal</button>
       </div>
     </div>
@@ -1877,10 +1877,10 @@
       <button class="popup-close-btn" onclick="closePdfSuccessPopup()">×</button>
       <h3 class="popup-header">✅ PDF Berhasil Diunggah!</h3>
       <div class="popup-body">
-        <p>File PDF Anda telah berhasil dibuat dan diunggah ke cloud. Gunakan link di bawah untuk mengunduh:</p>
+        <p>File PDF Anda telah berhasil dibuat . Gunakan link di bawah untuk mengunduh di browser anda (JANGAN CROME):</p>
         <input type="text" id="pdfLinkInput" class="pdf-link-input" readonly>
         <br>
-        <a id="pdfDownloadLink" class="pdf-download-link" href="#" target="_blank">⬇️ Klik untuk Download PDF</a>
+        <a id="pdfDownloadLink" class="pdf-download-link" href="#" target="_blank">⬇️ Klik untuk Lihat PDF</a>
         <p style="color: #ff6b35; font-weight: bold; margin-top: 15px;">
           ⚠️ Link PDF ini hanya aktif selama 1 menit. Setelah itu akan otomatis kadaluarsa.
         </p>
@@ -2496,7 +2496,7 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
             } catch (error) {
                 console.error('Error in auto-deletion:', error);
             }
-        }, 5000); // FIXED: Changed from 300000 (5 minutes) to 60000 (1 minute)
+        }, 65000); // FIXED: Changed from 300000 (5 minutes) to 60000 (1 minute)
     }
     
     // --- INITIALIZATION ---
@@ -3369,12 +3369,12 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
     function exitApplication() {
         playClickSound();
         closeExitConfirmPopup();
-        showToast('Terima Kasih!', 'Menutup aplikasi...');
+        showToast('Oke tunggu', 'Menutup aplikasi...');
         
         window.close();
 
         setTimeout(() => {
-            showToast('Gagal Menutup Tab', 'Browser Anda mungkin mencegah penutupan tab secara otomatis.', 5000);
+            showToast('Silahkan tekan kembali 2 kali untuk Keluar Aplikasi .', );
             kembaliKeLogin();
         }, 500);
     }
