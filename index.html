@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Agendaku</title>
-<!-- Prevent cache -->
-<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
-<meta content="no-cache" http-equiv="Pragma"/>
-<meta content="0" http-equiv="Expires"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendaku</title>
+  <!-- Prevent cache -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
+  <style>
     /* CSS tidak ada perubahan dari revisi sebelumnya */
     * {
       margin: 0;
@@ -1510,465 +1509,511 @@
 </style>
 </head>
 <body>
-<div class="sidebar-overlay-blur" id="sidebarOverlay"></div>
-<div class="overlay" id="login">
-<input id="nama" placeholder="Masukkan Nama Anda" type="text"/>
-<input id="nimInput" placeholder="Masukkan Nim/Kelas (Opsional)" type="text"/>
-<button class="btn" id="loginBtn">Masuk</button>
-<button class="btn btn-secondary" id="guestLoginBtn">Masuk sebagai Tamu</button>
-<div class="digital-time info-frame" id="digitalClock"></div>
-<div class="user-info info-frame" id="userInfoDisplayLogin">
-<span id="userNameDisplayLogin"></span>
-<span id="userNimDisplayLogin"></span>
-</div>
-<div class="menu-icon-top-right" onclick="showAgendakuBranding()"></div>
-</div>
-<div class="overlay" id="menu" style="display:none">
-<button class="btn" onclick="bukaSlide('jadwal')">Jadwal Kegiatan</button>
-<button class="btn" onclick="bukaSlide('kuliah')">Jadwal Kuliah/Sekolah</button>
-<button class="btn" onclick="bukaSlide('ubahTema')">Ganti Tema Aplikasi</button>
-<button class="btn" onclick="bukaSlide('catatan')">Buat Catatan</button>
-<button class="btn" onclick="bukaSlide('info')">Info</button>
-<div class="digital-time info-frame" id="digitalClockMenu"></div>
-<div class="user-info info-frame" id="userInfoDisplayMenu">
-<span id="userNameDisplayMenu"></span>
-<span id="userNimDisplayMenu"></span>
-</div>
-<div class="menu-icon-top-right" onclick="showAgendakuBranding()"></div>
-</div>
-<div class="slide" id="jadwal">
-<div class="button-container">
-<button class="btn btn-edit-save" onclick="bukaSlide('editJadwal', 'jadwalContent')">Edit</button>
-<button class="btn btn-reset-custom" onclick="confirmResetSchedule('jadwalContent')">Reset</button>
-<button class="btn" onclick="tutupSlide('jadwal')">Kembali</button>
-</div>
-<h2>Kegiatan Harian</h2> <div class="jadwal-section" id="jadwalContainer">
-<div id="jadwalContent">
-</div>
-</div>
-</div>
-<div class="slide" id="kuliah">
-<div class="button-container">
-<button class="btn btn-edit-save" onclick="bukaSlide('editJadwal', 'kuliahContent')">Edit</button>
-<button class="btn btn-reset-custom" onclick="confirmResetSchedule('kuliahContent')">Reset</button>
-<button class="btn" onclick="tutupSlide('kuliah')">Kembali</button>
-</div>
-<h2>Jadwal Kuliah/ Sekolah</h2>
-<div class="jadwal-section" id="kuliahContent">
-</div>
-</div>
-<div class="slide" id="ubahTema">
-<div class="button-container">
-<button class="btn" onclick="tutupSlide('ubahTema')">Kembali</button>
-<button class="btn btn-reset-custom" onclick="confirmDefaultTheme()">Tema Default</button>
-</div>
-<h2>Pilih Tema Latar Belakang</h2>
-<div class="background-grid">
-<img alt="Latar 1" onclick="confirmImageTheme('https://files.catbox.moe/xtcb9j.jpg')" src="https://files.catbox.moe/xtcb9j.jpg"/>
-<img alt="Latar 2" onclick="confirmImageTheme('https://files.catbox.moe/m34hwi.jpg')" src="https://files.catbox.moe/m34hwi.jpg"/>
-<img alt="Latar 3" onclick="confirmImageTheme('https://files.catbox.moe/7kizkm.jpg')" src="https://files.catbox.moe/7kizkm.jpg"/>
-<img alt="Latar 4" onclick="confirmImageTheme('https://files.catbox.moe/6inu37.jpg')" src="https://files.catbox.moe/6inu37.jpg"/>
-<img alt="Latar 5" onclick="confirmImageTheme('https://files.catbox.moe/mq9zmw.jpg')" src="https://files.catbox.moe/mq9zmw.jpg"/>
-<img alt="Latar 6" onclick="confirmImageTheme('https://files.catbox.moe/mhhmd9.jpg')" src="https://files.catbox.moe/mhhmd9.jpg"/>
-<img alt="Latar 7" onclick="confirmImageTheme('https://files.catbox.moe/60s2gr.jpg')" src="https://files.catbox.moe/60s2gr.jpg"/>
-<img alt="Latar 8" onclick="confirmImageTheme('https://files.catbox.moe/29u9l1.jpg')" src="https://files.catbox.moe/29u9l1.jpg"/>
-<img alt="Latar 9" onclick="confirmImageTheme('https://files.catbox.moe/dp6gal.jpg')" src="https://files.catbox.moe/dp6gal.jpg"/>
-<img alt="Latar 10" onclick="confirmImageTheme('https://files.catbox.moe/2juexf.jpg')" src="https://files.catbox.moe/2juexf.jpg"/>
-</div>
-<div class="custom-theme-container">
-<button class="btn btn-custom-theme" onclick="triggerCustomTheme()">Unggah Tema Custom</button>
-</div>
-</div>
-<div class="slide" id="catatan">
-<div class="button-container">
-<button class="btn btn-edit-save" onclick="bukaSlide('editCatatan')">Edit</button>
-<button class="btn" onclick="tutupSlide('catatan')">Kembali</button>
-</div>
-<h2>Catatan Pribadi</h2>
-<div class="jadwal-section" id="catatanContent" style="flex-grow: 1; overflow-y: auto;">
-</div>
-</div>
-<div class="slide" id="editCatatan">
-<div class="button-container">
-<button class="btn btn-edit-save" onclick="saveCatatan()">Simpan</button>
-<button class="btn" onclick="tutupSlide('editCatatan')">Kembali</button>
-</div>
-<h2>Edit Catatan Pribadi</h2>
-<textarea id="editCatatanTextarea" style="width: 100%; height: 100%; border: 1px solid #ccc; padding: 15px; font-size: 16px; border-radius: 10px; resize: vertical; box-sizing: border-box; flex-grow: 1;"></textarea>
-</div>
-<div class="slide" id="info">
-<div class="info-header-content">
-<h2>Info Pengguna</h2>
-<p id="namaInfo">Nama: -</p>
-<p id="nimInfo">Nim/Kelas: -</p>
-</div>
-<div class="developer-description-container" id="developerDescriptionScrollable">
-<h3>Sebuah Pesan dari Developer</h3>
-<p style="margin-top: 10px;">
+
+  <div class="sidebar-overlay-blur" id="sidebarOverlay"></div>
+  
+  <div class="overlay" id="login">
+    <input type="text" id="nama" placeholder="Masukkan Nama Anda">
+    <input type="text" id="nimInput" placeholder="Masukkan Nim/Kelas (Opsional)">
+    <button class="btn" id="loginBtn">Masuk</button>
+    <button class="btn btn-secondary" id="guestLoginBtn">Masuk sebagai Tamu</button>
+    <div class="digital-time info-frame" id="digitalClock"></div>
+    <div class="user-info info-frame" id="userInfoDisplayLogin">
+      <span id="userNameDisplayLogin"></span>
+      <span id="userNimDisplayLogin"></span>
+    </div>
+    <div class="menu-icon-top-right" onclick="showAgendakuBranding()"></div>
+  </div>
+
+  <div class="overlay" id="menu" style="display:none">
+    <button class="btn" onclick="bukaSlide('jadwal')">Jadwal Kegiatan</button>
+    <button class="btn" onclick="bukaSlide('kuliah')">Jadwal Kuliah/Sekolah</button>
+    <button class="btn" onclick="bukaSlide('ubahTema')">Ganti Tema Aplikasi</button>
+    <button class="btn" onclick="bukaSlide('catatan')">Buat Catatan</button> 
+    <button class="btn" onclick="bukaSlide('info')">Info</button>
+    <div class="digital-time info-frame" id="digitalClockMenu"></div>
+    <div class="user-info info-frame" id="userInfoDisplayMenu">
+      <span id="userNameDisplayMenu"></span>
+      <span id="userNimDisplayMenu"></span>
+    </div>
+    <div class="menu-icon-top-right" onclick="showAgendakuBranding()"></div>
+  </div>
+
+  <div class="slide" id="jadwal">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="bukaSlide('editJadwal', 'jadwalContent')">Edit</button>
+      <button class="btn btn-reset-custom" onclick="confirmResetSchedule('jadwalContent')">Reset</button>
+      <button class="btn" onclick="tutupSlide('jadwal')">Kembali</button>
+    </div>
+    <h2>Kegiatan Harian</h2> <div class="jadwal-section" id="jadwalContainer">
+      <div id="jadwalContent">
+        </div>
+    </div>
+  </div>
+
+  <div class="slide" id="kuliah">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="bukaSlide('editJadwal', 'kuliahContent')">Edit</button>
+      <button class="btn btn-reset-custom" onclick="confirmResetSchedule('kuliahContent')">Reset</button>
+      <button class="btn" onclick="tutupSlide('kuliah')">Kembali</button>
+    </div>
+    <h2>Jadwal Kuliah/ Sekolah</h2>
+    <div id="kuliahContent" class="jadwal-section">
+      </div>
+  </div>
+
+  <div class="slide" id="ubahTema">
+    <div class="button-container">
+      <button class="btn" onclick="tutupSlide('ubahTema')">Kembali</button>
+      <button class="btn btn-reset-custom" onclick="confirmDefaultTheme()">Tema Default</button> 
+    </div>
+    <h2>Pilih Tema Latar Belakang</h2>
+    <div class="background-grid">
+      <img src="https://files.catbox.moe/xtcb9j.jpg" onclick="confirmImageTheme('https://files.catbox.moe/xtcb9j.jpg')" alt="Latar 1" />
+      <img src="https://files.catbox.moe/m34hwi.jpg" onclick="confirmImageTheme('https://files.catbox.moe/m34hwi.jpg')" alt="Latar 2" />
+      <img src="https://files.catbox.moe/7kizkm.jpg" onclick="confirmImageTheme('https://files.catbox.moe/7kizkm.jpg')" alt="Latar 3" />
+      <img src="https://files.catbox.moe/6inu37.jpg" onclick="confirmImageTheme('https://files.catbox.moe/6inu37.jpg')" alt="Latar 4" />
+      <img src="https://files.catbox.moe/mq9zmw.jpg" onclick="confirmImageTheme('https://files.catbox.moe/mq9zmw.jpg')" alt="Latar 5" />
+      <img src="https://files.catbox.moe/mhhmd9.jpg" onclick="confirmImageTheme('https://files.catbox.moe/mhhmd9.jpg')" alt="Latar 6" />
+      <img src="https://files.catbox.moe/60s2gr.jpg" onclick="confirmImageTheme('https://files.catbox.moe/60s2gr.jpg')" alt="Latar 7" />
+      <img src="https://files.catbox.moe/29u9l1.jpg" onclick="confirmImageTheme('https://files.catbox.moe/29u9l1.jpg')" alt="Latar 8" />
+      <img src="https://files.catbox.moe/dp6gal.jpg" onclick="confirmImageTheme('https://files.catbox.moe/dp6gal.jpg')" alt="Latar 9" />
+      <img src="https://files.catbox.moe/2juexf.jpg" onclick="confirmImageTheme('https://files.catbox.moe/2juexf.jpg')" alt="Latar 10" />
+    </div>
+    <div class="custom-theme-container">
+        <button class="btn btn-custom-theme" onclick="triggerCustomTheme()">Unggah Tema Custom</button>
+    </div>
+  </div>
+
+  <div class="slide" id="catatan">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="bukaSlide('editCatatan')">Edit</button>
+      <button class="btn" onclick="tutupSlide('catatan')">Kembali</button>
+    </div>
+    <h2>Catatan Pribadi</h2>
+    <div id="catatanContent" class="jadwal-section" style="flex-grow: 1; overflow-y: auto;">
+      </div>
+  </div>
+
+  <div class="slide" id="editCatatan">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="saveCatatan()">Simpan</button>
+      <button class="btn" onclick="tutupSlide('editCatatan')">Kembali</button>
+    </div>
+    <h2>Edit Catatan Pribadi</h2>
+    <textarea id="editCatatanTextarea" style="width: 100%; height: 100%; border: 1px solid #ccc; padding: 15px; font-size: 16px; border-radius: 10px; resize: vertical; box-sizing: border-box; flex-grow: 1;"></textarea>
+  </div>
+
+  <div class="slide" id="info">
+    <div class="info-header-content">
+      <h2>Info Pengguna</h2>
+      <p id="namaInfo">Nama: -</p>
+      <p id="nimInfo">Nim/Kelas: -</p>
+    </div>
+    <div class="developer-description-container" id="developerDescriptionScrollable">
+        <h3>Sebuah Pesan dari Developer</h3>
+        <p style="margin-top: 10px;">
             Halo Pengguna Agendaku,
         </p>
-<p>
+        <p>
             Terima kasih telah memilih dan menggunakan aplikasi ini. Agendaku dibuat dengan tujuan sederhana: membantu Anda mengelola jadwal harian dengan lebih mudah dan efisien. Saya sadar bahwa aplikasi ini masih dalam tahap pengembangan dan jauh dari kata sempurna. Mungkin Anda akan menemukan bug atau kekurangan di beberapa fitur.
         </p>
-<p>
+        <p>
             Untuk itu, saya memohon maaf atas segala ketidaknyamanan yang mungkin timbul. Setiap masukan, kritik, dan saran dari Anda sangatlah berharga bagi saya untuk terus memperbaiki dan mengembangkan Agendaku menjadi lebih baik. Jangan ragu untuk menghubungi saya melalui tombol "Kritik dan Saran".
         </p>
-<p>
+        <p>
             Sekali lagi, terima kasih atas dukungan Anda. Semoga aplikasi ini bermanfaat!
         </p>
-<p>Hormat saya,<br/><strong>#Amin FA</strong></p>
+        <p>Hormat saya,<br><strong>#Amin FA</strong></p>
+    </div>
+    <div class="info-footer-buttons">
+      <button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Panduan Aplikasi</button>
+      <button class="btn" onclick="tutupSlide('info')">Kembali</button>
+      <button class="btn btn-kritik-saran" onclick="showKritikSaranPopup()">Kritik dan Saran</button>
+      <div class="copyright-info">•</div>
+    </div>
+  </div>
+
+  <div class="slide" id="instruksi">
+    <div class="button-container">
+        <button class="btn" onclick="tutupSlide('instruksi')">Kembali ke Info</button>
+    </div>
+    <h2>Panduan Penggunaan Aplikasi</h2>
+    <div class="tutorial-content">
+        <div class="tutorial-section">
+            <h3>Selamat Datang di Agendaku!</h3>
+            <p>Aplikasi ini dirancang untuk menjadi asisten pribadi Anda dalam mengatur jadwal kegiatan, perkuliahan/sekolah, dan catatan penting. Mari kita mulai!</p>
+        </div>
+
+        <div class="tutorial-section">
+            <h3>Memulai Aplikasi</h3>
+            <ul>
+                <li><strong>Login Pengguna:</strong> Masukkan nama Anda untuk personalisasi. Data Anda akan disimpan secara lokal di browser Anda.</li>
+                <li><strong>Mode Tamu:</strong> Jika Anda hanya ingin mencoba, gunakan "Masuk sebagai Tamu". Tidak ada data yang akan disimpan secara permanen dengan nama Anda.</li>
+            </ul>
+        </div>
+        
+        <div class="tutorial-section">
+            <h3>Mengelola Tema Latar</h3>
+            <ul>
+                <li><strong>Pilih Tema:</strong> Masuk ke menu "Ganti Tema Aplikasi" untuk memilih dari daftar latar belakang yang tersedia.</li>
+                <li><strong>Tema Custom:</strong>
+                    <ul>
+                       <li>Di bagian bawah halaman tema, klik tombol "Unggah Tema Custom".</li>
+                       <li>Pilih gambar dari perangkat Anda. <strong>Disarankan menggunakan gambar dengan orientasi potrait (tegak)</strong> agar tampilan optimal di perangkat mobile.</li>
+                       <li>Konfirmasi untuk menerapkan tema baru Anda.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="tutorial-section">
+            <h3>Mengelola Jadwal Anda</h3>
+            <ul>
+                <li><strong>Edit:</strong> Klik tombol "Edit" untuk masuk ke mode pengeditan. Jadwal kini memiliki template awal untuk memudahkan Anda.</li>
+                <li><strong>Mode Waktu Fleksibel:</strong> Gunakan ikon ⏱️/🗓️ di samping setiap item untuk beralih antara waktu spesifik (misal: 08.00-09.00) dan waktu umum (misal: Pagi, Siang).</li>
+                <li><strong>Lokasi:</strong> Tambahkan detail tempat atau lokasi pada kolom yang tersedia.</li>
+                <li><strong>Simpan & Reset:</strong> Jangan lupa "Simpan" perubahan Anda. Tombol "Reset" akan mengembalikan jadwal ke template awal.</li>
+            </ul>
+        </div>
+
+        <div class="tutorial-section">
+            <h3>Backup Data (Export/Import)</h3>
+            <ul>
+                <li><strong>Export Project:</strong> Buka menu samping (☰) dan pilih "Export Project". Salin kode yang muncul dan simpan di tempat aman (misal: file .txt). Ini adalah cadangan seluruh data Anda.</li>
+                <li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project". **Tekan dan tahan** di dalam kotak teks lalu pilih 'Tempel' (Paste) untuk memasukkan kode backup Anda, kemudian klik "Import".</li>
+                <li><strong>Penting:</strong> Lakukan backup secara berkala untuk menghindari kehilangan data.</li>
+            </ul>
+        </div>
+
+        <div class="tutorial-section">
+            <h3>Export ke PDF</h3>
+            <ul>
+                <li><strong>Fitur Baru:</strong> Klik tombol "Export ke PDF" di menu samping untuk membuat laporan profesional dalam format PDF.</li>
+                <li><strong>Cloud Storage:</strong> PDF akan diunggah ke cloud dan Anda akan mendapat link untuk mengunduh.</li>
+                <li><strong>Download Otomatis:</strong> Link yang diberikan akan langsung mengunduh file PDF ke perangkat Anda.</li>
+            </ul>
+        </div>
+
+        <div class="tutorial-section">
+            <h3>Tombol Bantuan Cepat</h3>
+            <ul>
+                <li><strong>Tombol "💡":</strong> Menampilkan ringkasan jadwal untuk hari ini.</li>
+                <li><strong>Tombol Rumah (⌂):</strong> Kembali ke halaman login awal.</li>
+                <li><strong>Tombol Quote (💬):</strong> Menampilkan kutipan inspiratif dalam sebuah pop-up.</li>
+                <li><strong>Keluar Aplikasi:</strong> Dari menu samping (☰), pilih "Keluar" untuk mencoba menutup tab aplikasi.</li>
+            </ul>
+        </div>
+    </div>
 </div>
-<div class="info-footer-buttons">
-<button class="btn" onclick="bukaSlide('instruksi')" style="margin-top: 20px;">Panduan Aplikasi</button>
-<button class="btn" onclick="tutupSlide('info')">Kembali</button>
-<button class="btn btn-kritik-saran" onclick="showKritikSaranPopup()">Kritik dan Saran</button>
-<div class="copyright-info">•</div>
-</div>
-</div>
-<div class="slide" id="instruksi">
-<div class="button-container">
-<button class="btn" onclick="tutupSlide('instruksi')">Kembali ke Info</button>
-</div>
-<h2>Panduan Penggunaan Aplikasi</h2>
-<div class="tutorial-content">
-<div class="tutorial-section">
-<h3>Selamat Datang di Agendaku!</h3>
-<p>Aplikasi ini dirancang untuk menjadi asisten pribadi Anda dalam mengatur jadwal kegiatan, perkuliahan/sekolah, dan catatan penting. Mari kita mulai!</p>
-</div>
-<div class="tutorial-section">
-<h3>Memulai Aplikasi</h3>
-<ul>
-<li><strong>Login Pengguna:</strong> Masukkan nama Anda untuk personalisasi. Data Anda akan disimpan secara lokal di browser Anda.</li>
-<li><strong>Mode Tamu:</strong> Jika Anda hanya ingin mencoba, gunakan "Masuk sebagai Tamu". Tidak ada data yang akan disimpan secara permanen dengan nama Anda.</li>
-</ul>
-</div>
-<div class="tutorial-section">
-<h3>Mengelola Tema Latar</h3>
-<ul>
-<li><strong>Pilih Tema:</strong> Masuk ke menu "Ganti Tema Aplikasi" untuk memilih dari daftar latar belakang yang tersedia.</li>
-<li><strong>Tema Custom:</strong>
-<ul>
-<li>Di bagian bawah halaman tema, klik tombol "Unggah Tema Custom".</li>
-<li>Pilih gambar dari perangkat Anda. <strong>Disarankan menggunakan gambar dengan orientasi potrait (tegak)</strong> agar tampilan optimal di perangkat mobile.</li>
-<li>Konfirmasi untuk menerapkan tema baru Anda.</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="tutorial-section">
-<h3>Mengelola Jadwal Anda</h3>
-<ul>
-<li><strong>Edit:</strong> Klik tombol "Edit" untuk masuk ke mode pengeditan. Jadwal kini memiliki template awal untuk memudahkan Anda.</li>
-<li><strong>Mode Waktu Fleksibel:</strong> Gunakan ikon ⏱️/🗓️ di samping setiap item untuk beralih antara waktu spesifik (misal: 08.00-09.00) dan waktu umum (misal: Pagi, Siang).</li>
-<li><strong>Lokasi:</strong> Tambahkan detail tempat atau lokasi pada kolom yang tersedia.</li>
-<li><strong>Simpan &amp; Reset:</strong> Jangan lupa "Simpan" perubahan Anda. Tombol "Reset" akan mengembalikan jadwal ke template awal.</li>
-</ul>
-</div>
-<div class="tutorial-section">
-<h3>Backup Data (Export/Import)</h3>
-<ul>
-<li><strong>Export Project:</strong> Buka menu samping (☰) dan pilih "Export Project". Salin kode yang muncul dan simpan di tempat aman (misal: file .txt). Ini adalah cadangan seluruh data Anda.</li>
-<li><strong>Import Project:</strong> Untuk memulihkan data, pilih "Import Project". **Tekan dan tahan** di dalam kotak teks lalu pilih 'Tempel' (Paste) untuk memasukkan kode backup Anda, kemudian klik "Import".</li>
-<li><strong>Penting:</strong> Lakukan backup secara berkala untuk menghindari kehilangan data.</li>
-</ul>
-</div>
-<div class="tutorial-section">
-<h3>Export ke PDF</h3>
-<ul>
-<li><strong>Fitur Baru:</strong> Klik tombol "Export ke PDF" di menu samping untuk membuat laporan profesional dalam format PDF.</li>
-<li><strong>Cloud Storage:</strong> PDF akan diunggah ke cloud dan Anda akan mendapat link untuk mengunduh.</li>
-<li><strong>Download Otomatis:</strong> Link yang diberikan akan langsung mengunduh file PDF ke perangkat Anda.</li>
-</ul>
-</div>
-<div class="tutorial-section">
-<h3>Tombol Bantuan Cepat</h3>
-<ul>
-<li><strong>Tombol "💡":</strong> Menampilkan ringkasan jadwal untuk hari ini.</li>
-<li><strong>Tombol Rumah (⌂):</strong> Kembali ke halaman login awal.</li>
-<li><strong>Tombol Quote (💬):</strong> Menampilkan kutipan inspiratif dalam sebuah pop-up.</li>
-<li><strong>Keluar Aplikasi:</strong> Dari menu samping (☰), pilih "Keluar" untuk mencoba menutup tab aplikasi.</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="slide" id="editJadwal">
-<div class="button-container">
-<button class="btn btn-edit-save" onclick="saveEditedSchedule()">Simpan</button>
-<button class="btn" onclick="tutupSlide('editJadwal')">Kembali</button>
-</div>
-<h2 id="editJadwalTitle">Edit Jadwal</h2>
-<div class="edit-schedule-container" id="editScheduleContent">
-</div>
-</div>
-<div aria-label="Kembali ke Login" class="circular-btn home-btn" id="homeBtn" onclick="kembaliKeLogin()" style="display:none"></div>
-<div aria-label="Tampilkan Kutipan Motivasi" class="circular-btn quote-btn" id="quoteBtn" onclick="showQuotePopup()" style="display:none"></div>
-<div aria-label="Lihat Jadwal Hari Ini" class="circular-btn tutorial-help-btn" id="tutorialHelpBtn" onclick="showScheduleNow()" style="display:none"></div>
-<div aria-label="Bantuan Jadwal" class="circular-btn help-btn" id="helpBtnJadwal" onclick="showHelp('jadwal')" style="display: none;">?</div>
-<div aria-label="Bantuan Kuliah" class="circular-btn help-btn" id="helpBtnKuliah" onclick="showHelp('kuliah')" style="display: none;">?</div>
-<div class="popup-overlay" id="notificationPopup">
-<div class="popup-content notification-popup">
-<button class="popup-close-btn" onclick="closeNotification()">×</button>
-<h3 class="popup-header" id="notificationTitle">Jadwal Hari Ini</h3>
-<div class="popup-body" id="notificationContent">
-</div>
-</div>
-</div>
-<div class="tutorial-overlay" id="tutorialPopup">
-<div class="tutorial-popup">
-<button class="tutorial-close" onclick="closeMainTutorial()">×</button>
-<h3>Tutorial Penggunaan Aplikasi</h3>
-<p>1. Masukkan nama Anda untuk memulai</p>
-<p>2. Pilih menu Jadwal, lalu tekan tombol <strong>Edit</strong></p>
-<p>3. Di halaman edit, gunakan tombol <strong>⏱️/🗓️</strong> untuk mengganti mode waktu.</p>
-<p>4. Gunakan tombol "💡" di pojok kanan bawah untuk melihat jadwal hari ini.</p>
-<button class="btn" onclick="closeMainTutorial()" style="width:100%; margin-top:15px;">Mengerti</button>
-</div>
-</div>
-<div class="popup-overlay" id="helpPopupOverlay">
-<div class="popup-content" id="helpPopupContent">
-<button class="popup-close-btn" onclick="closeHelpPopup()">×</button>
-<h3 class="popup-header" id="helpPopupTitle">Bantuan</h3>
-<div class="popup-body" id="helpPopupText"></div>
-<div class="popup-footer">
-<button class="btn" onclick="closeHelpPopup()">Tutup</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="kritikSaranPopup">
-<div class="popup-content kritik-saran-popup">
-<button class="popup-close-btn" onclick="closeKritikSaranPopup()">×</button>
-<h3 class="popup-header">Kritik dan Saran</h3>
-<div class="popup-body">
-<textarea id="kritikSaranTextarea" placeholder="Tulis kritik atau saran Anda di sini..."></textarea>
-<div class="feedback-fallback">
-<div class="feedback-container">
-<span>Jika 'Kirim' gagal, copy &amp; kirim manual:</span>
-<button class="btn btn-copy-email" onclick="copyEmailToClipboard()">Copy Email</button>
-</div>
-</div>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-kirim" onclick="sendKritikSaran()">Kirim</button>
-<button class="btn btn-confirm btn-batal" onclick="closeKritikSaranPopup()">Batal</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="resetConfirmPopup">
-<div class="popup-content reset-confirm-popup">
-<span class="question-mark">❓</span>
-<div class="popup-body centered">
-<p>Kamu yakin ingin mereset jadwal kembali ke default?</p>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-yes" id="confirmResetYes">Ya</button>
-<button class="btn btn-confirm btn-no" id="confirmResetNo">Tidak</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="deleteConfirmPopup">
-<div class="popup-content delete-confirm-popup">
-<span class="question-mark">🗑️</span>
-<div class="popup-body centered">
-<p>Kamu yakin ingin menghapus item ini?</p>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-yes" id="confirmDeleteYes">Ya</button>
-<button class="btn btn-confirm btn-no" id="confirmDeleteNo">Tidak</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="themeConfirmPopup">
-<div class="popup-content theme-confirm-popup">
-<span class="question-mark">🖼️</span>
-<div class="popup-body centered">
-<p>Apakah Anda yakin ingin menerapkan tema ini?</p>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-yes" id="confirmThemeYes">Ya</button>
-<button class="btn btn-confirm btn-no" id="confirmThemeNo">Tidak</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="defaultThemeConfirmPopup">
-<div class="popup-content default-theme-confirm-popup">
-<span class="question-mark">ℹ️</span>
-<div class="popup-body centered">
-<p>Anda yakin ingin kembali ke tema awal aplikasi?</p>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-yes" id="confirmDefaultThemeYes">Ya</button>
-<button class="btn btn-confirm btn-no" id="confirmDefaultThemeNo">Tidak</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="saveConfirmPopup">
-<div class="popup-content save-confirm-popup">
-<span class="question-mark">💾</span>
-<div class="popup-body centered">
-<p id="saveConfirmMessage">Apakah Anda ingin menyimpan perubahan?</p>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-yes" id="confirmSaveYes">Simpan</button>
-<button class="btn btn-confirm btn-no" id="confirmSaveNo">Jangan Simpan</button>
-<button class="btn btn-confirm btn-cancel" id="confirmSaveCancel">Batal</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="exitConfirmPopup">
-<div class="popup-content exit-confirm-popup">
-<span class="question-mark">👋</span>
-<div class="popup-body centered">
-<p>Apakah Anda yakin ingin keluar dari aplikasi?</p>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-yes" id="confirmExitYes">Ya, Keluar</button>
-<button class="btn btn-confirm btn-no" id="confirmExitNo">Tidak</button>
-</div>
-</div>
-</div>
-<!-- PDF Confirmation Popup -->
-<div class="popup-overlay" id="pdfConfirmPopup">
-<div class="popup-content pdf-confirm-popup">
-<span class="question-mark">📄</span>
-<div class="popup-body centered">
-<p>Apakah Anda ingin membuat File Pdf laporan Anda? File akan tersimpan secara online dan Anda akan mendapat link untuk mengunduh.</p>
-</div>
-<div class="popup-footer btn-confirm-container">
-<button class="btn btn-confirm btn-yes" id="confirmPdfYes">Siap Buat PDF</button>
-<button class="btn btn-confirm btn-no" id="confirmPdfNo">Batal</button>
-</div>
-</div>
-</div>
-<!-- PDF Success Popup -->
-<div class="popup-overlay" id="pdfSuccessPopup">
-<div class="popup-content pdf-success-popup">
-<button class="popup-close-btn" onclick="closePdfSuccessPopup()">×</button>
-<h3 class="popup-header">✅ PDF Berhasil Diunggah!</h3>
-<div class="popup-body">
-<p>File PDF Anda telah berhasil dibuat . Gunakan link di bawah untuk mengunduh di browser anda (JANGAN CROME):</p>
-<input class="pdf-link-input" id="pdfLinkInput" readonly="" type="text"/>
-<br/>
-<a class="pdf-download-link" id="pdfDownloadLink" onclick="savePdfToDevice(event)">💾 Simpan PDF</a>
-<p style="color: #ff6b35; font-weight: bold; margin-top: 15px;">
+
+
+  <div class="slide" id="editJadwal">
+    <div class="button-container">
+      <button class="btn btn-edit-save" onclick="saveEditedSchedule()">Simpan</button>
+      <button class="btn" onclick="tutupSlide('editJadwal')">Kembali</button>
+    </div>
+    <h2 id="editJadwalTitle">Edit Jadwal</h2>
+    <div class="edit-schedule-container" id="editScheduleContent">
+      </div>
+  </div>
+
+
+  <div class="circular-btn home-btn" onclick="kembaliKeLogin()" id="homeBtn" style="display:none" aria-label="Kembali ke Login"></div>
+  <div class="circular-btn quote-btn" id="quoteBtn" style="display:none" onclick="showQuotePopup()" aria-label="Tampilkan Kutipan Motivasi"></div>
+  <div class="circular-btn tutorial-help-btn" id="tutorialHelpBtn" style="display:none" onclick="showScheduleNow()" aria-label="Lihat Jadwal Hari Ini"></div>
+  <div class="circular-btn help-btn" id="helpBtnJadwal" style="display: none;" onclick="showHelp('jadwal')" aria-label="Bantuan Jadwal">?</div>
+  <div class="circular-btn help-btn" id="helpBtnKuliah" style="display: none;" onclick="showHelp('kuliah')" aria-label="Bantuan Kuliah">?</div>
+
+  <div class="popup-overlay" id="notificationPopup">
+    <div class="popup-content notification-popup">
+      <button class="popup-close-btn" onclick="closeNotification()">×</button>
+      <h3 class="popup-header" id="notificationTitle">Jadwal Hari Ini</h3>
+      <div class="popup-body" id="notificationContent">
+        </div>
+    </div>
+  </div>
+
+  <div class="tutorial-overlay" id="tutorialPopup">
+    <div class="tutorial-popup">
+      <button class="tutorial-close" onclick="closeMainTutorial()">×</button>
+      <h3>Tutorial Penggunaan Aplikasi</h3>
+      <p>1. Masukkan nama Anda untuk memulai</p>
+      <p>2. Pilih menu Jadwal, lalu tekan tombol <strong>Edit</strong></p>
+      <p>3. Di halaman edit, gunakan tombol <strong>⏱️/🗓️</strong> untuk mengganti mode waktu.</p>
+      <p>4. Gunakan tombol "💡" di pojok kanan bawah untuk melihat jadwal hari ini.</p>
+      <button class="btn" onclick="closeMainTutorial()" style="width:100%; margin-top:15px;">Mengerti</button>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="helpPopupOverlay">
+    <div class="popup-content" id="helpPopupContent">
+      <button class="popup-close-btn" onclick="closeHelpPopup()">×</button>
+      <h3 class="popup-header" id="helpPopupTitle">Bantuan</h3>
+      <div class="popup-body" id="helpPopupText"></div>
+      <div class="popup-footer">
+        <button class="btn" onclick="closeHelpPopup()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="kritikSaranPopup">
+    <div class="popup-content kritik-saran-popup">
+        <button class="popup-close-btn" onclick="closeKritikSaranPopup()">×</button>
+        <h3 class="popup-header">Kritik dan Saran</h3>
+        <div class="popup-body">
+            <textarea id="kritikSaranTextarea" placeholder="Tulis kritik atau saran Anda di sini..."></textarea>
+            <div class="feedback-fallback">
+                <div class="feedback-container">
+                    <span>Jika 'Kirim' gagal, copy & kirim manual:</span>
+                    <button class="btn btn-copy-email" onclick="copyEmailToClipboard()">Copy Email</button>
+                </div>
+            </div>
+        </div>
+        <div class="popup-footer btn-confirm-container">
+            <button class="btn btn-confirm btn-kirim" onclick="sendKritikSaran()">Kirim</button>
+            <button class="btn btn-confirm btn-batal" onclick="closeKritikSaranPopup()">Batal</button>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="popup-overlay" id="resetConfirmPopup">
+    <div class="popup-content reset-confirm-popup">
+      <span class="question-mark">❓</span>
+      <div class="popup-body centered">
+         <p>Kamu yakin ingin mereset jadwal kembali ke default?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmResetYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmResetNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="deleteConfirmPopup">
+    <div class="popup-content delete-confirm-popup">
+      <span class="question-mark">🗑️</span>
+      <div class="popup-body centered">
+         <p>Kamu yakin ingin menghapus item ini?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmDeleteYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmDeleteNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="themeConfirmPopup">
+    <div class="popup-content theme-confirm-popup">
+      <span class="question-mark">🖼️</span>
+      <div class="popup-body centered">
+         <p>Apakah Anda yakin ingin menerapkan tema ini?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmThemeYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmThemeNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="defaultThemeConfirmPopup">
+    <div class="popup-content default-theme-confirm-popup">
+      <span class="question-mark">ℹ️</span>
+      <div class="popup-body centered">
+         <p>Anda yakin ingin kembali ke tema awal aplikasi?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmDefaultThemeYes">Ya</button>
+        <button class="btn btn-confirm btn-no" id="confirmDefaultThemeNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="saveConfirmPopup">
+    <div class="popup-content save-confirm-popup">
+      <span class="question-mark">💾</span>
+      <div class="popup-body centered">
+         <p id="saveConfirmMessage">Apakah Anda ingin menyimpan perubahan?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmSaveYes">Simpan</button>
+        <button class="btn btn-confirm btn-no" id="confirmSaveNo">Jangan Simpan</button>
+        <button class="btn btn-confirm btn-cancel" id="confirmSaveCancel">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="exitConfirmPopup">
+    <div class="popup-content exit-confirm-popup">
+      <span class="question-mark">👋</span>
+      <div class="popup-body centered">
+         <p>Apakah Anda yakin ingin keluar dari aplikasi?</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmExitYes">Ya, Keluar</button>
+        <button class="btn btn-confirm btn-no" id="confirmExitNo">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Confirmation Popup -->
+  <div class="popup-overlay" id="pdfConfirmPopup">
+    <div class="popup-content pdf-confirm-popup">
+      <span class="question-mark">📄</span>
+      <div class="popup-body centered">
+         <p>Apakah Anda ingin membuat File Pdf laporan Anda? File akan tersimpan secara online dan Anda akan mendapat link untuk mengunduh.</p>
+      </div>
+      <div class="popup-footer btn-confirm-container">
+        <button class="btn btn-confirm btn-yes" id="confirmPdfYes">Siap Buat PDF</button>
+        <button class="btn btn-confirm btn-no" id="confirmPdfNo">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Success Popup -->
+  <div class="popup-overlay" id="pdfSuccessPopup">
+    <div class="popup-content pdf-success-popup">
+      <button class="popup-close-btn" onclick="closePdfSuccessPopup()">×</button>
+      <h3 class="popup-header">✅ PDF Berhasil Diunggah!</h3>
+      <div class="popup-body">
+        <p>File PDF Anda telah berhasil dibuat . Gunakan link di bawah untuk mengunduh di browser anda (JANGAN CROME):</p>
+        <input type="text" id="pdfLinkInput" class="pdf-link-input" readonly>
+        <br>
+        <a id="pdfDownloadLink" class="pdf-download-link" href="#" onclick="savePdfToDevice(event)">💾 Simpan PDF</a>
+        <p style="color: #ff6b35; font-weight: bold; margin-top: 15px;">
           ⚠️ Link PDF ini hanya aktif selama 1 menit. Setelah itu akan otomatis kadaluarsa.
         </p>
-</div>
-<div class="popup-footer">
-<button class="btn" onclick="copyPdfLink()">📋 Salin Link</button>
-<button class="btn" onclick="closePdfSuccessPopup()">Tutup</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="exportPopup">
-<div class="popup-content export-popup">
-<button class="popup-close-btn" onclick="closeExportPopup()">×</button>
-<h3 class="popup-header">📤 Export Data Proyek</h3>
-<div class="popup-body">
-<div class="io-instructions">
-<h4>Cara Menyimpan Data Anda:</h4>
-<ol>
-<li>Klik <strong>"Copy Data"</strong> untuk menyalin kode di bawah ini.</li>
-<li>Buka aplikasi catatan (Notes) di perangkat Anda.</li>
-<li>Tempel (paste) kode tersebut dan simpan file.</li>
-<li>Beri nama file yang mudah diingat, misal: <strong>Agendaku_Backup.txt</strong></li>
-</ol>
-</div>
-<div class="export-data-display" id="exportDataDisplay"></div>
-</div>
-<div class="popup-footer">
-<button class="btn" onclick="saveProjectAsFile()">💾 Simpan sebagai File</button>
-<button class="btn" onclick="copyExportData()">📋 Copy Data</button>
-<button class="btn" onclick="closeExportPopup()">Tutup</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="importPopup">
-<div class="popup-content import-popup">
-<button class="popup-close-btn" onclick="closeImportPopup()">×</button>
-<h3 class="popup-header">📥 Import Data Proyek</h3>
-<div class="popup-body">
-<div class="io-instructions">
-<h4>Cara Memulihkan Data:</h4>
-<ol>
-<li>Salin semua teks dari file backup Anda.</li>
-<li><strong>Tekan dan tahan</strong> di dalam kotak di bawah lalu pilih 'Tempel' (Paste).</li>
-<li>Klik tombol <strong>"Import Data"</strong> untuk memulihkan.</li>
-</ol>
-</div>
-<textarea id="importDataTextarea" placeholder="Tempel (Paste) data backup Anda di sini..."></textarea>
-</div>
-<div class="popup-footer">
-<button class="btn" onclick="openProjectFromFile()">📂 Buka dari File</button>
-<button class="btn" onclick="processImportData()">📥 Import Data</button>
-<button class="btn" onclick="closeImportPopup()">Batal</button>
-</div>
-</div>
-</div>
-<div class="popup-overlay" id="quotePopup">
-<div class="popup-content quote-popup-content">
-<button class="popup-close-btn" onclick="closeQuotePopup()">×</button>
-<blockquote>
-<p id="quotePopupText"></p>
-<figcaption id="quotePopupAuthor"></figcaption>
-</blockquote>
-</div>
-</div>
-<div id="agendakuSidebar">
-<div class="sidebar-header">
-<h3>Tentang Agendaku</h3>
-<button class="sidebar-close-btn" onclick="closeAgendakuBranding()">×</button>
-</div>
-<div class="sidebar-content">
-<h4>Agendaku: Pengelola Jadwal Pintar Anda!</h4>
-<p>Aplikasi ini dirancang untuk membantu Anda mengelola waktu dan kegiatan sehari-hari dengan lebih efisien. Fitur-fitur utama termasuk jadwal kegiatan harian, jadwal kuliah/sekolah, catatan pribadi, dan kustomisasi tema.</p>
-<p>Dengan Agendaku, hidup Anda akan lebih terorganisir.</p>
-<h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
-<div class="update-info-content" id="updateInfoContent">
-<p><strong>Versi 1.6 - PDF Cloud Update:</strong></p>
-<ul>
-<li><strong>Export PDF ke Cloud:</strong> Fitur baru untuk membuat dan mengunggah laporan PDF ke cloud storage.</li>
-<li><strong>Download Otomatis:</strong> Link PDF yang dihasilkan akan langsung mengunduh file ke perangkat Anda.</li>
-<li><strong>Laporan Profesional:</strong> PDF berisi tabel jadwal yang rapi dan terstruktur.</li>
-<li><strong>Keamanan Data:</strong> Hanya pengguna terdaftar yang dapat menggunakan fitur ini (tidak tersedia untuk mode Tamu).</li>
-</ul>
-</div>
-<div class="sidebar-action-buttons">
-<button class="btn-sidebar-action btn-new-update" onclick="openUpdateInBrowser()">
+      </div>
+      <div class="popup-footer">
+        <button class="btn" onclick="copyPdfLink()">📋 Salin Link</button>
+        <button class="btn" onclick="closePdfSuccessPopup()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="exportPopup">
+        <div class="popup-content export-popup">
+            <button class="popup-close-btn" onclick="closeExportPopup()">×</button>
+            <h3 class="popup-header">📤 Export Data Proyek</h3>
+            <div class="popup-body">
+                <div class="io-instructions">
+                    <h4>Cara Menyimpan Data Anda:</h4>
+                    <ol>
+                        <li>Klik <strong>"💾 Simpan sebagai File"</strong> untuk langsung menyimpan sebagai file.</li>
+                        <li>Atau klik <strong>"Copy Data"</strong> untuk menyalin kode di bawah ini.</li>
+                        <li>Buka aplikasi catatan (Notes) di perangkat Anda.</li>
+                        <li>Tempel (paste) kode tersebut dan simpan file.</li>
+                        <li>Beri nama file yang mudah diingat, misal: <strong>Agendaku_Backup.txt</strong></li>
+                    </ol>
+                </div>
+                <div class="export-data-display" id="exportDataDisplay"></div>
+            </div>
+            <div class="popup-footer">
+                <button class="btn" onclick="saveProjectAsFile()">💾 Simpan sebagai File</button>
+                <button class="btn" onclick="copyExportData()">📋 Copy Data</button>
+                <button class="btn" onclick="closeExportPopup()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="importPopup">
+        <div class="popup-content import-popup">
+            <button class="popup-close-btn" onclick="closeImportPopup()">×</button>
+            <h3 class="popup-header">📥 Import Data Proyek</h3>
+            <div class="popup-body">
+                <div class="io-instructions">
+                    <h4>Cara Memulihkan Data:</h4>
+                    <ol>
+                        <li>Klik <strong>"📂 Buka dari File"</strong> untuk membuka file backup langsung.</li>
+                        <li>Atau salin semua teks dari file backup Anda.</li>
+                        <li><strong>Tekan dan tahan</strong> di dalam kotak di bawah lalu pilih 'Tempel' (Paste).</li>
+                        <li>Klik tombol <strong>"Import Data"</strong> untuk memulihkan.</li>
+                    </ol>
+                </div>
+                <textarea id="importDataTextarea" placeholder="Tempel (Paste) data backup Anda di sini..."></textarea>
+            </div>
+            <div class="popup-footer">
+                <button class="btn" onclick="openProjectFromFile()">📂 Buka dari File</button>
+                <button class="btn" onclick="processImportData()">📥 Import Data</button>
+                <button class="btn" onclick="closeImportPopup()">Batal</button>
+            </div>
+        </div>
+    </div>
+    
+  <div class="popup-overlay" id="quotePopup">
+    <div class="popup-content quote-popup-content">
+      <button class="popup-close-btn" onclick="closeQuotePopup()">×</button>
+      <blockquote>
+        <p id="quotePopupText"></p>
+        <figcaption id="quotePopupAuthor"></figcaption>
+      </blockquote>
+    </div>
+  </div>
+
+  <div id="agendakuSidebar">
+      <div class="sidebar-header">
+          <h3>Tentang Agendaku</h3>
+          <button class="sidebar-close-btn" onclick="closeAgendakuBranding()">×</button>
+      </div>
+      <div class="sidebar-content">
+          <h4>Agendaku: Pengelola Jadwal Pintar Anda!</h4>
+          <p>Aplikasi ini dirancang untuk membantu Anda mengelola waktu dan kegiatan sehari-hari dengan lebih efisien. Fitur-fitur utama termasuk jadwal kegiatan harian, jadwal kuliah/sekolah, catatan pribadi, dan kustomisasi tema.</p>
+          <p>Dengan Agendaku, hidup Anda akan lebih terorganisir.</p>
+
+          <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
+          <div class="update-info-content" id="updateInfoContent">
+              <p><strong>Versi 1.6 - PDF Cloud Update:</strong></p>
+              <ul>
+                  <li><strong>Export PDF ke Cloud:</strong> Fitur baru untuk membuat dan mengunggah laporan PDF ke cloud storage.</li>
+                  <li><strong>Download Otomatis:</strong> Link PDF yang dihasilkan akan langsung mengunduh file ke perangkat Anda.</li>
+                  <li><strong>Laporan Profesional:</strong> PDF berisi tabel jadwal yang rapi dan terstruktur.</li>
+                  <li><strong>Keamanan Data:</strong> Hanya pengguna terdaftar yang dapat menggunakan fitur ini (tidak tersedia untuk mode Tamu).</li>
+              </ul>
+          </div>
+
+          <div class="sidebar-action-buttons">
+              <button class="btn-sidebar-action btn-new-update" onclick="openUpdateInBrowser()">
                   🔥 Cek Update
               </button>
-<button class="btn-sidebar-action btn-export-project" onclick="showExportPopup()">
+              <button class="btn-sidebar-action btn-export-project" onclick="showExportPopup()">
                   📤 Export Project
               </button>
-<button class="btn-sidebar-action btn-import-project" onclick="showImportPopup()">
+              <button class="btn-sidebar-action btn-import-project" onclick="showImportPopup()">
                   📥 Import Project
               </button>
-<button class="btn-sidebar-action btn-export-pdf" onclick="showPdfConfirmPopup()">
+              <button class="btn-sidebar-action btn-export-pdf" onclick="showPdfConfirmPopup()">
                   📄 Export ke PDF
               </button>
-</div>
-</div>
-<button class="btn-keluar-sidebar" onclick="showExitConfirmPopup()">Keluar</button>
-<div class="social-icons-container">
-<a aria-label="Facebook" class="social-icon" href="https://www.facebook.com/share/1XPb1Uti5i/" target="_blank">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 13.5h2.5L17 9h-3v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.053-1.6-.144-3.04-.144C10.66 2 9 3.65 9 6.7v2.8H6v4.5h3V22h5v-8.5z"></path></svg>
-</a>
-<a aria-label="Instagram" class="social-icon" href="https://www.instagram.com/aminnu.s?igsh=dWV0bndhYmt6aDI1" target="_blank">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A2.02 2.02 0 0 0 4 6.02V16.2C4 17.65 5.35 19 6.78 19h8.43c1.45 0 2.78-1.35 2.78-2.78V7.8c0-1.45-1.35-2.78-2.78-2.78H7.6zm9.6.48c-.9 0-1.62.73-1.62 1.62s.73 1.62 1.62 1.62c.9 0 1.62-.73 1.62-1.62s-.73-1.62-1.62-1.62zm-4.8 3.7c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 2.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"></path></svg>
-</a>
-<a aria-label="Website" class="social-icon" href="https://andikka0001.github.io/agendaku-komersial/" target="_blank">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43 2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"></path></svg>
-</a>
-</div>
-<div class="sidebar-footer">
+          </div>
+      </div>
+      
+      <button class="btn-keluar-sidebar" onclick="showExitConfirmPopup()">Keluar</button>
+
+      <div class="social-icons-container">
+          <a href="https://www.facebook.com/share/1XPb1Uti5i/" target="_blank" class="social-icon" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 13.5h2.5L17 9h-3v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.053-1.6-.144-3.04-.144C10.66 2 9 3.65 9 6.7v2.8H6v4.5h3V22h5v-8.5z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/aminnu.s?igsh=dWV0bndhYmt6aDI1" target="_blank" class="social-icon" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A2.02 2.02 0 0 0 4 6.02V16.2C4 17.65 5.35 19 6.78 19h8.43c1.45 0 2.78-1.35 2.78-2.78V7.8c0-1.45-1.35-2.78-2.78-2.78H7.6zm9.6.48c-.9 0-1.62.73-1.62 1.62s.73 1.62 1.62 1.62c.9 0 1.62-.73 1.62-1.62s-.73-1.62-1.62-1.62zm-4.8 3.7c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 2.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
+          </a>
+          <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="social-icon" aria-label="Website">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43 2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
+          </a>
+      </div>
+      <div class="sidebar-footer">
           Versi 1.6
       </div>
-</div>
-<input accept=".json,.txt" class="hidden-file-input" id="importFileInput" onchange="handleImportFile(event)" type="file"/>
-<input accept="image/*" class="hidden-file-input" id="customThemeInput" onchange="handleCustomTheme(event)" type="file"/>
-<div id="toast-container"></div>
-<audio id="toast-sound" preload="auto" src="https://files.catbox.moe/vxltiz.mp3"></audio>
-<audio id="click-sound" preload="auto" src="https://files.catbox.moe/x35kz3.wav"></audio>
-<script>
+  </div>
+
+  <input type="file" id="importFileInput" class="hidden-file-input" accept=".json,.txt" onchange="handleImportFile(event)">
+  <input type="file" id="customThemeInput" class="hidden-file-input" accept="image/*" onchange="handleCustomTheme(event)">
+
+  <div id="toast-container"></div>
+  <audio id="toast-sound" src="https://files.catbox.moe/vxltiz.mp3" preload="auto"></audio>
+  <audio id="click-sound" src="https://files.catbox.moe/x35kz3.wav" preload="auto"></audio>
+
+  <script>
     // --- GLOBAL VARIABLES & CONSTANTS ---
     let namaUser = '';
     let nimUser = '';
@@ -1997,7 +2042,6 @@
     let currentDeleteItemElement = null; 
     let historyState = [];
     let isNavigatingBack = false;
-    let backPressOnLoginCount = 0;
 
     const appData = {
         jadwalContent: {},
@@ -2130,6 +2174,86 @@
         closeAgendakuBranding();
     }
 
+    // --- ANDROID NATIVE BRIDGE FUNCTIONS ---
+    
+    // REVISI 1: Integrasi Sistem Notifikasi Canggih
+    function handleNotificationScheduling(newData) {
+        try {
+            // Cek apakah window.Android tersedia
+            if (!window.Android || !window.Android.scheduleNotification) {
+                console.log('Android bridge tidak tersedia untuk notifikasi');
+                return;
+            }
+
+            // Iterasi setiap hari dan setiap item jadwal
+            for (const day in newData) {
+                if (newData[day] && newData[day].length > 0) {
+                    newData[day].forEach(item => {
+                        // Jika item memiliki type: 'specific' dan startTime
+                        if (item.type === 'specific' && item.startTime && item.activity) {
+                            // Hitung waktu pemicu untuk kejadian berikutnya
+                            const triggerTime = calculateNextTriggerTime(day, item.startTime);
+                            
+                            if (triggerTime > Date.now()) {
+                                // Panggil jembatan native untuk schedule notification
+                                const title = `Pengingat: ${item.activity}`;
+                                const message = `Waktu untuk ${item.activity}${item.location ? ` di ${item.location}` : ''}`;
+                                
+                                try {
+                                    window.Android.scheduleNotification(title, message, triggerTime);
+                                    console.log(`Notifikasi dijadwalkan untuk: ${item.activity} pada ${new Date(triggerTime)}`);
+                                } catch (error) {
+                                    console.error('Error scheduling notification:', error);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error dalam handleNotificationScheduling:', error);
+        }
+    }
+
+    function calculateNextTriggerTime(dayName, startTime) {
+        const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const targetDayIndex = dayNames.indexOf(dayName);
+        
+        if (targetDayIndex === -1) return 0;
+        
+        const now = new Date();
+        const currentDay = now.getDay();
+        
+        // Hitung hari berikutnya untuk jadwal tersebut
+        let daysUntilTarget = targetDayIndex - currentDay;
+        if (daysUntilTarget <= 0) {
+            daysUntilTarget += 7; // Minggu berikutnya
+        }
+        
+        // Parse waktu dari string "HH:MM"
+        const [hours, minutes] = startTime.split(':').map(Number);
+        
+        // Buat tanggal target
+        const targetDate = new Date(now);
+        targetDate.setDate(now.getDate() + daysUntilTarget);
+        targetDate.setHours(hours, minutes, 0, 0);
+        
+        return targetDate.getTime();
+    }
+
+    function notifyWelcome() {
+        try {
+            if (window.Android && window.Android.showWelcomeNotification) {
+                window.Android.showWelcomeNotification(
+                    "Notifikasi Diaktifkan!", 
+                    "Agendaku sekarang akan mengingatkan jadwalmu."
+                );
+            }
+        } catch (error) {
+            console.error('Error dalam notifyWelcome:', error);
+        }
+    }
+
     // --- REVISED EXPORT/IMPORT FUNCTIONS ---
     function showExportPopup() {
         playClickSound();
@@ -2156,6 +2280,28 @@
         document.getElementById('exportPopup').classList.add('active');
         playToastSound();
         closeAgendakuBranding();
+    }
+
+    // REVISI 3: Fitur Export - Simpan sebagai File
+    function saveProjectAsFile() {
+        playClickSound();
+        
+        try {
+            const dataText = document.getElementById('exportDataDisplay').textContent;
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0]; // Format YYYY-MM-DD
+            const defaultFileName = `Agendaku_Backup_${dateStr}.txt`;
+            
+            if (window.Android && window.Android.saveTextToFile) {
+                window.Android.saveTextToFile(dataText, defaultFileName);
+                showToast('Berhasil', 'File backup akan disimpan ke perangkat Anda.');
+            } else {
+                showToast('Tidak Tersedia', 'Fitur ini hanya tersedia di aplikasi Android.');
+            }
+        } catch (error) {
+            console.error('Error saving file:', error);
+            showToast('Error', 'Gagal menyimpan file.');
+        }
     }
 
     function copyExportData() {
@@ -2186,12 +2332,44 @@
         document.getElementById('importPopup').classList.remove('active');
     }
 
+    // REVISI 3: Fitur Import - Buka dari File
+    function openProjectFromFile() {
+        playClickSound();
+        
+        try {
+            if (window.Android && window.Android.readTextFromFile) {
+                window.Android.readTextFromFile();
+                showToast('Memuat...', 'Membuka file selector...');
+            } else {
+                showToast('Tidak Tersedia', 'Fitur ini hanya tersedia di aplikasi Android.');
+            }
+        } catch (error) {
+            console.error('Error opening file:', error);
+            showToast('Error', 'Gagal membuka file.');
+        }
+    }
+
+    // REVISI 3: Callback untuk hasil baca file dari native
+    function onFileRead(content) {
+        try {
+            if (content && content.trim()) {
+                document.getElementById('importDataTextarea').value = content;
+                showToast('Berhasil', 'Konten file berhasil dimuat. Klik Import Data untuk melanjutkan.');
+            } else {
+                showToast('File Kosong', 'File yang dipilih kosong atau tidak valid.');
+            }
+        } catch (error) {
+            console.error('Error in onFileRead:', error);
+            showToast('Error', 'Gagal memproses konten file.');
+        }
+    }
+
     function processImportData() {
         playClickSound();
         const importText = document.getElementById('importDataTextarea').value.trim();
         
         if (!importText) {
-            showToast('Error', 'Silakan tempel (paste) data backup terlebih dahulu.');
+            showToast('Error', 'Silakan tempel (paste) data backup atau buka file terlebih dahulu.');
             return;
         }
 
@@ -2269,6 +2447,37 @@
         }).catch(err => {
             showToast('Gagal', 'Gagal menyalin link. Silakan salin manual.');
         });
+    }
+
+    // REVISI 3: Fitur Simpan PDF ke Device
+    function savePdfToDevice(event) {
+        event.preventDefault();
+        playClickSound();
+        
+        try {
+            const pdfUrl = document.getElementById('pdfLinkInput').value;
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const defaultFileName = `Agendaku_Laporan_${namaUser}_${dateStr}.pdf`;
+            
+            if (window.Android && window.Android.downloadAndSavePdf) {
+                window.Android.downloadAndSavePdf(pdfUrl, defaultFileName);
+                showToast('Mengunduh...', 'PDF sedang diunduh ke perangkat Anda.');
+            } else {
+                // Fallback: buka di browser
+                try {
+                    const newWindow = window.open(pdfUrl, '_blank', 'noopener,noreferrer');
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                        window.location.href = pdfUrl;
+                    }
+                } catch (error) {
+                    window.location.href = pdfUrl;
+                }
+            }
+        } catch (error) {
+            console.error('Error saving PDF:', error);
+            showToast('Error', 'Gagal menyimpan PDF.');
+        }
     }
 
     async function generateAndUploadPdf() {
@@ -2417,29 +2626,11 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         downloadLink.href = publicUrl;
         downloadLink.setAttribute('download', `Agendaku_Laporan_${namaUser}.pdf`);
         
-        // FIXED: Force download link to open in new tab/browser for WebView compatibility
-        downloadLink.onclick = function(e) {
-            e.preventDefault();
-            try {
-                // Try to open in new tab/window first
-                const newWindow = window.open(publicUrl, '_blank', 'noopener,noreferrer');
-                
-                // If blocked or in WebView, try alternative methods
-                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                    // Fallback: try to navigate current window
-                    window.location.href = publicUrl;
-                }
-            } catch (error) {
-                // Final fallback: direct navigation
-                window.location.href = publicUrl;
-            }
-        };
-        
         document.getElementById('pdfSuccessPopup').classList.add('active');
         showToast('Berhasil!', 'PDF berhasil diunggah ke cloud. Klik link untuk download.');
         playToastSound();
 
-        // Set 1-minute auto-deletion timer (FIXED: Changed from 5 minutes to 1 minute)
+        // Set 1-minute auto-deletion timer
         pdfDeletionTimeout = setTimeout(async () => {
             try {
                 const { error } = await supabase.storage
@@ -2455,7 +2646,7 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
             } catch (error) {
                 console.error('Error in auto-deletion:', error);
             }
-        }, 65000); // FIXED: Changed from 300000 (5 minutes) to 60000 (1 minute)
+        }, 65000); // 1 menit + 5 detik
     }
     
     // --- INITIALIZATION ---
@@ -2629,43 +2820,33 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         history.pushState(state, '', `#${slideId}`);
         historyState.push(state);
     }
-   // POTONG SEMUA KODE INI DARI LOKASI YANG SALAH
-function notifyWelcome() {
-    try {
-        if (window.Android && typeof window.Android.showWelcomeNotification === 'function') {
-            window.Android.showWelcomeNotification("Notifikasi Diaktifkan!", "Agendaku sekarang akan mengingatkan jadwalmu.");
-        }
-    } catch (e) {
-        console.error("Gagal menampilkan notifikasi sambutan native:", e);
-    }
-}
     
-    // === GANTI FUNGSI LAMA DENGAN VERSI BERSIH INI ===
-function handlePopState(state) {
-    const activePopup = document.querySelector('.popup-overlay.active, .tutorial-overlay.active, #agendakuSidebar.active');
-    if(activePopup) {
-        if (activePopup.id.includes('Popup') || activePopup.id.includes('tutorial')) activePopup.classList.remove('active');
-        if (activePopup.id === 'agendakuSidebar') closeAgendakuBranding();
-        history.pushState(historyState[historyState.length-1], '', `#${historyState[historyState.length-1].slideId}`);
-        return;
-    }
+    // REVISI 2: Modifikasi fungsi handlePopState
+    function handlePopState(state) {
+        const activePopup = document.querySelector('.popup-overlay.active, .tutorial-overlay.active, #agendakuSidebar.active');
+        if(activePopup) {
+            if (activePopup.id.includes('Popup') || activePopup.id.includes('tutorial')) activePopup.classList.remove('active');
+            if (activePopup.id === 'agendakuSidebar') closeAgendakuBranding();
+            history.pushState(historyState[historyState.length-1], '', `#${historyState[historyState.length-1].slideId}`);
+            return;
+        }
 
-    if (historyState.length === 1 && historyState[0].slideId === 'login') {
-        showExitConfirmPopup();
-        history.pushState({ slideId: 'login' }, '', '#login');
-        return;
-    }
+        // REVISI 2: Ganti logika backPressOnLoginCount
+        if (historyState.length === 1 && historyState[0].slideId === 'login') {
+            showExitConfirmPopup();
+            history.pushState({ slideId: 'login' }, '', '#login');
+            return;
+        }
 
-    if (historyState.length > 1) {
-        historyState.pop();
-        const previousState = historyState[historyState.length - 1];
-        navigateTo(previousState.slideId, previousState.contentId, false);
-    } else {
-         kembaliKeLogin();
+        if (historyState.length > 1) {
+            historyState.pop();
+            const previousState = historyState[historyState.length - 1];
+            navigateTo(previousState.slideId, previousState.contentId, false);
+        } else {
+             kembaliKeLogin();
+        }
+        isNavigatingBack = false;
     }
-    isNavigatingBack = false;
-}
-// === AKHIR DARI FUNGSI PENGGANTI ===
 
     function navigateTo(slideId, contentId = null, pushToHistory = true) {
         document.querySelectorAll('.overlay.active, .slide.active').forEach(el => el.classList.remove('active'));
@@ -2977,14 +3158,17 @@ function handlePopState(state) {
         return newData;
     }
 
+    // REVISI 1: Modifikasi fungsi saveEditedSchedule
     function saveEditedSchedule() {
         playClickSound();
         const newData = buildScheduleDataFromEditor();
         appData[currentEditTargetId] = newData;
         saveData(currentEditTargetId);
-    handleNotificationScheduling(newData);
         
-        renderJadwal(newData, currentEditTargetId); 
+        renderJadwal(newData, currentEditTargetId);
+        
+        // REVISI 1: Tambahkan panggilan handleNotificationScheduling setelah saveData
+        handleNotificationScheduling(newData);
         
         showToast('Berhasil', 'Jadwal berhasil diperbarui.');
         
@@ -3025,7 +3209,6 @@ function handlePopState(state) {
         document.getElementById('saveConfirmPopup').classList.remove('active');
     }
 
-    // FIXED: Save notes function - removed window.close() that was causing the bug
     function saveCatatan() {
         playClickSound();
         const newContent = document.getElementById('editCatatanTextarea').value;
@@ -3330,17 +3513,25 @@ function handlePopState(state) {
         document.getElementById('exitConfirmPopup').classList.remove('active');
     }
     
+    // REVISI 2: Modifikasi fungsi exitApplication
     function exitApplication() {
         playClickSound();
         closeExitConfirmPopup();
-        showToast('Oke tunggu', 'Menutup aplikasi...');
         
-        window.close();
-
-        setTimeout(() => {
-            showToast('Silahkan tekan kembali 2 kali untuk Keluar Aplikasi .', );
+        if (window.Android) {
+            // Jika window.Android tersedia, panggil window.close()
+            try {
+                window.close();
+                showToast('Menutup Aplikasi', 'Aplikasi akan ditutup...');
+            } catch (error) {
+                console.error('Error closing app:', error);
+                showToast('Gagal Menutup', 'Tidak dapat menutup aplikasi secara otomatis.');
+            }
+        } else {
+            // Jika tidak ada window.Android, tampilkan toast
+            showToast('Fitur Tidak Tersedia', 'Fitur keluar aplikasi hanya tersedia di aplikasi Android.');
             kembaliKeLogin();
-        }, 500);
+        }
     }
 
     const timeRanges = {
@@ -3414,6 +3605,7 @@ function handlePopState(state) {
         scheduleCheckerInterval = setInterval(checkCurrentSchedule, 60000); 
     }
 
+    // REVISI 1: Modifikasi fungsi requestNotificationPermissionAndStartChecker
     function requestNotificationPermissionAndStartChecker() {
         if (!('Notification' in window)) {
             console.log("Browser ini tidak mendukung notifikasi desktop.");
@@ -3421,11 +3613,14 @@ function handlePopState(state) {
         }
 
         if (Notification.permission === 'granted') {
+            // REVISI 1: Tambahkan panggilan notifyWelcome() sebelum startScheduleChecker()
+            notifyWelcome();
             startScheduleChecker();
         } else if (Notification.permission !== 'denied') {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
-      notifyWelcome();
+                    // REVISI 1: Tambahkan panggilan notifyWelcome() sebelum startScheduleChecker()
+                    notifyWelcome();
                     showToast('Notifikasi Diaktifkan', 'Pengingat jadwal akan muncul jika ada.');
                     startScheduleChecker();
                 }
@@ -3434,18 +3629,21 @@ function handlePopState(state) {
     }
 
   </script>
+
 <!-- Pop-up Sambutan Elegan -->
 <div class="popup-overlay" id="welcomePopup">
-<div class="popup-content welcome-popup-content">
-<button class="popup-close-btn" onclick="closeWelcomePopupAndRefresh()">×</button>
-<h2>👋 Selamat Datang di Agendaku!</h2>
-<p>
+  <div class="popup-content welcome-popup-content">
+    <button class="popup-close-btn" onclick="closeWelcomePopupAndRefresh()">×</button>
+    <h2>👋 Selamat Datang di Agendaku!</h2>
+    <p>
       Terima kasih telah memilih <strong>Agendaku</strong> sebagai teman harianmu.
       Yuk atur jadwalmu dan mulai hari dengan lebih terencana!
     </p>
-<button class="btn btn-welcome" onclick="closeWelcomePopupAndRefresh()">Masuk Sekarang</button>
+    <button class="btn btn-welcome" onclick="closeWelcomePopupAndRefresh()">Masuk Sekarang</button>
+  </div>
 </div>
-</div>
+
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const welcomePopup = document.getElementById("welcomePopup");
@@ -3458,48 +3656,7 @@ function handlePopState(state) {
     localStorage.setItem("popup_shown", "true");
     location.reload(true);
   }
-
-
-function openProjectFromFile() {
-    playClickSound();
-    try {
-        if (window.Android && typeof window.Android.readTextFromFile === 'function') {
-            window.Android.readTextFromFile();
-        } else {
-            showToast('Fitur Tidak Tersedia', 'Buka file hanya didukung di aplikasi Android.');
-        }
-    } catch (e) {
-        console.error("Gagal memanggil bridge readTextFromFile:", e);
-        showToast('Error', 'Terjadi kesalahan saat mencoba membuka file.');
-    }
-}
-function onFileRead(content) {
-    if (typeof content === 'string') {
-        document.getElementById('importDataTextarea').value = content;
-        showToast('Berhasil', 'Data dari file berhasil dimuat.');
-    } else {
-        showToast('Error', 'Gagal membaca konten file.');
-    }
-}
-
-
-function savePdfToDevice(event) {
-    event.preventDefault();
-    playClickSound();
-    try {
-        if (window.Android && typeof window.Android.downloadAndSavePdf === 'function') {
-            const pdfUrl = document.getElementById('pdfLinkInput').value;
-            const defaultFileName = `Laporan_Agendaku_${namaUser || 'Tamu'}.pdf`;
-            window.Android.downloadAndSavePdf(pdfUrl, defaultFileName);
-        } else {
-            showToast('Fitur Tidak Tersedia', 'Simpan PDF langsung hanya didukung di aplikasi.');
-            window.open(document.getElementById('pdfLinkInput').value, '_blank');
-        }
-    } catch (e) {
-        console.error("Gagal memanggil bridge downloadAndSavePdf:", e);
-        showToast('Error', 'Terjadi kesalahan saat mencoba menyimpan PDF.');
-    }
-}
 </script>
+
 </body>
 </html>
