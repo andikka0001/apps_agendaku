@@ -2667,6 +2667,14 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
       document.getElementById('confirmSaveYes').onclick = handleSaveConfirmation;
       document.getElementById('confirmSaveNo').onclick = handleDiscardChanges;
       document.getElementById('confirmSaveCancel').onclick = () => { playClickSound(); closeSaveConfirmPopup(); };
+      document.addEventListener("DOMContentLoaded", function () {
+  const exitButton = document.getElementById("confirmExitYes");
+  if (exitButton) {
+    exitButton.addEventListener("click", function () {
+      exitApplication();
+    });
+  }
+});
       document.getElementById('sidebarOverlay').addEventListener('click', closeAgendakuBranding);
       document.getElementById('updateInfoToggle').addEventListener('click', function() {
           this.classList.toggle('open');
@@ -3515,24 +3523,15 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
     
     // REVISI 2: Modifikasi fungsi exitApplication
     function exitApplication() {
-        playClickSound();
-        closeExitConfirmPopup();
-        
-        if (window.Android) {
-            // Jika window.Android tersedia, panggil window.close()
-            try {
-                window.close();
-                showToast('Menutup Aplikasi', 'Aplikasi akan ditutup...');
-            } catch (error) {
-                console.error('Error closing app:', error);
-                showToast('Gagal Menutup', 'Tidak dapat menutup aplikasi secara otomatis.');
-            }
-        } else {
-            // Jika tidak ada window.Android, tampilkan toast
-            showToast('Fitur Tidak Tersedia', 'Fitur keluar aplikasi hanya tersedia di aplikasi Android.');
-            kembaliKeLogin();
-        }
+    playClickSound();
+    closeExitConfirmPopup();
+
+    if (typeof Android !== "undefined" && Android.exitApp) {
+        Android.exitApp();
+    } else {
+        showToast('Fitur Tidak Tersedia', 'Fitur keluar aplikasi hanya tersedia di Android.');
     }
+}
 
     const timeRanges = {
         "Shubuh": { start: 4, end: 6, title: "Waktunya Shubuh!" },
