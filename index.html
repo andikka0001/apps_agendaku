@@ -2965,7 +2965,6 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
                 showMainTutorial();
                 localStorage.setItem('hasSeenTutorial', 'true');
             }
-            // Initialize notification system after login
             requestNotificationPermissionAndStartChecker();
         }, 200);
     }
@@ -3166,8 +3165,6 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         appData[currentEditTargetId] = newData;
         saveData(currentEditTargetId);
         
-        // NOTIFICATION TYPES 2 & 3: Schedule reminder and exact-time notifications
-        handleNotificationScheduling(newData);
         renderJadwal(newData, currentEditTargetId);
         
         // REVISI 1: Tambahkan panggilan handleNotificationScheduling setelah saveData
@@ -3616,20 +3613,12 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         }
 
         if (Notification.permission === 'granted') {
-            // NOTIFIKASI #1: Panggil notifikasi sambutan
-            notifyWelcome();
-            // NOTIFICATION TYPE 1: Welcome notification when permission is already granted
-            notifyWelcome();
             // REVISI 1: Tambahkan panggilan notifyWelcome() sebelum startScheduleChecker()
             notifyWelcome();
             startScheduleChecker();
         } else if (Notification.permission !== 'denied') {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
-                    // NOTIFIKASI #1: Panggil notifikasi sambutan setelah izin diberikan
-                    notifyWelcome();
-                    // NOTIFICATION TYPE 1: Welcome notification when permission is newly granted
-                    notifyWelcome();
                     // REVISI 1: Tambahkan panggilan notifyWelcome() sebelum startScheduleChecker()
                     notifyWelcome();
                     showToast('Notifikasi Diaktifkan', 'Pengingat jadwal akan muncul jika ada.');
