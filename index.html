@@ -10,7 +10,6 @@
 <meta http-equiv="Expires" content="0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* CSS tidak ada perubahan dari revisi sebelumnya */
     * {
@@ -68,7 +67,7 @@
       transform: translateX(-20%) scale(0.95);
       opacity: 0;
     }
-    input[type="text"], select, input[type="time"] {
+    input[type="text"], select, input[type="time"], input[type="file"] {
       padding: 12px 16px;
       border: 2px solid #ccc;
       border-radius: 10px;
@@ -542,18 +541,18 @@
         height: 100%;
     }
     #toast-container {
-        position: fixed;
-        top: 50px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999;
-        pointer-events: none;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-        max-width: 90%;
-    }
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    max-width: 90%;
+}
     .toast-wrapper {
         background: white;
         border-radius: 16px;
@@ -1690,8 +1689,8 @@
             <h3>Export ke PDF</h3>
             <ul>
                 <li><strong>Fitur Baru:</strong> Klik tombol "Export ke PDF" di menu samping untuk membuat laporan profesional dalam format PDF.</li>
-                <li><strong>Cloud Storage:</strong> PDF akan diunggah ke cloud dan Anda akan mendapat link untuk mengunduh.</li>
-                <li><strong>Download Otomatis:</strong> Link yang diberikan akan langsung mengunduh file PDF ke perangkat Anda.</li>
+                <li><strong>File Storage:</strong> PDF akan disimpan langsung ke penyimpanan perangkat Anda.</li>
+                <li><strong>Download Otomatis:</strong> File PDF akan otomatis tersimpan di folder Download perangkat Anda.</li>
             </ul>
         </div>
 
@@ -1701,7 +1700,7 @@
                 <li><strong>Tombol "💡":</strong> Menampilkan ringkasan jadwal untuk hari ini.</li>
                 <li><strong>Tombol Rumah (⌂):</strong> Kembali ke halaman login awal.</li>
                 <li><strong>Tombol Quote (💬):</strong> Menampilkan kutipan inspiratif dalam sebuah pop-up.</li>
-                <li><strong>Keluar Aplikasi:</strong> Dari menu samping (☰), pilih "Keluar" untuk mencoba menutup tab aplikasi.</li>
+                <li><strong>Keluar Aplikasi:</strong> Dari menu samping (☰), pilih "Keluar" untuk menutup aplikasi.</li>
             </ul>
         </div>
     </div>
@@ -1859,38 +1858,36 @@
 
   <!-- PDF Confirmation Popup -->
   <div class="popup-overlay" id="pdfConfirmPopup">
-    <div class="popup-content pdf-confirm-popup">
-      <span class="question-mark">📄</span>
-      <div class="popup-body centered">
-         <p>Apakah Anda ingin membuat File Pdf laporan Anda? File akan tersimpan secara online dan Anda akan mendapat link untuk mengunduh.</p>
-      </div>
-      <div class="popup-footer btn-confirm-container">
-        <button class="btn btn-confirm btn-yes" id="confirmPdfYes">Siap Buat PDF</button>
-        <button class="btn btn-confirm btn-no" id="confirmPdfNo">Batal</button>
-      </div>
+  <div class="popup-content pdf-confirm-popup">
+    <span class="question-mark">📄</span>
+       <div class="popup-body centered">
+       <p>Apakah Anda ingin membuat File PDF laporan Anda? File akan disimpan langsung ke folder Download perangkat Anda.</p>
+    </div>
+    <div class="popup-footer btn-confirm-container">
+      <button class="btn btn-confirm btn-yes" id="confirmPdfYes">Ya, Buat PDF</button>
+      <button class="btn btn-confirm btn-no" id="confirmPdfNo">Batal</button>
     </div>
   </div>
+</div>
+
 
   <!-- PDF Success Popup -->
   <div class="popup-overlay" id="pdfSuccessPopup">
-    <div class="popup-content pdf-success-popup">
-      <button class="popup-close-btn" onclick="closePdfSuccessPopup()">×</button>
-      <h3 class="popup-header">✅ PDF Berhasil Diunggah!</h3>
-      <div class="popup-body">
-        <p>File PDF Anda telah berhasil dibuat . Gunakan link di bawah untuk mengunduh di browser anda (JANGAN CROME):</p>
-        <input type="text" id="pdfLinkInput" class="pdf-link-input" readonly>
-        <br>
-        <a id="pdfDownloadLink" class="pdf-download-link" href="#" onclick="savePdfToDevice(event)">💾 Simpan PDF</a>
-        <p style="color: #ff6b35; font-weight: bold; margin-top: 15px;">
-          ⚠️ Link PDF ini hanya aktif selama 1 menit. Setelah itu akan otomatis kadaluarsa.
-        </p>
-      </div>
-      <div class="popup-footer">
-        <button class="btn" onclick="copyPdfLink()">📋 Salin Link</button>
-        <button class="btn" onclick="closePdfSuccessPopup()">Tutup</button>
-      </div>
+  <div class="popup-content pdf-success-popup">
+    <button class="popup-close-btn" onclick="closePdfSuccessPopup()">×</button>
+    <h3 class="popup-header">✅ PDF Berhasil Dibuat!</h3>
+    <div class="popup-body">
+       <p>File PDF Anda telah berhasil dibuat dan disimpan di folder Download perangkat Anda.</p>
+      <p style="color: #4CAF50; font-weight: bold; margin-top: 15px;">
+        📁 Lokasi: /Download/Agendaku_Laporan_[Nama].pdf
+      </p>
+    </div>
+    <div class="popup-footer">
+      <button class="btn" onclick="closePdfSuccessPopup()">Tutup</button>
     </div>
   </div>
+</div>
+
 
   <div class="popup-overlay" id="exportPopup">
         <div class="popup-content export-popup">
@@ -1900,20 +1897,19 @@
                 <div class="io-instructions">
                     <h4>Cara Menyimpan Data Anda:</h4>
                     <ol>
-                        <li>Klik <strong>"💾 Simpan sebagai File"</strong> untuk langsung menyimpan sebagai file.</li>
-                        <li>Atau klik <strong>"Copy Data"</strong> untuk menyalin kode di bawah ini.</li>
-                        <li>Buka aplikasi catatan (Notes) di perangkat Anda.</li>
-                        <li>Tempel (paste) kode tersebut dan simpan file.</li>
-                        <li>Beri nama file yang mudah diingat, misal: <strong>Agendaku_Backup.txt</strong></li>
+                        <li>Klik <strong>"Simpan ke File"</strong> untuk menyimpan data langsung ke penyimpanan perangkat.</li>
+                        <li>Atau klik <strong>"Copy Data"</strong> untuk menyalin kode dan simpan manual.</li>
+                        <li>File akan tersimpan dengan nama: <strong>Agendaku_Backup_[Nama].json</strong></li>
+                        <li>Simpan file di lokasi yang mudah diingat untuk backup.</li>
                     </ol>
                 </div>
                 <div class="export-data-display" id="exportDataDisplay"></div>
             </div>
             <div class="popup-footer">
-                <button class="btn" onclick="saveProjectAsFile()">💾 Simpan sebagai File</button>
-                <button class="btn" onclick="copyExportData()">📋 Copy Data</button>
-                <button class="btn" onclick="closeExportPopup()">Tutup</button>
-            </div>
+    <button class="btn" onclick="saveProjectAsFile()">💾 Simpan sebagai File</button>
+    <button class="btn" onclick="copyExportData()">📋 Copy Data</button>
+    <button class="btn" onclick="closeExportPopup()">Tutup</button>
+</div>
         </div>
     </div>
 
@@ -1925,19 +1921,19 @@
                 <div class="io-instructions">
                     <h4>Cara Memulihkan Data:</h4>
                     <ol>
-                        <li>Klik <strong>"📂 Buka dari File"</strong> untuk membuka file backup langsung.</li>
-                        <li>Atau salin semua teks dari file backup Anda.</li>
-                        <li><strong>Tekan dan tahan</strong> di dalam kotak di bawah lalu pilih 'Tempel' (Paste).</li>
+                        <li>Klik <strong>"Pilih File"</strong> untuk memilih file backup (.json) dari penyimpanan.</li>
+                        <li>Atau salin teks dari file backup dan <strong>tempel</strong> di kotak di bawah.</li>
                         <li>Klik tombol <strong>"Import Data"</strong> untuk memulihkan.</li>
                     </ol>
                 </div>
-                <textarea id="importDataTextarea" placeholder="Tempel (Paste) data backup Anda di sini..."></textarea>
+ 
+                <textarea id="importDataTextarea" placeholder="Atau tempel (Paste) data backup Anda di sini..."></textarea>
             </div>
-            <div class="popup-footer">
-                <button class="btn" onclick="openProjectFromFile()">📂 Buka dari File</button>
-                <button class="btn" onclick="processImportData()">📥 Import Data</button>
-                <button class="btn" onclick="closeImportPopup()">Batal</button>
-            </div>
+           <div class="popup-footer">
+    <button class="btn" onclick="openProjectFromFile()">📂 Buka dari File</button>
+    <button class="btn" onclick="processImportData()">📥 Import Data</button>
+    <button class="btn" onclick="closeImportPopup()">Batal</button>
+</div>
         </div>
     </div>
     
@@ -1952,61 +1948,60 @@
   </div>
 
   <div id="agendakuSidebar">
-      <div class="sidebar-header">
-          <h3>Tentang Agendaku</h3>
-          <button class="sidebar-close-btn" onclick="closeAgendakuBranding()">×</button>
-      </div>
-      <div class="sidebar-content">
-          <h4>Agendaku: Pengelola Jadwal Pintar Anda!</h4>
-          <p>Aplikasi ini dirancang untuk membantu Anda mengelola waktu dan kegiatan sehari-hari dengan lebih efisien. Fitur-fitur utama termasuk jadwal kegiatan harian, jadwal kuliah/sekolah, catatan pribadi, dan kustomisasi tema.</p>
-          <p>Dengan Agendaku, hidup Anda akan lebih terorganisir.</p>
+    <div class="sidebar-header">
+        <h3>Tentang Agendaku</h3>
+        <button class="sidebar-close-btn" onclick="closeAgendakuBranding()">×</button>
+    </div>
+    <div class="sidebar-content">
+        <h4>Agendaku: Pengelola Jadwal Pintar Anda!</h4>
+        <p>Aplikasi ini dirancang untuk membantu Anda mengelola waktu dan kegiatan sehari-hari dengan lebih efisien. Fitur-fitur utama termasuk jadwal kegiatan harian, jadwal kuliah/sekolah, catatan pribadi, dan kustomisasi tema.</p>
+        <p>Dengan Agendaku, hidup Anda akan lebih terorganisir.</p>
 
-          <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
-          <div class="update-info-content" id="updateInfoContent">
-              <p><strong>Versi 1.6 - PDF Cloud Update:</strong></p>
-              <ul>
-                  <li><strong>Export PDF ke Cloud:</strong> Fitur baru untuk membuat dan mengunggah laporan PDF ke cloud storage.</li>
-                  <li><strong>Download Otomatis:</strong> Link PDF yang dihasilkan akan langsung mengunduh file ke perangkat Anda.</li>
-                  <li><strong>Laporan Profesional:</strong> PDF berisi tabel jadwal yang rapi dan terstruktur.</li>
-                  <li><strong>Keamanan Data:</strong> Hanya pengguna terdaftar yang dapat menggunakan fitur ini (tidak tersedia untuk mode Tamu).</li>
-              </ul>
-          </div>
+        <h4 class="update-info-toggle" id="updateInfoToggle">Update New Info <span class="arrow">▼</span></h4>
+        <div class="update-info-content" id="updateInfoContent">
+            <p><strong>Versi 1.7 - File System Update:</strong></p>
+            <ul>
+                <li><strong>Export/Import File:</strong> Data kini dapat disimpan dan dimuat langsung dari file sistem perangkat.</li>
+                <li><strong>PDF ke Storage:</strong> File PDF laporan disimpan langsung ke folder Download perangkat.</li>
+                <li><strong>Notifikasi Otomatis:</strong> Sistem pengingat jadwal yang lebih akurat berdasarkan waktu real-time.</li>
+                <li><strong>Back Navigation:</strong> Tombol back Android kini berfungsi dengan baik untuk navigasi dalam aplikasi.</li>
+            </ul>
+        </div>
 
-          <div class="sidebar-action-buttons">
-              <button class="btn-sidebar-action btn-new-update" onclick="openUpdateInBrowser()">
-                  🔥 Cek Update
-              </button>
-              <button class="btn-sidebar-action btn-export-project" onclick="showExportPopup()">
-                  📤 Export Project
-              </button>
-              <button class="btn-sidebar-action btn-import-project" onclick="showImportPopup()">
-                  📥 Import Project
-              </button>
-              <button class="btn-sidebar-action btn-export-pdf" onclick="showPdfConfirmPopup()">
-                  📄 Export ke PDF
-              </button>
-          </div>
-      </div>
-      
-      <button class="btn-keluar-sidebar" onclick="showExitConfirmPopup()">Keluar</button>
+        <div class="sidebar-action-buttons">
+            <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="btn-sidebar-action btn-new-update">
+                🔥 Cek Update
+            </a>
+            <button class="btn-sidebar-action btn-export-project" onclick="showExportPopup()">
+                📤 Export Project
+            </button>
+            <button class="btn-sidebar-action btn-import-project" onclick="showImportPopup()">
+                📥 Import Project
+            </button>
+            <button class="btn-sidebar-action btn-export-pdf" onclick="showPdfConfirmPopup()">
+                📄 Export ke PDF
+            </button>
+        </div>
+    </div>
 
-      <div class="social-icons-container">
-          <a href="https://www.facebook.com/share/1XPb1Uti5i/" target="_blank" class="social-icon" aria-label="Facebook">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 13.5h2.5L17 9h-3v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.053-1.6-.144-3.04-.144C10.66 2 9 3.65 9 6.7v2.8H6v4.5h3V22h5v-8.5z"/></svg>
-          </a>
-          <a href="https://www.instagram.com/aminnu.s?igsh=dWV0bndhYmt6aDI1" target="_blank" class="social-icon" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A2.02 2.02 0 0 0 4 6.02V16.2C4 17.65 5.35 19 6.78 19h8.43c1.45 0 2.78-1.35 2.78-2.78V7.8c0-1.45-1.35-2.78-2.78-2.78H7.6zm9.6.48c-.9 0-1.62.73-1.62 1.62s.73 1.62 1.62 1.62c.9 0 1.62-.73 1.62-1.62s-.73-1.62-1.62-1.62zm-4.8 3.7c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 2.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
-          </a>
-          <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="social-icon" aria-label="Website">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43 2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
-          </a>
-      </div>
-      <div class="sidebar-footer">
-          Versi 1.6
-      </div>
-  </div>
+    <button class="btn-keluar-sidebar" onclick="showExitConfirmPopup()">Keluar</button>
 
-  <input type="file" id="importFileInput" class="hidden-file-input" accept=".json,.txt" onchange="handleImportFile(event)">
+    <div class="social-icons-container">
+        <a href="https://www.facebook.com/share/1XPb1Uti5i/" target="_blank" class="social-icon" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 13.5h2.5L17 9h-3v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.053-1.6-.144-3.04-.144C10.66 2 9 3.65 9 6.7v2.8H6v4.5h3V22h5v-8.5z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/aminnu.s?igsh=dWV0bndhYmt6aDI1" target="_blank" class="social-icon" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A2.02 2.02 0 0 0 4 6.02V16.2C4 17.65 5.35 19 6.78 19h8.43c1.45 0 2.78-1.35 2.78-2.78V7.8c0-1.45-1.35-2.78-2.78-2.78H7.6zm9.6.48c-.9 0-1.62.73-1.62 1.62s.73 1.62 1.62 1.62c.9 0 1.62-.73 1.62-1.62s-.73-1.62-1.62-1.62zm-4.8 3.7c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 2.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
+        </a>
+        <a href="https://andikka0001.github.io/agendaku-komersial/" target="_blank" class="social-icon" aria-label="Website">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.75-3.95c.23-.29.43-.58.62-.89l-1.3-.87c-.33.31-.69.64-1.08.96l1.76.8zm.51-1.28c.36-.59.69-1.2.98-1.84H14v-2h6.13c-.49-1.74-1.83-3.13-3.57-4.04l-1.76.99c.31.29.59.59.86.89l1.45-1.45L12 3.06V2.05c3.08.75 5.51 3.5 6 6.95h-2.1c-.5-1.34-1.49-2.43-2.77-3.14l1.83-1.83c1.7 2 2.77 4.58 2.77 7.42V12h-2.05c-.47-1.16-1.28-2.13-2.31-2.82L16.27 8.5C17.27 9.17 18.06 10.09 18.59 11.1H14V14h4.19c.1-.38.16-.76.16-1.15V12h2.05c-.45-3.08-2.61-5.59-5.38-6.15V3.06L12 2.05v1.01c-3.08.75-5.51 3.5-6 6.95h2.1c.5-1.34 1.49-2.43 2.77-3.14l-1.83-1.83C7.2 6.55 6.13 9.13 6.13 12v.85c.47 1.16 1.28 2.13 2.31 2.82l-1.84 1.84c-1.7-2-2.77-4.58-2.77-7.42V12H3.91C4.36 9.04 6.52 6.53 9.3 5.97V3.06L12 2.05z"/></svg>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        Versi 1.7
+    </div>
+</div>
+
   <input type="file" id="customThemeInput" class="hidden-file-input" accept="image/*" onchange="handleCustomTheme(event)">
 
   <div id="toast-container"></div>
@@ -2021,17 +2016,8 @@
     const DEFAULT_BACKGROUND_IMAGE = 'https://files.catbox.moe/sxim3d.jpg';
     const ADMIN_EMAIL = 'uchihafans2@gmail.com';
 
-    // Supabase Configuration
-    const SUPABASE_URL = 'https://nksyeuzkvhdmaqymjpjw.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rc3lldXprdmhkbWFxeW1qcGp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4NzI3NDEsImV4cCI6MjA2NzQ0ODc0MX0.bdmVnNDlNxC1QL1vnEVZ9UuwkwX_e0bMQogvQuVCzVE';
-    const BUCKET_NAME = 'pdf';
-
-    // Initialize Supabase client
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     let scheduleCheckerInterval = null;
     let notifiedSchedules = [];
-    let pdfDeletionTimeout = null; // For tracking PDF auto-deletion
 
     // State management variables
     let currentResetContentId = null; 
@@ -2042,6 +2028,7 @@
     let currentDeleteItemElement = null; 
     let historyState = [];
     let isNavigatingBack = false;
+    let backPressOnLoginCount = 0;
 
     const appData = {
         jadwalContent: {},
@@ -2140,7 +2127,7 @@
       return days[dayIndex];
     }
 
-    // Generate device ID for PDF naming
+    // Generate device ID for file naming
     function getDeviceId() {
         let deviceId = localStorage.getItem('deviceId');
         if (!deviceId) {
@@ -2150,116 +2137,12 @@
         return deviceId;
     }
 
-    // NEW: Function to open update page in browser (WebView compatible)
-    function openUpdateInBrowser() {
-        playClickSound();
-        const updateUrl = 'https://andikka0001.github.io/agendaku-komersial/';
-        
-        // Force open in external browser for WebView compatibility
-        try {
-            // Try to open in new tab/window first
-            const newWindow = window.open(updateUrl, '_blank', 'noopener,noreferrer');
-            
-            // If blocked or in WebView, try alternative methods
-            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                // Fallback: try to navigate current window
-                window.location.href = updateUrl;
-            }
-        } catch (error) {
-            // Final fallback: direct navigation
-            window.location.href = updateUrl;
-        }
-        
-        showToast('Membuka Browser', 'Mengarahkan ke halaman update...');
-        closeAgendakuBranding();
-    }
-
-    // --- ANDROID NATIVE BRIDGE FUNCTIONS ---
-    
-    // REVISI 1: Integrasi Sistem Notifikasi Canggih
-    function handleNotificationScheduling(newData) {
-        try {
-            // Cek apakah window.Android tersedia
-            if (!window.Android || !window.Android.scheduleNotification) {
-                console.log('Android bridge tidak tersedia untuk notifikasi');
-                return;
-            }
-
-            // Iterasi setiap hari dan setiap item jadwal
-            for (const day in newData) {
-                if (newData[day] && newData[day].length > 0) {
-                    newData[day].forEach(item => {
-                        // Jika item memiliki type: 'specific' dan startTime
-                        if (item.type === 'specific' && item.startTime && item.activity) {
-                            // Hitung waktu pemicu untuk kejadian berikutnya
-                            const triggerTime = calculateNextTriggerTime(day, item.startTime);
-                            
-                            if (triggerTime > Date.now()) {
-                                // Panggil jembatan native untuk schedule notification
-                                const title = `Pengingat: ${item.activity}`;
-                                const message = `Waktu untuk ${item.activity}${item.location ? ` di ${item.location}` : ''}`;
-                                
-                                try {
-                                    window.Android.scheduleNotification(title, message, triggerTime);
-                                    console.log(`Notifikasi dijadwalkan untuk: ${item.activity} pada ${new Date(triggerTime)}`);
-                                } catch (error) {
-                                    console.error('Error scheduling notification:', error);
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        } catch (error) {
-            console.error('Error dalam handleNotificationScheduling:', error);
-        }
-    }
-
-    function calculateNextTriggerTime(dayName, startTime) {
-        const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const targetDayIndex = dayNames.indexOf(dayName);
-        
-        if (targetDayIndex === -1) return 0;
-        
-        const now = new Date();
-        const currentDay = now.getDay();
-        
-        // Hitung hari berikutnya untuk jadwal tersebut
-        let daysUntilTarget = targetDayIndex - currentDay;
-        if (daysUntilTarget <= 0) {
-            daysUntilTarget += 7; // Minggu berikutnya
-        }
-        
-        // Parse waktu dari string "HH:MM"
-        const [hours, minutes] = startTime.split(':').map(Number);
-        
-        // Buat tanggal target
-        const targetDate = new Date(now);
-        targetDate.setDate(now.getDate() + daysUntilTarget);
-        targetDate.setHours(hours, minutes, 0, 0);
-        
-        return targetDate.getTime();
-    }
-
-    function notifyWelcome() {
-        try {
-            if (window.Android && window.Android.showWelcomeNotification) {
-                window.Android.showWelcomeNotification(
-                    "Notifikasi Diaktifkan!", 
-                    "Agendaku sekarang akan mengingatkan jadwalmu."
-                );
-            }
-        } catch (error) {
-            console.error('Error dalam notifyWelcome:', error);
-        }
-    }
-
-    // --- REVISED EXPORT/IMPORT FUNCTIONS ---
+    // --- REVISED EXPORT/IMPORT FUNCTIONS WITH FILE SYSTEM ---
     function showExportPopup() {
         playClickSound();
         
         const exportData = {
-            version: "1.6",
+            version: "1.7",
             timestamp: new Date().toISOString(),
             userData: {
                 namaUser: namaUser,
@@ -2282,28 +2165,6 @@
         closeAgendakuBranding();
     }
 
-    // REVISI 3: Fitur Export - Simpan sebagai File
-    function saveProjectAsFile() {
-        playClickSound();
-        
-        try {
-            const dataText = document.getElementById('exportDataDisplay').textContent;
-            const now = new Date();
-            const dateStr = now.toISOString().split('T')[0]; // Format YYYY-MM-DD
-            const defaultFileName = `Agendaku_Backup_${dateStr}.txt`;
-            
-            if (window.Android && window.Android.saveTextToFile) {
-                window.Android.saveTextToFile(dataText, defaultFileName);
-                showToast('Berhasil', 'File backup akan disimpan ke perangkat Anda.');
-            } else {
-                showToast('Tidak Tersedia', 'Fitur ini hanya tersedia di aplikasi Android.');
-            }
-        } catch (error) {
-            console.error('Error saving file:', error);
-            showToast('Error', 'Gagal menyimpan file.');
-        }
-    }
-
     function copyExportData() {
         playClickSound();
         const dataText = document.getElementById('exportDataDisplay').textContent;
@@ -2317,51 +2178,74 @@
     }
     
     function closeExportPopup() {
-        document.getElementById('exportPopup').classList.remove('active');
+    document.getElementById('exportPopup').classList.remove('active');
+}
+
+// --- TAMBAHKAN 3 FUNGSI DI BAWAH INI ---
+
+// Fungsi untuk memanggil Android agar menyimpan file
+function saveProjectAsFile() {
+    playClickSound();
+    try {
+        const dataText = document.getElementById('exportDataDisplay').textContent;
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0]; // Format YYYY-MM-DD
+        const defaultFileName = `Agendaku_Backup_${namaUser}_${dateStr}.json`;
+
+        if (window.Android && window.Android.saveTextToFile) {
+            window.Android.saveTextToFile(dataText, defaultFileName);
+            showToast('Berhasil', 'File backup akan disimpan ke perangkat Anda.');
+        } else {
+            showToast('Tidak Tersedia', 'Fitur ini hanya tersedia di aplikasi Android.');
+        }
+    } catch (error) {
+        console.error('Error saving file:', error);
+        showToast('Error', 'Gagal menyimpan file.');
     }
+}
+
+// Fungsi untuk memanggil Android agar membuka file
+function openProjectFromFile() {
+    playClickSound();
+    try {
+        if (window.Android && window.Android.readTextFromFile) {
+            window.Android.readTextFromFile();
+            showToast('Memuat...', 'Membuka pemilih file...');
+        } else {
+            showToast('Tidak Tersedia', 'Fitur ini hanya tersedia di aplikasi Android.');
+        }
+    } catch (error) {
+        console.error('Error opening file:', error);
+        showToast('Error', 'Gagal membuka file.');
+    }
+}
+
+// Fungsi yang akan dipanggil oleh Android setelah file selesai dibaca
+function onFileRead(content) {
+    try {
+        if (content && content.trim()) {
+            document.getElementById('importDataTextarea').value = content;
+            showToast('Berhasil', 'Konten file dimuat. Klik Import Data untuk melanjutkan.');
+        } else {
+            showToast('File Kosong', 'File yang dipilih kosong atau tidak valid.');
+        }
+    } catch (error) {
+        console.error('Error in onFileRead:', error);
+        showToast('Error', 'Gagal memproses konten file.');
+    }
+}
 
     function showImportPopup() {
-        playClickSound();
-        document.getElementById('importDataTextarea').value = '';
-        document.getElementById('importPopup').classList.add('active');
-        playToastSound();
-        closeAgendakuBranding();
-    }
+    playClickSound();
+    document.getElementById('importDataTextarea').value = ''; // Hanya baris ini yang perlu kita simpan
+    document.getElementById('importPopup').classList.add('active');
+    playToastSound();
+    closeAgendakuBranding();
+}
+
 
     function closeImportPopup() {
         document.getElementById('importPopup').classList.remove('active');
-    }
-
-    // REVISI 3: Fitur Import - Buka dari File
-    function openProjectFromFile() {
-        playClickSound();
-        
-        try {
-            if (window.Android && window.Android.readTextFromFile) {
-                window.Android.readTextFromFile();
-                showToast('Memuat...', 'Membuka file selector...');
-            } else {
-                showToast('Tidak Tersedia', 'Fitur ini hanya tersedia di aplikasi Android.');
-            }
-        } catch (error) {
-            console.error('Error opening file:', error);
-            showToast('Error', 'Gagal membuka file.');
-        }
-    }
-
-    // REVISI 3: Callback untuk hasil baca file dari native
-    function onFileRead(content) {
-        try {
-            if (content && content.trim()) {
-                document.getElementById('importDataTextarea').value = content;
-                showToast('Berhasil', 'Konten file berhasil dimuat. Klik Import Data untuk melanjutkan.');
-            } else {
-                showToast('File Kosong', 'File yang dipilih kosong atau tidak valid.');
-            }
-        } catch (error) {
-            console.error('Error in onFileRead:', error);
-            showToast('Error', 'Gagal memproses konten file.');
-        }
     }
 
     function processImportData() {
@@ -2369,7 +2253,7 @@
         const importText = document.getElementById('importDataTextarea').value.trim();
         
         if (!importText) {
-            showToast('Error', 'Silakan tempel (paste) data backup atau buka file terlebih dahulu.');
+            showToast('Error', 'Silakan pilih file atau tempel data backup terlebih dahulu.');
             return;
         }
 
@@ -2386,7 +2270,7 @@
             }
         } catch (error) {
             console.error('Error parsing import data:', error);
-            showToast('Error', 'Format data backup tidak valid. Pastikan Anda paste data yang benar.');
+            showToast('Error', 'Format data backup tidak valid. Pastikan file atau data yang benar.');
         }
     }
 
@@ -2432,221 +2316,257 @@
 
     function closePdfSuccessPopup() {
         document.getElementById('pdfSuccessPopup').classList.remove('active');
-        // Clear deletion timeout if popup is closed manually
-        if (pdfDeletionTimeout) {
-            clearTimeout(pdfDeletionTimeout);
-            pdfDeletionTimeout = null;
+    }
+
+    // GANTI FUNGSI LAMA DENGAN VERSI FINAL DAN PALING CANGGIH INI
+async function generateAndSavePdf() {
+    try {
+        showToast('Memuat aset...', 'Membaca font dari aplikasi...');
+
+        // [REVISI] Meminta data font dari Java, bukan dari internet
+        if (!window.Android || !window.Android.getEmojiFontAsBase64) {
+            throw new Error('Fungsi native untuk memuat font tidak ditemukan.');
         }
-    }
+        const fontBase64 = await window.Android.getEmojiFontAsBase64();
 
-    function copyPdfLink() {
-        playClickSound();
-        const linkInput = document.getElementById('pdfLinkInput');
-        navigator.clipboard.writeText(linkInput.value).then(() => {
-            showToast('Berhasil', 'Link PDF telah disalin ke clipboard!');
-        }).catch(err => {
-            showToast('Gagal', 'Gagal menyalin link. Silakan salin manual.');
-        });
-    }
-
-    // REVISI 3: Fitur Simpan PDF ke Device
-    function savePdfToDevice(event) {
-        event.preventDefault();
-        playClickSound();
-        
-        try {
-            const pdfUrl = document.getElementById('pdfLinkInput').value;
-            const now = new Date();
-            const dateStr = now.toISOString().split('T')[0];
-            const defaultFileName = `Agendaku_Laporan_${namaUser}_${dateStr}.pdf`;
-            
-            if (window.Android && window.Android.downloadAndSavePdf) {
-                window.Android.downloadAndSavePdf(pdfUrl, defaultFileName);
-                showToast('Mengunduh...', 'PDF sedang diunduh ke perangkat Anda.');
-            } else {
-                // Fallback: buka di browser
-                try {
-                    const newWindow = window.open(pdfUrl, '_blank', 'noopener,noreferrer');
-                    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                        window.location.href = pdfUrl;
-                    }
-                } catch (error) {
-                    window.location.href = pdfUrl;
-                }
-            }
-        } catch (error) {
-            console.error('Error saving PDF:', error);
-            showToast('Error', 'Gagal menyimpan PDF.');
+        if (!fontBase64) {
+            throw new Error('Gagal membaca data font dari aset aplikasi.');
         }
-    }
 
-    async function generateAndUploadPdf() {
-        try {
-            showToast('Membuat PDF...', 'Harap tunggu, menyusun laporan profesional...');
-            
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const margin = 15;
-            let finalY = 20;
+        showToast('Membuat PDF...', 'Harap tunggu, menyusun laporan profesional...');
 
-            // --- Judul Utama ---
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(20);
-            pdf.text(`Laporan Agendaku`, pageWidth / 2, finalY, { align: 'center' });
-            finalY += 8;
-            pdf.setFontSize(12);
-            pdf.setFont("helvetica", "normal");
-            pdf.text(`Pengguna: ${namaUser}`, pageWidth / 2, finalY, { align: 'center' });
-            finalY += 15;
-            
-            // Di bagian header PDF (setelah judul)
-pdf.setFontSize(12);
-pdf.text(`Dibuat oleh: ${namaUser}`, margin, finalY);
-finalY += 5;
-pdf.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, margin, finalY);
-finalY += 15;
+        // Sisa dari kode ini sama persis dengan versi sebelumnya,
+        // karena bagian pembuatan PDF-nya sudah benar.
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
 
-            // Fungsi untuk mengubah data jadwal menjadi format tabel
-            const createTableData = (data) => {
-                const body = [];
-                const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
-                daysOrder.forEach(day => {
-                    if (data[day] && data[day].length > 0) {
-                        data[day].forEach(item => {
-                            let timeString = item.type === 'specific' ? `${item.startTime || ''}-${item.endTime || ''}` : `[${item.time || 'Umum'}]`;
-                            let activityString = (item.selesai ? '✓ ' : '') + (item.activity || '');
-                            body.push([day, timeString, activityString, item.location || '-']);
-                        });
-                    }
-                });
-                return body;
-            };
+        pdf.addFileToVFS('NotoColorEmoji-Regular.ttf', fontBase64);
+        pdf.addFont('NotoColorEmoji-Regular.ttf', 'NotoColorEmoji', 'normal');
 
-            // --- Render Tabel Jadwal Kegiatan ---
-            pdf.autoTable({
-                startY: finalY,
-                head: [['Hari', 'Waktu', 'Kegiatan', 'Lokasi']],
-                body: createTableData(appData.jadwalContent),
-                theme: 'grid',
-                headStyles: { fillColor: [0, 85, 170] },
-                didDrawPage: (data) => {
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text('Jadwal Kegiatan', margin, data.settings.startY - 5);
-                }
-            });
-            finalY = pdf.autoTable.previous.finalY + 15;
-
-            // --- Render Tabel Jadwal Kuliah ---
-            if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
-            pdf.autoTable({
-                startY: finalY,
-                head: [['Hari', 'Waktu', 'Mata Kuliah/Pelajaran', 'Ruangan']],
-                body: createTableData(appData.kuliahContent),
-                theme: 'grid',
-                headStyles: { fillColor: [0, 85, 170] },
-                didDrawPage: (data) => {
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text('Jadwal Kuliah/Sekolah', margin, data.settings.startY - 5);
-                }
-            });
-            finalY = pdf.autoTable.previous.finalY + 15;
-
-            // --- Render Catatan ---
-            if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(16);
-            pdf.text('Catatan Pribadi', margin, finalY);
-            finalY += 8;
-            pdf.setFont("helvetica", "normal");
-            pdf.setFontSize(10);
-            const noteLines = pdf.splitTextToSize(appData.catatanContent.join('\n'), pageWidth - (margin * 2));
-            pdf.text(noteLines, margin, finalY);
-
-            // --- Tambahkan Footer Nomor Halaman ---
-            const pageCount = pdf.internal.getNumberOfPages();
-            for(let i = 1; i <= pageCount; i++) {
-                pdf.setPage(i);
-                pdf.setFontSize(8);
-                pdf.setTextColor(150);
-                pdf.text(`Halaman ${i} dari ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-            }
-
-            // Convert PDF to blob
-const pdfBlob = pdf.output('blob');
-const deviceId = getDeviceId();
-const now = new Date();
-const formattedDate = now.toISOString().split('T')[0]; // Tanggal (YYYY-MM-DD)
-const hours = String(now.getHours()).padStart(2, '0'); // Jam (00-23)
-const minutes = String(now.getMinutes()).padStart(2, '0'); // Menit (00-59)
-const timestamp = `${formattedDate}_${hours}-${minutes}`; // Format: YYYY-MM-DD_HH-MM
-
-const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
-            
-            // Upload to Supabase
-            const { data, error } = await supabase.storage
-                .from(BUCKET_NAME)
-                .upload(fileName, pdfBlob, {
-                    cacheControl: '0',
-                    upsert: true,
-                    contentType: 'application/pdf'
-                });
-
-            if (error) {
-                console.error('Supabase upload error:', error);
-                throw new Error(`Upload failed: ${error.message}`);
-            }
-
-            // Get public URL
-            const { data: urlData } = supabase.storage
-                .from(BUCKET_NAME)
-                .getPublicUrl(fileName);
-
-            if (!urlData?.publicUrl) {
-                throw new Error('Failed to get public URL');
-            }
-
-            // Show success popup with download link
-            showPdfSuccessPopup(urlData.publicUrl, fileName);
-
-        } catch (error) {
-            console.error('PDF generation/upload error:', error);
-            showToast('Error', `Gagal membuat atau mengunggah PDF: ${error.message}`);
-        }
-    }
-
-    function showPdfSuccessPopup(publicUrl, fileName) {
-        const linkInput = document.getElementById('pdfLinkInput');
-        const downloadLink = document.getElementById('pdfDownloadLink');
-        
-        linkInput.value = publicUrl;
-        downloadLink.href = publicUrl;
-        downloadLink.setAttribute('download', `Agendaku_Laporan_${namaUser}.pdf`);
-        
-        document.getElementById('pdfSuccessPopup').classList.add('active');
-        showToast('Berhasil!', 'PDF berhasil diunggah ke cloud. Klik link untuk download.');
-        playToastSound();
-
-        // Set 1-minute auto-deletion timer
-        pdfDeletionTimeout = setTimeout(async () => {
-            try {
-                const { error } = await supabase.storage
-                    .from(BUCKET_NAME)
-                    .remove([fileName]);
-
-                if (error) {
-                    console.error('Error deleting PDF:', error);
+        const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+        function smartText(text, x, y, options) {
+            const segments = text.split(emojiRegex).filter(s => s);
+            let currentX = x;
+            const baseFontSize = pdf.getFontSize();
+            segments.forEach(segment => {
+                if (segment.match(emojiRegex)) {
+                    pdf.setFont('NotoColorEmoji', 'normal');
                 } else {
-                    showToast('File Kadaluarsa', 'PDF telah otomatis dihapus setelah 1 menit.');
-                    closePdfSuccessPopup();
+                    pdf.setFont('times', options?.fontStyle || 'normal');
                 }
-            } catch (error) {
-                console.error('Error in auto-deletion:', error);
+                pdf.text(segment, currentX, y, options);
+                currentX += pdf.getStringUnitWidth(segment) * baseFontSize / pdf.internal.scaleFactor;
+            });
+        }
+
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 15;
+        let finalY = 20;
+
+        pdf.setFont("times", "bold");
+        pdf.setFontSize(20);
+        pdf.text(`Laporan Agendaku`, pageWidth / 2, finalY, { align: 'center' });
+        finalY += 8;
+
+        pdf.setFont("times", "normal");
+        pdf.setFontSize(12);
+        smartText(`Pengguna: ${namaUser}`, pageWidth / 2, finalY, { align: 'center' });
+        finalY += 15;
+
+        pdf.text(`Dibuat pada: ${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}`, margin, finalY);
+        finalY += 15;
+
+        const createTableData = (data) => {
+            const body = [];
+            const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+            daysOrder.forEach(day => {
+                if (data[day] && data[day].length > 0) {
+                    data[day].forEach(item => {
+                        let timeString = item.type === 'specific' ? `${item.startTime || ''}-${item.endTime || ''}` : `[${item.time || 'Umum'}]`;
+                        let activityString = (item.selesai ? '✓ ' : '') + (item.activity || '');
+                        body.push([day, timeString, activityString, item.location || '-']);
+                    });
+                }
+            });
+            return body;
+        };
+
+        pdf.autoTable({
+            startY: finalY,
+            head: [['Hari', 'Waktu', 'Kegiatan', 'Lokasi']],
+            body: createTableData(appData.jadwalContent),
+            theme: 'grid',
+            headStyles: { fillColor: [0, 85, 170], font: 'times', fontStyle: 'bold' },
+            styles: { font: 'times', cellPadding: 2 },
+            didDrawPage: (data) => {
+                pdf.setFont("times", "bold");
+                pdf.setFontSize(16);
+                pdf.text('Jadwal Kegiatan Harian', margin, data.settings.startY - 5);
             }
-        }, 65000); // 1 menit + 5 detik
+        });
+        finalY = pdf.autoTable.previous.finalY + 15;
+
+        if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
+
+        pdf.autoTable({
+            startY: finalY,
+            head: [['Hari', 'Waktu', 'Mata Kuliah/Pelajaran', 'Ruangan']],
+            body: createTableData(appData.kuliahContent),
+            theme: 'grid',
+            headStyles: { fillColor: [0, 85, 170], font: 'times', fontStyle: 'bold' },
+            styles: { font: 'times', cellPadding: 2 },
+            didDrawPage: (data) => {
+                pdf.setFont("times", "bold");
+                pdf.setFontSize(16);
+                pdf.text('Jadwal Kuliah/Sekolah', margin, data.settings.startY - 5);
+            }
+        });
+        finalY = pdf.autoTable.previous.finalY + 15;
+
+        if (finalY >= pageHeight - 40) { pdf.addPage(); finalY = margin; }
+
+        pdf.setFont("times", "bold");
+        pdf.setFontSize(16);
+        pdf.text('Catatan Pribadi', margin, finalY);
+        finalY += 8;
+
+        const noteLines = pdf.splitTextToSize(appData.catatanContent.join('\n'), pageWidth - (margin * 2));
+
+        noteLines.forEach(line => {
+            pdf.setFontSize(10);
+            smartText(line, margin, finalY);
+            finalY += 5;
+            if (finalY >= pageHeight - 20) {
+                pdf.addPage();
+                finalY = margin;
+            }
+        });
+
+        const pageCount = pdf.internal.getNumberOfPages();
+        for(let i = 1; i <= pageCount; i++) {
+            pdf.setPage(i);
+            pdf.setFont("times", "italic");
+            pdf.setFontSize(8);
+            pdf.setTextColor(150);
+            pdf.text(`Halaman ${i} dari ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+        }
+
+        const fileName = `Agendaku_Laporan_${namaUser}_${new Date().toISOString().split('T')[0]}.pdf`;
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+
+        if (window.Android && window.Android.savePdfFromBase64) {
+            window.Android.savePdfFromBase64(pdfBase64, fileName);
+        } else {
+            showToast('Mode Browser', 'PDF akan diunduh secara otomatis.');
+            pdf.save(fileName);
+        }
+
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        showToast('Error', `Gagal membuat PDF: ${error.message}`);
+    }
+}
+
+
+function showPdfSuccessPopup() {
+    document.getElementById('pdfSuccessPopup').classList.add('active');
+    showToast('Berhasil!', 'PDF berhasil disimpan ke folder Download perangkat Anda.');
+    playToastSound();
+}
+    
+    // --- NOTIFICATION SYSTEM ---
+    function requestNotificationPermissionAndStartChecker() {
+        // Request notification permission from Android
+        if (typeof Android !== 'undefined' && Android.requestNotificationPermission) {
+            Android.requestNotificationPermission();
+        }
+        
+        // Show welcome notification
+        if (typeof Android !== 'undefined' && Android.showWelcomeNotification) {
+            Android.showWelcomeNotification();
+        }
+        
+        startScheduleChecker();
+    }
+
+    function setupScheduleNotifications() {
+        const now = new Date();
+        const currentDayName = getDayNameID(now.getDay());
+        
+        // Get all today's schedules
+        const allTodaySchedules = [
+            ...(appData.jadwalContent[currentDayName] || []),
+            ...(appData.kuliahContent[currentDayName] || [])
+        ];
+
+        // Clear existing alarms and set new ones
+        allTodaySchedules.forEach(item => {
+            if (item.selesai) return; // Skip completed items
+
+            if (item.type === 'specific' && item.startTime) {
+                const [hour, minute] = item.startTime.split(':').map(Number);
+                
+                // Set preparation alarm (15 minutes before)
+                const prepHour = minute >= 15 ? hour : hour - 1;
+                const prepMinute = minute >= 15 ? minute - 15 : minute + 45;
+                
+                if (typeof Android !== 'undefined' && Android.setAlarm) {
+                    Android.setAlarm(
+                        `${String(prepHour).padStart(2, '0')}:${String(prepMinute).padStart(2, '0')}`,
+                        `Persiapan: ${item.activity}`,
+                        `Persiapkan diri, jadwal ${item.activity} akan dimulai pukul ${item.startTime}`
+                    );
+                    
+                    // Set main alarm (1 minute before)
+                    const mainHour = minute >= 1 ? hour : hour - 1;
+                    const mainMinute = minute >= 1 ? minute - 1 : minute + 59;
+                    
+                    Android.setAlarm(
+                        `${String(mainHour).padStart(2, '0')}:${String(mainMinute).padStart(2, '0')}`,
+                        `Saatnya: ${item.activity}`,
+                        `Sekarang saatnya melaksanakan ${item.activity}`
+                    );
+                }
+            } else if (item.type === 'general' && item.time) {
+                // Convert general time to specific time
+                const timeMap = {
+                    "Shubuh": "05:00",
+                    "Pagi": "06:00", 
+                    "Dhuhur": "12:00",
+                    "Siang": "12:00",
+                    "Ashar": "15:00",
+                    "Sore": "16:00",
+                    "Maghrib": "18:00",
+                    "Isya": "19:00",
+                    "Malam": "19:00"
+                };
+                
+                const specificTime = timeMap[item.time];
+                if (specificTime && typeof Android !== 'undefined' && Android.setAlarm) {
+                    const [hour, minute] = specificTime.split(':').map(Number);
+                    
+                    // Set preparation alarm (15 minutes before)
+                    const prepHour = minute >= 15 ? hour : hour - 1;
+                    const prepMinute = minute >= 15 ? minute - 15 : minute + 45;
+                    
+                    Android.setAlarm(
+                        `${String(prepHour).padStart(2, '0')}:${String(prepMinute).padStart(2, '0')}`,
+                        `Persiapan: ${item.activity}`,
+                        `Persiapkan diri untuk ${item.activity}`
+                    );
+                    
+                    // Set main alarm (exact time)
+                    Android.setAlarm(
+                        specificTime,
+                        `Saatnya: ${item.activity}`,
+                        `Sekarang saatnya melaksanakan ${item.activity}`
+                    );
+                }
+            }
+        });
+        
+        showToast('Notifikasi Diatur', 'Semua alarm jadwal hari ini telah dijadwalkan.');
     }
     
     // --- INITIALIZATION ---
@@ -2667,14 +2587,6 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
       document.getElementById('confirmSaveYes').onclick = handleSaveConfirmation;
       document.getElementById('confirmSaveNo').onclick = handleDiscardChanges;
       document.getElementById('confirmSaveCancel').onclick = () => { playClickSound(); closeSaveConfirmPopup(); };
-      document.addEventListener("DOMContentLoaded", function () {
-  const exitButton = document.getElementById("confirmExitYes");
-  if (exitButton) {
-    exitButton.addEventListener("click", function () {
-      exitApplication();
-    });
-  }
-});
       document.getElementById('sidebarOverlay').addEventListener('click', closeAgendakuBranding);
       document.getElementById('updateInfoToggle').addEventListener('click', function() {
           this.classList.toggle('open');
@@ -2686,10 +2598,8 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
       document.getElementById('confirmExitNo').onclick = () => { playClickSound(); closeExitConfirmPopup(); };
 
       // PDF confirmation handlers
-      document.getElementById('confirmPdfYes').onclick = () => { playClickSound(); closePdfConfirmPopup(); generateAndUploadPdf(); };
+      document.getElementById('confirmPdfYes').onclick = () => { playClickSound(); closePdfConfirmPopup(); generateAndSavePdf(); };
       document.getElementById('confirmPdfNo').onclick = () => { playClickSound(); closePdfConfirmPopup(); };
-
-      window.addEventListener('popstate', (e) => { isNavigatingBack = true; handlePopState(e.state); });
 
       if (lastLoggedInUser) {
         document.getElementById('nama').value = lastLoggedInUser;
@@ -2701,8 +2611,12 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
       updateCircularButtonVisibility('login');
       updateDigitalClock();
       setInterval(updateDigitalClock, 1000);
-      if (document.getElementById('login').style.display !== 'none') {
-          pushState('login');
+      
+      // Show welcome popup on first load
+      if (!localStorage.getItem("popup_shown")) {
+          setTimeout(() => {
+              document.getElementById("welcomePopup").classList.add("active");
+          }, 1000);
       }
     });
 
@@ -2729,6 +2643,11 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
     function saveData(key) {
         if (!namaUser) return;
         localStorage.setItem(`${namaUser}_${key}`, JSON.stringify(appData[key]));
+        
+        // Setup notifications after saving schedule data
+        if (key === 'jadwalContent' || key === 'kuliahContent') {
+            setTimeout(setupScheduleNotifications, 500);
+        }
     }
     
     function renderJadwal(data, containerId) {
@@ -2747,6 +2666,8 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
               data[day].forEach((item, index) => {
                   const li = document.createElement('li');
                   li.className = item.selesai ? 'selesai' : '';
+                  li.setAttribute('data-kategori', item.time || 'umum');
+                  li.setAttribute('data-waktu', item.startTime || item.time || '');
 
                   const checkbox = document.createElement('div');
                   checkbox.className = 'jadwal-checkbox';
@@ -2822,64 +2743,36 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         renderJadwal(appData[contentId], contentId);
     }
 
-    // --- HISTORY & NAVIGATION ---
-    function pushState(slideId, contentId = null) {
-        const state = { slideId, contentId };
-        history.pushState(state, '', `#${slideId}`);
-        historyState.push(state);
-    }
-    
-    // REVISI 2: Modifikasi fungsi handlePopState
-    function handlePopState(state) {
-        const activePopup = document.querySelector('.popup-overlay.active, .tutorial-overlay.active, #agendakuSidebar.active');
-        if(activePopup) {
-            if (activePopup.id.includes('Popup') || activePopup.id.includes('tutorial')) activePopup.classList.remove('active');
-            if (activePopup.id === 'agendakuSidebar') closeAgendakuBranding();
-            history.pushState(historyState[historyState.length-1], '', `#${historyState[historyState.length-1].slideId}`);
-            return;
-        }
-
-        // REVISI 2: Ganti logika backPressOnLoginCount
-        if (historyState.length === 1 && historyState[0].slideId === 'login') {
-            showExitConfirmPopup();
-            history.pushState({ slideId: 'login' }, '', '#login');
-            return;
-        }
-
-        if (historyState.length > 1) {
-            historyState.pop();
-            const previousState = historyState[historyState.length - 1];
-            navigateTo(previousState.slideId, previousState.contentId, false);
-        } else {
-             kembaliKeLogin();
-        }
-        isNavigatingBack = false;
-    }
-
+    // --- NAVIGATION ---
     function navigateTo(slideId, contentId = null, pushToHistory = true) {
-        document.querySelectorAll('.overlay.active, .slide.active').forEach(el => el.classList.remove('active'));
-        
-        setTimeout(() => {
-            document.querySelectorAll('.overlay, .slide').forEach(el => el.style.display = 'none');
-            const targetElement = document.getElementById(slideId);
-            if (targetElement) {
-                targetElement.style.display = 'flex';
-                setTimeout(() => targetElement.classList.add('active'), 10);
-            }
-            if (pushToHistory) pushState(slideId, contentId);
-            
-            updateCircularButtonVisibility(slideId);
-            document.getElementById('helpBtnJadwal').style.display = (slideId === 'jadwal') ? 'flex' : 'none';
-            document.getElementById('helpBtnKuliah').style.display = (slideId === 'kuliah') ? 'flex' : 'none';
-
-            if (slideId === 'editJadwal' && contentId) {
-                currentEditTargetId = contentId;
-                loadScheduleToEditor();
-            } else if (slideId === 'editCatatan') {
-                document.getElementById('editCatatanTextarea').value = appData.catatanContent.join('\n');
-            }
-        }, 300);
+    // Cek agar tidak menambahkan state yang sama berturut-turut
+    const currentState = historyState[historyState.length - 1];
+    if (pushToHistory && (!currentState || currentState.slideId !== slideId)) {
+        historyState.push({ slideId, contentId });
     }
+
+    document.querySelectorAll('.overlay.active, .slide.active').forEach(el => el.classList.remove('active'));
+    setTimeout(() => {
+        document.querySelectorAll('.overlay, .slide').forEach(el => el.style.display = 'none');
+        const targetElement = document.getElementById(slideId);
+        if (targetElement) {
+            targetElement.style.display = 'flex';
+            setTimeout(() => targetElement.classList.add('active'), 10);
+        }
+        
+        updateCircularButtonVisibility(slideId);
+        document.getElementById('helpBtnJadwal').style.display = (slideId === 'jadwal') ? 'flex' : 'none';
+        document.getElementById('helpBtnKuliah').style.display = (slideId === 'kuliah') ? 'flex' : 'none';
+
+        if (slideId === 'editJadwal' && contentId) {
+            currentEditTargetId = contentId;
+            loadScheduleToEditor();
+        } else if (slideId === 'editCatatan') {
+            document.getElementById('editCatatanTextarea').value = appData.catatanContent.join('\n');
+        }
+    }, 300);
+}
+
     
     function bukaSlide(slideId, contentId = null) {
       playClickSound();
@@ -2890,41 +2783,54 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
     }
 
     function tutupSlide(slideId) {
-        playClickSound();
-        let shouldPromptSave = false;
-        let message = '';
-
-        if (slideId === 'editJadwal') {
-            const editorData = buildScheduleDataFromEditor();
-            if (JSON.stringify(editorData) !== JSON.stringify(appData[currentEditTargetId])) {
-                shouldPromptSave = true;
-                message = `Anda punya perubahan yang belum disimpan. Simpan perubahan?`;
-            }
-        } else if (slideId === 'editCatatan') {
-            if (document.getElementById('editCatatanTextarea').value !== appData.catatanContent.join('\n')) {
-                shouldPromptSave = true;
-                message = 'Anda punya perubahan yang belum disimpan di catatan. Simpan perubahan?';
-            }
-        } else if (slideId === 'instruksi') {
-            navigateTo('info', null, false);
-            return;
-        } else if (slideId === 'ubahTema') {
-            // Auto-close theme panel and return to menu
-            navigateTo('menu', null, false);
-            return;
-        }
-
-        if (shouldPromptSave) {
-            activeEditableContentId = slideId;
-            document.getElementById('saveConfirmMessage').textContent = message;
-            document.getElementById('saveConfirmPopup').classList.add('active');
-            playToastSound();
-            return;
-        }
-
-        if (historyState.length > 1) history.back();
-        else goToMenu();
+    playClickSound();
+    
+    // Cek apakah ada perubahan yang belum disimpan
+    let shouldPromptSave = false;
+    if (slideId === 'editJadwal' && JSON.stringify(buildScheduleDataFromEditor()) !== JSON.stringify(appData[currentEditTargetId])) {
+        shouldPromptSave = true;
+    } else if (slideId === 'editCatatan' && document.getElementById('editCatatanTextarea').value !== appData.catatanContent.join('\n')) {
+        shouldPromptSave = true;
     }
+
+    if (shouldPromptSave) {
+        activeEditableContentId = slideId;
+        document.getElementById('saveConfirmMessage').textContent = `Anda punya perubahan yang belum disimpan. Simpan perubahan?`;
+        document.getElementById('saveConfirmPopup').classList.add('active');
+        playToastSound();
+        return;
+    }
+    
+    // Jika tidak ada perubahan, panggil handleBackButton
+    handleBackButton();
+}
+
+function handleBackButton() {
+    // Prioritas 1: Tutup pop-up yang aktif
+    const activePopup = document.querySelector('.popup-overlay.active, .sidebar-overlay-blur.active');
+    if (activePopup) {
+        if (activePopup.id === 'sidebarOverlay') {
+            closeAgendakuBranding();
+        } else {
+            activePopup.classList.remove('active');
+        }
+        return true; // Beri tahu Android bahwa event sudah ditangani
+    }
+
+    // Prioritas 2: Navigasi mundur antar slide
+    if (historyState.length > 1) {
+        historyState.pop(); // Hapus state saat ini
+        const prevState = historyState[historyState.length - 1]; // Lihat state sebelumnya
+        navigateTo(prevState.slideId, prevState.contentId, false); // Pindah ke state sebelumnya tanpa mencatat ke history
+        return true; // Beri tahu Android bahwa event sudah ditangani
+    }
+
+    // Prioritas 3: Jika sudah di halaman paling awal (menu/login)
+    // Tampilkan konfirmasi keluar
+    showExitConfirmPopup();
+    return true; // Kita tangani konfirmasi keluar sendiri, jadi return true
+}
+
     
     // --- CORE APP LOGIC ---
     function handleLogin() {
@@ -3166,28 +3072,20 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         return newData;
     }
 
-    // REVISI 1: Modifikasi fungsi saveEditedSchedule
     function saveEditedSchedule() {
         playClickSound();
         const newData = buildScheduleDataFromEditor();
         appData[currentEditTargetId] = newData;
         saveData(currentEditTargetId);
         
-        renderJadwal(newData, currentEditTargetId);
+        renderJadwal(newData, currentEditTargetId); 
         
-        // REVISI 1: Tambahkan panggilan handleNotificationScheduling setelah saveData
-        handleNotificationScheduling(newData);
+        showToast('Berhasil', 'Jadwal berhasil diperbarui dan notifikasi telah diatur.');
         
-        showToast('Berhasil', 'Jadwal berhasil diperbarui.');
-        
-        // Immediate return to schedule view (100ms instead of 1000ms)
+        // Return to schedule view
         setTimeout(() => {
-            if (currentEditTargetId === 'jadwalContent') {
-                navigateTo('jadwal');
-            } else if (currentEditTargetId === 'kuliahContent') {
-                navigateTo('kuliah');
-            }
-        }, 100);
+    handleBackButton();
+}, 100);
     }
     
     function handleSaveConfirmation() {
@@ -3200,8 +3098,7 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         closeSaveConfirmPopup();
         
         if (activeEditableContentId === 'editCatatan') {
-            if (historyState.length > 1) history.back();
-            else goToMenu();
+            goToMenu();
         }
     }
 
@@ -3209,8 +3106,7 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         playClickSound();
         showToast('Info', 'Perubahan tidak disimpan.');
         closeSaveConfirmPopup();
-        if (historyState.length > 1) history.back();
-        else goToMenu();
+        goToMenu();
     }
     
     function closeSaveConfirmPopup() {
@@ -3224,13 +3120,7 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         saveData('catatanContent');
         renderCatatan(appData.catatanContent);
         showToast('Tersimpan', 'Catatan pribadi berhasil diperbarui.');
-        
-        // Navigate back properly without closing tabs
-        if (historyState.length > 1) {
-            history.back();
-        } else {
-            navigateTo('catatan');
-        }
+        handleBackButton();
     }
     
     function confirmResetSchedule(contentId) {
@@ -3358,9 +3248,8 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
       showToast('Berhasil', 'Tema berhasil diganti.');
       closeThemeConfirmPopup();
       
-      // Auto-close theme panel and return to menu
       setTimeout(() => {
-          navigateTo('menu');
+          handleBackButton();
       }, 1000);
     }
 
@@ -3381,9 +3270,8 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
       showToast('Berhasil', 'Tema latar belakang kembali ke default.');
       closeDefaultThemeConfirmPopup();
       
-      // Auto-close theme panel and return to menu
       setTimeout(() => {
-          navigateTo('menu');
+          handleBackButton();
       }, 1000);
     }
 
@@ -3391,7 +3279,6 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
       document.getElementById('defaultThemeConfirmPopup').classList.remove('active');
     }
     
-    // NEW: Function to show aesthetic quote popup
     function showQuotePopup() {
         playClickSound();
         
@@ -3403,7 +3290,7 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         
         const popup = document.getElementById('quotePopup');
         popup.classList.add('active');
-        playToastSound(); // Reusing the sound for a nice effect
+        playToastSound();
     }
 
     function closeQuotePopup() {
@@ -3521,110 +3408,34 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
         document.getElementById('exitConfirmPopup').classList.remove('active');
     }
     
-    // REVISI 2: Modifikasi fungsi exitApplication
     function exitApplication() {
-    playClickSound();
-    closeExitConfirmPopup();
-
-    if (typeof Android !== "undefined" && Android.exitApp) {
-        Android.exitApp();
-    } else {
-        showToast('Fitur Tidak Tersedia', 'Fitur keluar aplikasi hanya tersedia di Android.');
-    }
-}
-
-    const timeRanges = {
-        "Shubuh": { start: 4, end: 6, title: "Waktunya Shubuh!" },
-        "Pagi": { start: 7, end: 11, title: "Selamat Pagi!" },
-        "Dhuhur": { start: 12, end: 14, title: "Waktunya Dhuhur!" },
-        "Ashar": { start: 15, end: 17, title: "Waktunya Ashar!" },
-        "Maghrib": { start: 18, end: 19, title: "Waktunya Maghrib!" },
-        "Isya": { start: 19, end: 21, title: "Waktunya Isya!" },
-        "Malam": { start: 21, end: 23, title: "Selamat Malam!" }
-    };
-
-    function showBrowserNotification(title, body) {
-        if (Notification.permission === 'granted') {
-            new Notification(title, {
-                body: body,
-                icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-            });
-        }
-    }
-
-    function checkCurrentSchedule() {
-        const now = new Date();
-        const currentDayName = getDayNameID(now.getDay());
-        const currentHour = now.getHours();
-        const currentTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-
-        const allTodaySchedules = [
-            ...(appData.jadwalContent[currentDayName] || []),
-            ...(appData.kuliahContent[currentDayName] || [])
-        ];
-
-        allTodaySchedules.forEach(item => {
-            if (item.selesai) return;
-
-            if (item.type === 'specific' && item.startTime) {
-                const uniqueId = `${currentDayName}-${item.startTime}-${item.activity}`;
-                if (item.startTime === currentTime && !notifiedSchedules.includes(uniqueId)) {
-                    showBrowserNotification("Pengingat Jadwal", `Saatnya untuk: ${item.activity}`);
-                    notifiedSchedules.push(uniqueId);
-                }
-            }
-        });
+        playClickSound();
+        closeExitConfirmPopup();
+        showToast('Menutup Aplikasi', 'Sampai jumpa lagi!');
         
-        for (const period in timeRanges) {
-            const range = timeRanges[period];
-            if (currentHour >= range.start && currentHour < range.end) {
-                const uniquePeriodId = `${currentDayName}-${period}`;
-                
-                if (!notifiedSchedules.includes(uniquePeriodId)) {
-                    const activitiesInPeriod = allTodaySchedules
-                        .filter(item => item.type === 'general' && item.time === period && !item.selesai)
-                        .map(item => item.activity);
-                    
-                    if (activitiesInPeriod.length > 0) {
-                        const notificationBody = "Jangan lupa: " + activitiesInPeriod.join(', ');
-                        showBrowserNotification(range.title, notificationBody);
-                    }
-                    
-                    notifiedSchedules.push(uniquePeriodId);
-                }
-            }
+        // Call Android exit function
+        if (typeof Android !== 'undefined' && Android.exitApp) {
+            setTimeout(() => {
+                Android.exitApp();
+            }, 1000);
+        } else {
+            // Fallback for web version
+            setTimeout(() => {
+                window.close();
+            }, 1000);
         }
     }
 
     function startScheduleChecker() {
-        notifiedSchedules = []; 
-        if (scheduleCheckerInterval) {
-            clearInterval(scheduleCheckerInterval);
-        }
-        scheduleCheckerInterval = setInterval(checkCurrentSchedule, 60000); 
+        // This function is now handled by Android native notifications
+        // Keep for compatibility but main logic moved to setupScheduleNotifications
+        console.log('Schedule checker started - notifications handled by Android');
     }
 
-    // REVISI 1: Modifikasi fungsi requestNotificationPermissionAndStartChecker
-    function requestNotificationPermissionAndStartChecker() {
-        if (!('Notification' in window)) {
-            console.log("Browser ini tidak mendukung notifikasi desktop.");
-            return;
-        }
-
-        if (Notification.permission === 'granted') {
-            // REVISI 1: Tambahkan panggilan notifyWelcome() sebelum startScheduleChecker()
-            notifyWelcome();
-            startScheduleChecker();
-        } else if (Notification.permission !== 'denied') {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    // REVISI 1: Tambahkan panggilan notifyWelcome() sebelum startScheduleChecker()
-                    notifyWelcome();
-                    showToast('Notifikasi Diaktifkan', 'Pengingat jadwal akan muncul jika ada.');
-                    startScheduleChecker();
-                }
-            });
-        }
+    // Welcome popup functions
+    function closeWelcomePopupAndRefresh() {
+        localStorage.setItem("popup_shown", "true");
+        document.getElementById("welcomePopup").classList.remove("active");
     }
 
   </script>
@@ -3641,21 +3452,6 @@ const fileName = `pdf/${namaUser}_laporan_${timestamp}.pdf`;
     <button class="btn btn-welcome" onclick="closeWelcomePopupAndRefresh()">Masuk Sekarang</button>
   </div>
 </div>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const welcomePopup = document.getElementById("welcomePopup");
-    if (!localStorage.getItem("popup_shown")) {
-      welcomePopup.classList.add("active");
-    }
-  });
-
-  function closeWelcomePopupAndRefresh() {
-    localStorage.setItem("popup_shown", "true");
-    location.reload(true);
-  }
-</script>
 
 </body>
 </html>
